@@ -51,14 +51,14 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
         if (productList != null) {
             Product current = productList.get(position);
             holder.textView.setText(current.getProductName());
-            holder.checkBox.setActivated(current.isOnSaleProduct());
+            holder.checkBox.setActivated(current.isOnSaleProduct() == 1 ? true : false);
         } else {
             // Covers the case of data not being ready yet.
             holder.textView.setText("Não há produtos registrados");
         }
     }
 
-    public void setWords(List<Product> words){
+    public void setProducts(List<Product> words){
         productList = words;
         notifyDataSetChanged();
     }

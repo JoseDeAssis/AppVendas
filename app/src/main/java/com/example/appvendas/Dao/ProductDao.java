@@ -24,7 +24,7 @@ public interface ProductDao {
     @Update
     public void updateProduct(Product produto);
 
-    @Query("SELECT * from Product ORDER BY id ASC")
+    @Query("SELECT * from product_table ORDER BY id ASC")
     public LiveData<List<Product>> getAlphabetizedProducts();
 
 }

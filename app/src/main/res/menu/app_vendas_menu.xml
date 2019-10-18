@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/iconeBusca"
+        android:id="@+id/searchIcon"
         android:icon="@drawable/search_icon"
         android:title="@string/search_icon"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/addProducts"

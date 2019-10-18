@@ -24,7 +24,7 @@ public class Product {
 
     @NonNull
     @ColumnInfo(name = "on_sale")
-    private boolean onSaleProduct;
+    private int onSaleProduct;
 
     public long getId() {
         return id;
@@ -59,11 +59,11 @@ public class Product {
         this.productPrice = productPrice;
     }
 
-    public boolean isOnSaleProduct() {
+    public int isOnSaleProduct() {
         return onSaleProduct;
     }
 
-    public void setOnSaleProduct(boolean onSaleProduct) {
+    public void setOnSaleProduct(int onSaleProduct) {
         this.onSaleProduct = onSaleProduct;
     }
 }
