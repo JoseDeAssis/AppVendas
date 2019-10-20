@@ -15,15 +15,19 @@ public class Product {
     @ColumnInfo(name = "product_name")
     private String productName;
 
-    @ColumnInfo(name = "description")
+    @ColumnInfo(name = "product_description")
     private String productDescrition;
 
     @NonNull
-    @ColumnInfo(name = "price")
+    @ColumnInfo(name = "product_group")
+    private String productGroup;
+
+    @NonNull
+    @ColumnInfo(name = "product_price")
     private double productPrice;
 
     @NonNull
-    @ColumnInfo(name = "on_sale")
+    @ColumnInfo(name = "product_on_sale")
     private int onSaleProduct;
 
     public long getId() {
@@ -51,6 +55,15 @@ public class Product {
         this.productDescrition = productDescrition;
     }
 
+    @NonNull
+    public String getProductGroup() {
+        return productGroup;
+    }
+
+    public void setProductGroup(@NonNull String productGroup) {
+        this.productGroup = productGroup;
+    }
+
     public double getProductPrice() {
         return productPrice;
     }
@@ -59,7 +72,7 @@ public class Product {
         this.productPrice = productPrice;
     }
 
-    public int isOnSaleProduct() {
+    public int getOnSaleProduct() {
         return onSaleProduct;
     }
 

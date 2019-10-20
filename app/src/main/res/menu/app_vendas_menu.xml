@@ -10,7 +10,7 @@
     <item
         android:id="@+id/addProducts"
         android:icon="@drawable/add_products_icon"
-        android:title="@string/add_products"
+        android:title="@string/add_products_icon"
         app:showAsAction="always"/>
 
 </menu>

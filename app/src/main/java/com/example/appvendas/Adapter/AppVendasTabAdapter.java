@@ -1,6 +1,5 @@
 package com.example.appvendas.Adapter;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -19,10 +18,10 @@ public class AppVendasTabAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new AppVendasProdutosTab();
+                return new AppVendasDestaquesTab();
 
             case 1:
-                return new AppVendasDestaquesTab();
+                return new AppVendasProdutosTab();
 
             case 2:
                 return new AppVendasHistoricoTab();
@@ -37,15 +36,14 @@ public class AppVendasTabAdapter extends FragmentPagerAdapter {
         return 3;
     }
 
-    @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Produtos";
+                return "Destaques";
 
             case 1:
-                return "Destaques";
+                return "Produtos";
 
             case 2:
                 return "Histórico";
