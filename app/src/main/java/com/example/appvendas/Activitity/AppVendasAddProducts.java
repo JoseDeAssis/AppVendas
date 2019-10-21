@@ -23,8 +23,8 @@ import com.google.android.material.textfield.TextInputEditText;
 public class AppVendasAddProducts extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private TextInputEditText newProductTitle, newProductDescription, newProductPrice, newProductGroup;
-    private MaterialCardView newProductCardView;
+    private TextInputEditText newProductTitle, newProductPrice;
+    private MaterialCardView newProductCardView, newProductDescription, newProductGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +37,9 @@ public class AppVendasAddProducts extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         newProductTitle = findViewById(R.id.productTitleEdtTxt);
-        newProductDescription = findViewById(R.id.productDescriptionEdtTxt);
+        newProductDescription = findViewById(R.id.productDescriptionCardView);
         newProductPrice = findViewById(R.id.productPriceEdtTxt);
-        newProductGroup = findViewById(R.id.productGroupEdtTxt);
+        newProductGroup = findViewById(R.id.productGroupCardView);
         newProductCardView = findViewById(R.id.productImageCardView);
 
         newProductDescription.setOnClickListener(new View.OnClickListener() {
