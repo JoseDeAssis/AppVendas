@@ -1,4 +1,4 @@
-package com.example.appvendas.Activitiy;
+package com.example.appvendas.Activitity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,15 +45,14 @@ public class AppVendasMainActivity extends AppCompatActivity {
         appVendasFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AppVendasMainActivity.this, AppVendasShoppingCart.class);
-                startActivity(intent);
+                startActivity(new Intent(AppVendasMainActivity.this, AppVendasShoppingCart.class));
             }
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.app_vendas_menu, menu);
+        getMenuInflater().inflate(R.menu.app_vendas_main_menu, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

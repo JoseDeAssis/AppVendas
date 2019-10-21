@@ -9,17 +9,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <activity android:name=".Activitiy.AppVendasMainActivity">
+        <activity android:name=".Activitity.AppVendasMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activitiy.AppVendasAddProducts"
-            android:parentActivityName=".Activitiy.AppVendasMainActivity"/>
-        <activity android:name=".Activitiy.AppVendasShoppingCart"
-            android:parentActivityName=".Activitiy.AppVendasMainActivity"/>
+        <activity
+            android:name=".Activitity.AppVendasAddProducts"
+            android:parentActivityName=".Activitity.AppVendasMainActivity" />
+        <activity
+            android:name=".Activitity.AppVendasShoppingCart"
+            android:parentActivityName=".Activitity.AppVendasMainActivity" />
+        <activity
+            android:name=".Activitity.AppVendasProductGroup"
+            android:parentActivityName=".Activitity.AppVendasAddProducts"/>
+        <activity
+            android:name=".Activitity.AppVendasProductDescription"
+            android:parentActivityName=".Activitity.AppVendasAddProducts"/>
     </application>
 
 </manifest>

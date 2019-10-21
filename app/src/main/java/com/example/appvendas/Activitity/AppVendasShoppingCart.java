@@ -1,4 +1,4 @@
-package com.example.appvendas.Activitiy;
+package com.example.appvendas.Activitity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
