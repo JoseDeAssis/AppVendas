@@ -9,8 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <activity android:name=".Activitiy.AppVendasAddProducts"></activity>
-        <activity android:name=".Activitiy.AppVendasShoppingCart" />
         <activity android:name=".Activitiy.AppVendasMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activitiy.AppVendasAddProducts"
+            android:parentActivityName=".Activitiy.AppVendasMainActivity"/>
+        <activity android:name=".Activitiy.AppVendasShoppingCart"
+            android:parentActivityName=".Activitiy.AppVendasMainActivity"/>
     </application>
 
 </manifest>

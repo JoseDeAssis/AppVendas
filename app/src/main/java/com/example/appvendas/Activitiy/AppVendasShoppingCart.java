@@ -19,5 +19,6 @@ public class AppVendasShoppingCart extends AppCompatActivity {
         carrinhoToolbar = findViewById(R.id.myToolbar);
         setSupportActionBar(carrinhoToolbar);
         getSupportActionBar().setTitle("carrinho");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

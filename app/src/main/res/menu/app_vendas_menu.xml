@@ -13,4 +13,10 @@
         android:title="@string/add_products_icon"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/confirm_button"
+        android:icon="@drawable/app_vendas_confirm_icon"
+        android:title="@string/confirm_icon"
+        app:showAsAction="always" />
+
 </menu>

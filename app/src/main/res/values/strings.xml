@@ -4,14 +4,17 @@
     <!--  Menu  -->
     <string name="search_icon">Search</string>
     <string name="add_products_icon">Add Products</string>
+    <string name="confirm_icon">Confirm Button</string>
+    <string name="back_icon">Back Button</string>
 
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>
 
     <!--  Activity Add Products  -->
     <string name="add_products">Adicionar Produtos</string>
-    <string name="product_title">Título</string>
+    <string name="product_title">Título*</string>
     <string name="product_description">Descrição</string>
-    <string name="product_price">Preço</string>
-    <string name="product_group">Categoria</string>
+    <string name="product_price">Preço*</string>
+    <string name="product_group">Categoria*</string>
+    <string name="add_an_image">Adicionar uma imagem</string>
 </resources>
