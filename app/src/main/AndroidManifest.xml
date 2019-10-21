@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.appvendas">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,16 +21,19 @@
         </activity>
         <activity
             android:name=".Activitity.AppVendasAddProducts"
-            android:parentActivityName=".Activitity.AppVendasMainActivity" />
+            android:parentActivityName=".Activitity.AppVendasProductCrud" />
         <activity
             android:name=".Activitity.AppVendasShoppingCart"
             android:parentActivityName=".Activitity.AppVendasMainActivity" />
         <activity
             android:name=".Activitity.AppVendasProductGroup"
-            android:parentActivityName=".Activitity.AppVendasAddProducts"/>
+            android:parentActivityName=".Activitity.AppVendasAddProducts" />
         <activity
             android:name=".Activitity.AppVendasProductDescription"
-            android:parentActivityName=".Activitity.AppVendasAddProducts"/>
+            android:parentActivityName=".Activitity.AppVendasAddProducts" />
+
+        <activity android:name=".Activitity.AppVendasProductCrud"
+            android:parentActivityName=".Activitity.AppVendasMainActivity"/>
     </application>
 
 </manifest>

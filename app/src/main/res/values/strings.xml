@@ -6,6 +6,7 @@
     <string name="add_products_icon">Add Products</string>
     <string name="confirm_icon">Confirm Button</string>
     <string name="back_icon">Back Button</string>
+    <string name="delete_icon">Delete Button</string>
 
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>

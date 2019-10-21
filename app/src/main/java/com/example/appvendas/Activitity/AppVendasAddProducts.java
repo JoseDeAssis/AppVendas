@@ -5,11 +5,19 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,11 +31,18 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class AppVendasAddProducts extends AppCompatActivity {
 
+    private static final int PERMISSION_CODE = 1000;
+    private static final int IMAGE_CAPTURE_CODE = 1001;
     private Toolbar toolbar;
     private TextInputEditText newProductTitle, newProductPrice;
     private MaterialCardView newProductCardView, newProductDescription, newProductGroup;
+    private Uri uriImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +59,7 @@ public class AppVendasAddProducts extends AppCompatActivity {
         newProductPrice = findViewById(R.id.productPriceEdtTxt);
         newProductGroup = findViewById(R.id.productGroupCardView);
         newProductCardView = findViewById(R.id.productImageCardView);
+        newProductCardView.setPreventCornerOverlap(false);
 
         newProductDescription.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +78,18 @@ public class AppVendasAddProducts extends AppCompatActivity {
         newProductCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        requestPermissions(permission, PERMISSION_CODE);
+                        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
+                    } else {
+                        openCamera();
+                    }
+                } else {
+                    openCamera();
+                }
             }
         });
     }
@@ -105,10 +132,38 @@ public class AppVendasAddProducts extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-        ImageView imageView = new ImageView(this);
-        imageView.setImageBitmap(bitmap);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        newProductCardView.addView(imageView);
+        if(resultCode == RESULT_OK) {
+            ImageView image = new ImageView(newProductCardView.getContext());
+            image.setImageURI(uriImage);
+            image.setMaxWidth(newProductCardView.getWidth());
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP
+            );
+            newProductCardView.addView(image);
+        }
+    }
+
+    private  void openCamera() {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the camera");
+        uriImage = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
+        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSION_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCamera();
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+        }
     }
 }
