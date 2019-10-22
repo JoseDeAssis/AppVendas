@@ -25,4 +25,15 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productGroupRecyclerView"
+
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/productGroupAppBar"
+        tools:listitem="@layout/app_vendas_rv_product_group_list" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
