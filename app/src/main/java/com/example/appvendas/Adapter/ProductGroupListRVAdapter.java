@@ -24,12 +24,29 @@ public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroup
 
         private final TextView textView;
         private final ImageView productGroupImageView, selectedImageView;
+        private final MaterialCardView productGroupCardView;
 
         private ProductGroupListRVViewHolder(View itemView) {
             super(itemView);
+            productGroupCardView = itemView.findViewById(R.id.productGroupRVCardView);
             textView = itemView.findViewById(R.id.productGroupRVTextView);
             productGroupImageView = itemView.findViewById(R.id.productGroupRVImgView);
             selectedImageView = itemView.findViewById(R.id.productGroupRVSelectedImgView);
+
+            productGroupCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    for(ProductGroup productGroup: productGroupList) {
+                        if(productGroup.getGroupName().equals(textView.getText().toString())) {
+                            productGroup.setSelected(true);
+                            selectedImageView.setVisibility(View.VISIBLE);
+                        } else if(productGroup.isSelected()) {
+                            productGroup.setSelected(false);
+                            selectedImageView.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
         }
     }
 
