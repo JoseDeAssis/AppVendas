@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,6 +31,7 @@ import com.example.appvendas.R;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -39,9 +41,12 @@ public class AppVendasAddProducts extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
+    private static final int PRODUCT_GROUP_RESPONSE_CODE = 1002;
+    private static final int PRODUCT_DESCRIPTION_RESULT_CODE = 1003;
     private Toolbar toolbar;
     private TextInputEditText newProductTitle, newProductPrice;
-    private MaterialCardView newProductCardView, newProductDescription, newProductGroup;
+    private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
+    private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup;
     private Uri uriImage;
 
     @Override
@@ -50,32 +55,39 @@ public class AppVendasAddProducts extends AppCompatActivity {
         setContentView(R.layout.activity_app_vendas_add_products);
 
         toolbar = findViewById(R.id.myToolbar);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Adicionar Produto");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         newProductTitle = findViewById(R.id.productTitleEdtTxt);
         newProductDescription = findViewById(R.id.productDescriptionCardView);
+        newProductDescriptionTxt = findViewById(R.id.productDescriptionCardViewTxt);
         newProductPrice = findViewById(R.id.productPriceEdtTxt);
         newProductGroup = findViewById(R.id.productGroupCardView);
-        newProductCardView = findViewById(R.id.productImageCardView);
-        newProductCardView.setPreventCornerOverlap(false);
+        newProductGroupTxt = findViewById(R.id.productGroupCardViewTxt);
+        newProductImageCardView = findViewById(R.id.productImageCardView);
+        newProductImageCardView.setPreventCornerOverlap(false);
 
         newProductDescription.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AppVendasAddProducts.this, AppVendasProductDescription.class));
+                Intent intent = new Intent(AppVendasAddProducts.this, AppVendasProductDescription.class);
+                intent.putExtra("productDescription", newProductDescriptionTxt.getText().toString());
+                startActivityForResult(intent, PRODUCT_DESCRIPTION_RESULT_CODE);
             }
         });
 
         newProductGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(AppVendasAddProducts.this, AppVendasProductGroup.class));
+                Intent intent = new Intent(AppVendasAddProducts.this, AppVendasProductGroup.class);
+                intent.putExtra("groupSelected", newProductGroupTxt.getText().toString());
+
+                startActivityForResult(intent, PRODUCT_GROUP_RESPONSE_CODE);
             }
         });
 
-        newProductCardView.setOnClickListener(new View.OnClickListener() {
+        newProductImageCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -123,6 +135,26 @@ public class AppVendasAddProducts extends AppCompatActivity {
                         }).show();
 //                finish();
                 break;
+
+            case android.R.id.home:
+
+                new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
+                        .setTitle("Descartar rascunho?")
+                        .setMessage("Todas as mudanças não salvas serão perdidas")
+                        .setPositiveButton("Descartar", /* listener = */ new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(AppVendasAddProducts.this, "Show de bola", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(AppVendasAddProducts.this, "Mó paia man", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
+//                finish();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -133,12 +165,23 @@ public class AppVendasAddProducts extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == RESULT_OK) {
-            ImageView image = new ImageView(newProductCardView.getContext());
-            image.setImageURI(uriImage);
-            image.setMaxWidth(newProductCardView.getWidth());
-            image.setScaleType(ImageView.ScaleType.CENTER_CROP
-            );
-            newProductCardView.addView(image);
+            switch (requestCode) {
+                case IMAGE_CAPTURE_CODE:
+                    ImageView image = new ImageView(newProductImageCardView.getContext());
+                    image.setImageURI(uriImage);
+                    image.setMaxWidth(newProductImageCardView.getWidth());
+                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    newProductImageCardView.addView(image);
+                    break;
+
+                case PRODUCT_GROUP_RESPONSE_CODE:
+                    newProductGroupTxt.setText(data.getStringExtra("groupName"));
+                    newProductGroupTxt.setTextColor(Color.BLACK);
+                    break;
+
+                case PRODUCT_DESCRIPTION_RESULT_CODE:
+                    break;
+            }
         }
     }
 

@@ -19,6 +19,15 @@ public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroup
 
     private final LayoutInflater mInflater;
     private ProductGroup[] productGroupList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     public class ProductGroupListRVViewHolder extends RecyclerView.ViewHolder  {
 
@@ -26,23 +35,21 @@ public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroup
         private final ImageView productGroupImageView, selectedImageView;
         private final MaterialCardView productGroupCardView;
 
-        private ProductGroupListRVViewHolder(View itemView) {
+        private ProductGroupListRVViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
             productGroupCardView = itemView.findViewById(R.id.productGroupRVCardView);
             textView = itemView.findViewById(R.id.productGroupRVTextView);
             productGroupImageView = itemView.findViewById(R.id.productGroupRVImgView);
             selectedImageView = itemView.findViewById(R.id.productGroupRVSelectedImgView);
 
-            productGroupCardView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    for(ProductGroup productGroup: productGroupList) {
-                        if(productGroup.getGroupName().equals(textView.getText().toString())) {
-                            productGroup.setSelected(true);
-                            selectedImageView.setVisibility(View.VISIBLE);
-                        } else if(productGroup.isSelected()) {
-                            productGroup.setSelected(false);
-                            selectedImageView.setVisibility(View.GONE);
+                    if(listener != null) {
+                        int position = getAdapterPosition();
+
+                        if(position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
                         }
                     }
                 }
@@ -57,7 +64,7 @@ public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroup
     @Override
     public ProductGroupListRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_product_group_list, parent, false);
-        return new ProductGroupListRVAdapter.ProductGroupListRVViewHolder(itemView);
+        return new ProductGroupListRVAdapter.ProductGroupListRVViewHolder(itemView, mListener);
     }
 
     @Override

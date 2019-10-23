@@ -82,16 +82,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/materialTextView"
+                app:layout_constraintBottom_toBottomOf="@+id/productDescriptionCardViewTxt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/materialTextView"
+                app:layout_constraintTop_toTopOf="@+id/productDescriptionCardViewTxt"
                 app:layout_constraintVertical_bias="0.6"
                 app:srcCompat="@drawable/product_description_icon" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/materialTextView"
+                android:id="@+id/productDescriptionCardViewTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -113,7 +113,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/materialTextView"
+                app:layout_constraintTop_toBottomOf="@+id/productDescriptionCardViewTxt"
                 app:layout_constraintVertical_bias="0.8" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -178,15 +178,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/materialTextView2"
+                app:layout_constraintBottom_toBottomOf="@+id/productGroupCardViewTxt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/materialTextView2"
+                app:layout_constraintTop_toTopOf="@+id/productGroupCardViewTxt"
                 app:srcCompat="@drawable/product_group_icon" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/materialTextView2"
+                android:id="@+id/productGroupCardViewTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -208,7 +208,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/materialTextView2"
+                app:layout_constraintTop_toBottomOf="@+id/productGroupCardViewTxt"
                 app:layout_constraintVertical_bias="0.8" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
