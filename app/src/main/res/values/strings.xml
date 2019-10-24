@@ -18,4 +18,5 @@
     <string name="product_price">Preço*</string>
     <string name="product_group">Categoria*</string>
     <string name="add_an_image">Adicionar uma imagem</string>
+    <string name="is_promotion">Produto em destaque</string>
 </resources>

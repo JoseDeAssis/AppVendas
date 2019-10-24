@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.appvendas.Adapter.ProductGroupListRVAdapter;
@@ -41,6 +42,12 @@ public class AppVendasProductGroup extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
         getSupportActionBar().setTitle("Selecione a categoria");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    finish();
+            }
+        });
 
         String groupSelected = getIntent().getExtras().getString("groupSelected");
 
@@ -89,12 +96,12 @@ public class AppVendasProductGroup extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if(item.getItemId() == android.R.id.home)
-                finish();
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//
+//        if(item.getItemId() == android.R.id.home)
+//                finish();
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 }

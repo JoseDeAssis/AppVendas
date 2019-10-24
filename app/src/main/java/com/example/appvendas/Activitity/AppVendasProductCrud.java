@@ -1,5 +1,6 @@
 package com.example.appvendas.Activitity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -29,6 +32,8 @@ public class AppVendasProductCrud extends AppCompatActivity {
     private ProductViewModel appVendasProdutosCrudViewModel;
     private Toolbar toolbar;
     private ActionMode mActionMode;
+    private FloatingActionButton addProductFAB;
+    private static final int ADD_PRODUCT_RESULT_CODE = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,16 @@ public class AppVendasProductCrud extends AppCompatActivity {
         getSupportActionBar().setTitle("Produtos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        appVendasProdutosCrudRecyclerView = findViewById(R.id.produtosTabRecyclerView);
+        addProductFAB = findViewById(R.id.appVendasProductCrudFAB);
+        addProductFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AppVendasProductCrud.this, AppVendasAddProducts.class);
+                startActivityForResult(intent, ADD_PRODUCT_RESULT_CODE);
+            }
+        });
+
+        appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
         final ProductListRVAdapter adapter = new ProductListRVAdapter(this);
 
         appVendasProdutosCrudRecyclerView.setAdapter(adapter);
@@ -110,4 +124,29 @@ public class AppVendasProductCrud extends AppCompatActivity {
             mActionMode = null;
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (resultCode) {
+            case RESULT_OK:
+                switch (requestCode) {
+                    case ADD_PRODUCT_RESULT_CODE:
+                        Product newProduct = new Product();
+                        newProduct.setProductName(data.getStringExtra("productName"));
+                        newProduct.setProductDescrition(data.getStringExtra("productDescription"));
+                        newProduct.setProductGroup(data.getStringExtra("productGroup"));
+                        newProduct.setProductPrice(data.getDoubleExtra("productPrice", 0));
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
 }

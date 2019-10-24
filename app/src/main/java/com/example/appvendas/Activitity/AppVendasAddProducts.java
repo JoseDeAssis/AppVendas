@@ -30,7 +30,9 @@ import android.widget.Toast;
 import com.example.appvendas.R;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.io.File;
@@ -46,8 +48,10 @@ public class AppVendasAddProducts extends AppCompatActivity {
     private Toolbar toolbar;
     private TextInputEditText newProductTitle, newProductPrice;
     private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
-    private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup;
+    private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup, newProductHot;
     private Uri uriImage;
+    private TextInputLayout productTitleTxtInputLayout, productPriceTxtInputLayout;
+    private SwitchMaterial newProductHotSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +63,16 @@ public class AppVendasAddProducts extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Adicionar Produto");
 
+        productTitleTxtInputLayout = findViewById(R.id.productTitleTxtInputLayout);
+        productPriceTxtInputLayout = findViewById(R.id.productPriceTxtInputLayout);
         newProductTitle = findViewById(R.id.productTitleEdtTxt);
         newProductDescription = findViewById(R.id.productDescriptionCardView);
         newProductDescriptionTxt = findViewById(R.id.productDescriptionCardViewTxt);
         newProductPrice = findViewById(R.id.productPriceEdtTxt);
         newProductGroup = findViewById(R.id.productGroupCardView);
         newProductGroupTxt = findViewById(R.id.productGroupCardViewTxt);
+        newProductHot = findViewById(R.id.productHotCardView);
+        newProductHotSwitch = findViewById(R.id.productHotSwitch);
         newProductImageCardView = findViewById(R.id.productImageCardView);
         newProductImageCardView.setPreventCornerOverlap(false);
 
@@ -87,10 +95,21 @@ public class AppVendasAddProducts extends AppCompatActivity {
             }
         });
 
+        newProductHot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(newProductHotSwitch.isChecked()) {
+                    newProductHotSwitch.setChecked(false);
+                } else {
+                    newProductHotSwitch.setChecked(true);
+                }
+            }
+        });
+
         newProductImageCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
                             checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                         String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -118,22 +137,23 @@ public class AppVendasAddProducts extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.confirmIcon:
-                new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
-                        .setTitle("Salvar produto?")
-                        .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
-                        .setPositiveButton("Accept", /* listener = */ new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(AppVendasAddProducts.this, "Show de bola", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(AppVendasAddProducts.this, "Mó paia man", Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
-//                finish();
+                if (validadeFields()) {
+                    new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
+                            .setTitle("Salvar produto?")
+                            .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
+                            .setPositiveButton("Accept", /* listener = */ new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(AppVendasAddProducts.this, "Mó paia man", Toast.LENGTH_SHORT).show();
+                                }
+                            }).show();
+                }
                 break;
 
             case android.R.id.home:
@@ -164,28 +184,38 @@ public class AppVendasAddProducts extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case IMAGE_CAPTURE_CODE:
-                    ImageView image = new ImageView(newProductImageCardView.getContext());
-                    image.setImageURI(uriImage);
-                    image.setMaxWidth(newProductImageCardView.getWidth());
-                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    newProductImageCardView.addView(image);
-                    break;
+        switch (resultCode) {
+            case RESULT_OK:
+                switch (requestCode) {
+                    case IMAGE_CAPTURE_CODE:
+                        ImageView image = new ImageView(newProductImageCardView.getContext());
+                        image.setImageURI(uriImage);
+                        image.setMaxWidth(newProductImageCardView.getWidth());
+                        image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        newProductImageCardView.addView(image);
+                        break;
 
-                case PRODUCT_GROUP_RESPONSE_CODE:
-                    newProductGroupTxt.setText(data.getStringExtra("groupName"));
-                    newProductGroupTxt.setTextColor(Color.BLACK);
-                    break;
+                    case PRODUCT_GROUP_RESPONSE_CODE:
+                        newProductGroupTxt.setText(data.getStringExtra("groupName"));
+                        newProductGroupTxt.setTextColor(Color.BLACK);
+                        break;
 
-                case PRODUCT_DESCRIPTION_RESULT_CODE:
-                    break;
-            }
+                    case PRODUCT_DESCRIPTION_RESULT_CODE:
+                        newProductDescriptionTxt.setText(data.getStringExtra("productDescription"));
+                        newProductDescriptionTxt.setTextColor(Color.BLACK);
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
-    private  void openCamera() {
+    private void openCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the camera");
@@ -202,11 +232,18 @@ public class AppVendasAddProducts extends AppCompatActivity {
 
         switch (requestCode) {
             case PERMISSION_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     openCamera();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
         }
+    }
+
+    public boolean validadeFields() {
+
+        boolean validate = true;
+
+        return validate;
     }
 }
