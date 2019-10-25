@@ -60,7 +60,7 @@ public class AppVendasProductGroup extends AppCompatActivity {
         productGroupViewModel = ViewModelProviders.of(this).get(ProductGroupViewModel.class);
         adapter.setProductGroupList(productGroupViewModel.getAllProducts());
 
-        if(!groupSelected.equals("Categoria*")) {
+        if(!groupSelected.equals("Categoria*") || !groupSelected.equals("Selecione uma categoria válida")) {
             for(int i = 0; i < productGroupViewModel.getAllProducts().length; i++) {
                 if(productGroupViewModel.getAllProducts()[i].getGroupName().equals(groupSelected)){
                     productGroupViewModel.getAllProducts()[i].setSelected(true);

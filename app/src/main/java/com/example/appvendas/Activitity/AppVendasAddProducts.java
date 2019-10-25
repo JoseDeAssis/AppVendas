@@ -10,6 +10,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -32,6 +33,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 public class AppVendasAddProducts extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     private static final int PERMISSION_CODE = 1000;
@@ -43,6 +48,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
     private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup, newProductHot;
     private Uri uriImage;
+    private Bitmap photo = null;
     private TextInputLayout productTitleTxtInputLayout, productPriceTxtInputLayout;
     private SwitchMaterial newProductHotSwitch;
 
@@ -109,13 +115,27 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                             .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent();
+                                    intent.putExtra("productTitle", newProductTitle.getText().toString());
+                                    intent.putExtra("productDescription",
+                                            newProductDescriptionTxt.getText().toString().equals("Descrição") ? "" :
+                                                    newProductDescriptionTxt.getText().toString());
+                                    intent.putExtra("productPrice", Double.parseDouble(newProductPrice.getText().toString()));
+                                    intent.putExtra("productGroup", newProductGroupTxt.getText().toString());
+                                    intent.putExtra("isProductHot", newProductHotSwitch.isChecked() ? 1 : 0);
 
+                                    HashMap<String, Bitmap> photoMap = new HashMap<String, Bitmap>();
+                                    photoMap.put("productPhoto", photo);
+
+                                    intent.putExtra("productPhoto", photoMap);
+
+                                    setResult(RESULT_OK, intent);
+                                    finish();
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(AppVendasAddProducts.this, "Mó paia man", Toast.LENGTH_SHORT).show();
                                 }
                             }).show();
                 }
@@ -157,6 +177,8 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                     image.setMaxWidth(newProductImageCardView.getWidth());
                     image.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     newProductImageCardView.addView(image);
+
+                    photo = (Bitmap) data.getExtras().get("data");
                     break;
 
                 case PRODUCT_GROUP_RESPONSE_CODE:
@@ -209,14 +231,14 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         boolean validate = true;
 
         if (newProductTitle.getText().toString().trim().equals("")) {
-            if(!productTitleTxtInputLayout.isErrorEnabled()){
+            if (!productTitleTxtInputLayout.isErrorEnabled()) {
                 productTitleTxtInputLayout.setErrorEnabled(true);
             }
             productTitleTxtInputLayout.setError("Insira um título válido");
         }
 
         if (newProductPrice.getText().toString().trim().equals("")) {
-            if(!productPriceTxtInputLayout.isErrorEnabled()) {
+            if (!productPriceTxtInputLayout.isErrorEnabled()) {
                 productPriceTxtInputLayout.setErrorEnabled(true);
             }
             productPriceTxtInputLayout.setError("Insira um valor válido");

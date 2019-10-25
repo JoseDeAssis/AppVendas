@@ -44,7 +44,7 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
 
         productDescriptionTxtView = findViewById(R.id.productDescriptionTxtView);
 
-        if (!productDescription.equals("Descrição")) {
+        if (!productDescription.equals("Descrição") && !productDescription.equals("Insira uma descrição válida")) {
             productDescriptionTxtView.setText(productDescription);
         }
 

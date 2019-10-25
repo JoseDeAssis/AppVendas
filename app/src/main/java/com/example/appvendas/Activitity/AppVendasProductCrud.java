@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -24,6 +25,9 @@ import com.example.appvendas.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.List;
 
 public class AppVendasProductCrud extends AppCompatActivity {
@@ -33,6 +37,8 @@ public class AppVendasProductCrud extends AppCompatActivity {
     private Toolbar toolbar;
     private ActionMode mActionMode;
     private FloatingActionButton addProductFAB;
+    static public String filePath = "MyFileStorage";
+    private File myExternalFile;
     private static final int ADD_PRODUCT_RESULT_CODE = 1000;
 
     @Override
@@ -138,6 +144,13 @@ public class AppVendasProductCrud extends AppCompatActivity {
                         newProduct.setProductDescrition(data.getStringExtra("productDescription"));
                         newProduct.setProductGroup(data.getStringExtra("productGroup"));
                         newProduct.setProductPrice(data.getDoubleExtra("productPrice", 0));
+
+                        appVendasProdutosCrudViewModel.insert(newProduct);
+
+//                        if(data.getSerializableExtra("productPhoto") != null) {
+//                            HashMap<String, Bitmap> bitmapMap = (HashMap<String, Bitmap>) data.getSerializableExtra("productPhoto");
+//                            createDirectoryAndSaveFile(bitmapMap.get("photoProduct"), Long.toString(produtos.getId()));
+//                        }
                         break;
 
                     default:
@@ -147,6 +160,19 @@ public class AppVendasProductCrud extends AppCompatActivity {
 
             default:
                 break;
+        }
+    }
+
+    private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
+
+        try {
+            myExternalFile = new File(getExternalFilesDir(filePath), fileName);
+            FileOutputStream out = new FileOutputStream(myExternalFile);
+            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 public interface ProductDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insertProduct(Product produto);
+    public Long insertProduct(Product produto);
 
     @Delete
     public void deleteProduct(Product produto);
