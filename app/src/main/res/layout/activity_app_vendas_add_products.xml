@@ -148,6 +148,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             app:boxBackgroundColor="#FFFFFF"
+            app:errorEnabled="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/productPriceImageView"
