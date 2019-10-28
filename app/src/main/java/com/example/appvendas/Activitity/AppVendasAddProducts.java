@@ -44,12 +44,12 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     private static final int PRODUCT_GROUP_RESPONSE_CODE = 1002;
     private static final int PRODUCT_DESCRIPTION_RESULT_CODE = 1003;
     private Toolbar toolbar;
-    private TextInputEditText newProductTitle, newProductPrice;
+    private TextInputEditText newProductTitle, newProductCode, newProductPrice;
     private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
     private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup, newProductHot;
     private Uri uriImage;
     private Bitmap photo = null;
-    private TextInputLayout productTitleTxtInputLayout, productPriceTxtInputLayout;
+    private TextInputLayout productTitleTxtInputLayout, productCodeTxtInputLayout, productPriceTxtInputLayout;
     private SwitchMaterial newProductHotSwitch;
 
     @Override
@@ -65,11 +65,15 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
         //Text input layout
         productTitleTxtInputLayout = findViewById(R.id.productTitleTxtInputLayout);
+        productCodeTxtInputLayout = findViewById(R.id.productCodeTxtInputLayout);
         productPriceTxtInputLayout = findViewById(R.id.productPriceTxtInputLayout);
 
         //Edit Text input
         newProductTitle = findViewById(R.id.productTitleEdtTxt);
         newProductTitle.addTextChangedListener(this);
+
+        newProductCode = findViewById(R.id.productCodeEdtTxt);
+        newProductCode.addTextChangedListener(this);
 
         newProductPrice = findViewById(R.id.productPriceEdtTxt);
         newProductPrice.addTextChangedListener(this);
@@ -117,6 +121,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent intent = new Intent();
                                     intent.putExtra("productTitle", newProductTitle.getText().toString());
+                                    intent.putExtra("productCode", newProductCode.getText().toString());
                                     intent.putExtra("productDescription",
                                             newProductDescriptionTxt.getText().toString().equals("Descrição") ? "" :
                                                     newProductDescriptionTxt.getText().toString());
@@ -237,6 +242,13 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
             productTitleTxtInputLayout.setError("Insira um título válido");
         }
 
+        if (newProductCode.getText().toString().trim().equals("")) {
+            if (!productCodeTxtInputLayout.isErrorEnabled()) {
+                productCodeTxtInputLayout.setErrorEnabled(true);
+            }
+            productCodeTxtInputLayout.setError("Insira um código válido");
+        }
+
         if (newProductPrice.getText().toString().trim().equals("")) {
             if (!productPriceTxtInputLayout.isErrorEnabled()) {
                 productPriceTxtInputLayout.setErrorEnabled(true);
@@ -256,8 +268,9 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
         if (newProductGroupTxt.getText().equals("Selecione uma categoria válida") ||
                 newProductDescriptionTxt.getText().equals("Insira uma descrição válida") ||
-                newProductPrice.getText().toString().equals("Insira um valor válido") ||
-                newProductTitle.getText().toString().equals("Insira um título válido")) {
+                newProductPrice.getText().toString().equals("") ||
+                newProductCode.getText().toString().equals("") ||
+                newProductTitle.getText().toString().equals("")) {
             validate = false;
         }
 
@@ -325,6 +338,11 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         if (!newProductTitle.getText().toString().trim().equals("") &&
                 productTitleTxtInputLayout.isErrorEnabled()) {
             productTitleTxtInputLayout.setErrorEnabled(false);
+        }
+
+        if (!newProductCode.getText().toString().trim().equals("") &&
+                productCodeTxtInputLayout.isErrorEnabled()) {
+            productCodeTxtInputLayout.setErrorEnabled(false);
         }
 
         if (!newProductPrice.getText().toString().trim().equals("") &&

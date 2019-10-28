@@ -20,13 +20,16 @@ import android.widget.Toast;
 
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Helpers.Handler.ImageHandler;
+import com.example.appvendas.Helpers.Singleton.EventSingleton;
+import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +42,8 @@ public class AppVendasProductCrud extends AppCompatActivity {
     private FloatingActionButton addProductFAB;
     static public String filePath = "MyFileStorage";
     private File myExternalFile;
+    private Bitmap picture;
+    private ImageHandler imageHandler;
     private static final int ADD_PRODUCT_RESULT_CODE = 1000;
 
     @Override
@@ -50,6 +55,8 @@ public class AppVendasProductCrud extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Produtos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        imageHandler = new ImageHandler(getApplicationContext());
 
         addProductFAB = findViewById(R.id.appVendasProductCrudFAB);
         addProductFAB.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +84,7 @@ public class AppVendasProductCrud extends AppCompatActivity {
         appVendasProdutosCrudRecyclerView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if(mActionMode != null) {
+                if (mActionMode != null) {
                     return false;
                 }
                 return true;
@@ -141,16 +148,18 @@ public class AppVendasProductCrud extends AppCompatActivity {
                     case ADD_PRODUCT_RESULT_CODE:
                         Product newProduct = new Product();
                         newProduct.setProductName(data.getStringExtra("productName"));
+                        newProduct.setProductCode(data.getStringExtra("productCode"));
                         newProduct.setProductDescrition(data.getStringExtra("productDescription"));
                         newProduct.setProductGroup(data.getStringExtra("productGroup"));
                         newProduct.setProductPrice(data.getDoubleExtra("productPrice", 0));
 
                         appVendasProdutosCrudViewModel.insert(newProduct);
 
-//                        if(data.getSerializableExtra("productPhoto") != null) {
-//                            HashMap<String, Bitmap> bitmapMap = (HashMap<String, Bitmap>) data.getSerializableExtra("productPhoto");
-//                            createDirectoryAndSaveFile(bitmapMap.get("photoProduct"), Long.toString(produtos.getId()));
-//                        }
+                        if (data.getSerializableExtra("productPhoto") != null) {
+                            HashMap<String, Bitmap> bitmapMap = (HashMap<String, Bitmap>) data.getSerializableExtra("productPhoto");
+                            picture = bitmapMap.get("photoProduct");
+                            createDirectoryAndSaveFile(null);
+                        }
                         break;
 
                     default:
@@ -163,16 +172,26 @@ public class AppVendasProductCrud extends AppCompatActivity {
         }
     }
 
-    private void createDirectoryAndSaveFile(Bitmap imageToSave, String fileName) {
+    private void createDirectoryAndSaveFile(Long id) {
 
-        try {
-            myExternalFile = new File(getExternalFilesDir(filePath), fileName);
-            FileOutputStream out = new FileOutputStream(myExternalFile);
-            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (id == null && picture != null) {
+            EventSingleton eventSingleton = EventSingleton.getInstance();
+            eventSingleton.registerEvent(new EventListener() {
+                @Override
+                public void done(Long id) {
+                    try {
+                        imageHandler.savePicture(picture, id.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } else if (picture != null) {
+            try {
+                imageHandler.savePicture(picture, id.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

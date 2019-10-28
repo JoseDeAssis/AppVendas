@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.example.appvendas.Dao.ProductDao;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Room.ProductRoomDatabase;
+import com.example.appvendas.Helpers.Singleton.EventSingleton;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class ProductRepository {
         new insertAsyncTask(productDao).execute(word);
     }
 
-    private static class insertAsyncTask extends AsyncTask<Product, Void, Void> {
+    private static class insertAsyncTask extends AsyncTask<Product, Void, Long> {
 
         private ProductDao mAsyncTaskDao;
 
@@ -39,9 +40,15 @@ public class ProductRepository {
         }
 
         @Override
-        protected Void doInBackground(final Product... params) {
-            mAsyncTaskDao.insertProduct(params[0]);
-            return null;
+        protected Long doInBackground(final Product... params) {
+            return mAsyncTaskDao.insertProduct(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long result) {
+            super.onPostExecute(result);
+            EventSingleton eventSingleton = EventSingleton.getInstance();
+            eventSingleton.emitterDone(result);
         }
     }
 }

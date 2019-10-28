@@ -16,15 +16,15 @@ import java.util.List;
 public interface ProductDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public Long insertProduct(Product produto);
+    Long insertProduct(Product produto);
 
     @Delete
-    public void deleteProduct(Product produto);
+    void deleteProduct(Product produto);
 
     @Update
-    public void updateProduct(Product produto);
+    void updateProduct(Product produto);
 
     @Query("SELECT * from product_table ORDER BY id ASC")
-    public LiveData<List<Product>> getAlphabetizedProducts();
+    LiveData<List<Product>> getAlphabetizedProducts();
 
 }

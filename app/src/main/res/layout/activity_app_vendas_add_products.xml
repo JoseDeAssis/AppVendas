@@ -66,17 +66,52 @@
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <ImageView
+            android:id="@+id/productCodeImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/productCodeTxtInputLayout"
+            app:layout_constraintEnd_toStartOf="@+id/productCodeTxtInputLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/productCodeTxtInputLayout"
+            app:layout_constraintVertical_bias="0.5"
+            app:srcCompat="@drawable/ic_confirmation_number_black_24dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/productCodeTxtInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            app:boxBackgroundColor="#FFFFFF"
+            app:errorEnabled="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/productCodeImageView"
+            app:layout_constraintTop_toBottomOf="@+id/productTitleTxtInputLayout"
+            app:layout_constraintVertical_bias="0.0">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/productCodeEdtTxt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/product_code"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/productDescriptionCardView"
             android:layout_width="match_parent"
             android:layout_height="75dp"
-            android:layout_marginTop="10dp"
             android:backgroundTint="#FFFFFF"
             android:outlineSpotShadowColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/productTitleTxtInputLayout"
+            app:layout_constraintTop_toBottomOf="@+id/productCodeTxtInputLayout"
             app:layout_constraintVertical_bias="0.0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -145,7 +180,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="20dp"
             app:boxBackgroundColor="#FFFFFF"
             app:errorEnabled="true"
@@ -169,7 +204,6 @@
             android:id="@+id/productGroupCardView"
             android:layout_width="match_parent"
             android:layout_height="75dp"
-            android:layout_marginTop="10dp"
             android:backgroundTint="#FFFFFF"
             android:outlineSpotShadowColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
