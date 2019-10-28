@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -306,17 +307,14 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
             case R.id.productImageCardView:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
                             checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                        String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                        String[] permission = {Manifest.permission.CAMERA/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/};
                         requestPermissions(permission, PERMISSION_CODE);
                         startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
-                    } else {
-                        openCamera();
                     }
-                } else {
-                    openCamera();
                 }
+                openCamera();
 
                 break;
         }

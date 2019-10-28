@@ -40,8 +40,6 @@ public class AppVendasProductCrud extends AppCompatActivity {
     private Toolbar toolbar;
     private ActionMode mActionMode;
     private FloatingActionButton addProductFAB;
-    static public String filePath = "MyFileStorage";
-    private File myExternalFile;
     private Bitmap picture;
     private ImageHandler imageHandler;
     private static final int ADD_PRODUCT_RESULT_CODE = 1000;
@@ -147,7 +145,7 @@ public class AppVendasProductCrud extends AppCompatActivity {
                 switch (requestCode) {
                     case ADD_PRODUCT_RESULT_CODE:
                         Product newProduct = new Product();
-                        newProduct.setProductName(data.getStringExtra("productName"));
+                        newProduct.setProductName(data.getStringExtra("productTitle"));
                         newProduct.setProductCode(data.getStringExtra("productCode"));
                         newProduct.setProductDescrition(data.getStringExtra("productDescription"));
                         newProduct.setProductGroup(data.getStringExtra("productGroup"));
