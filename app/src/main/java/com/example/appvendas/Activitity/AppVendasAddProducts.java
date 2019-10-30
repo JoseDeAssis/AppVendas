@@ -179,12 +179,16 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
             switch (requestCode) {
                 case IMAGE_CAPTURE_CODE:
                     ImageView image = new ImageView(newProductImageCardView.getContext());
-                    image.setImageURI(uriImage);
-                    image.setMaxWidth(newProductImageCardView.getWidth());
-                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                    newProductImageCardView.addView(image);
-
-                    photo = (Bitmap) data.getExtras().get("data");
+//                    image.setImageBitmap((Bitmap) data.getExtras().get("data"));
+                    try {
+                        photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                        image.setImageBitmap(photo);
+                        image.setMaxWidth(newProductImageCardView.getWidth());
+                        image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        newProductImageCardView.addView(image);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
 
                 case PRODUCT_GROUP_RESPONSE_CODE:
@@ -208,11 +212,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     }
 
     private void openCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "New Picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From the camera");
-        uriImage = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
@@ -229,6 +228,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
+                break;
         }
     }
 
@@ -311,10 +311,8 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                             checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                         String[] permission = {Manifest.permission.CAMERA/*, Manifest.permission.WRITE_EXTERNAL_STORAGE*/};
                         requestPermissions(permission, PERMISSION_CODE);
-                        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
                     }
                 }
-                openCamera();
 
                 break;
         }
@@ -348,4 +346,5 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
             productPriceTxtInputLayout.setErrorEnabled(false);
         }
     }
+
 }
