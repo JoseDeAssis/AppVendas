@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
+import com.example.appvendas.R;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +23,9 @@ public class ImageHandler {
 
     public RoundedBitmapDrawable getRoundPicture(Long id) throws IOException {
         Bitmap picture = getProductPic(id);
+        if(picture == null) {
+            return null;
+        }
         RoundedBitmapDrawable roundedBitmapDrawable = setRoundPicture(picture);
         return roundedBitmapDrawable;
     }
@@ -43,7 +48,7 @@ public class ImageHandler {
     }
 
     public void savePicture(Bitmap picture, String picName) throws IOException{
-        File file = new File( context.getFilesDir(), picName);
+        File file = new File(context.getFilesDir(), picName);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
         picture.compress(Bitmap.CompressFormat.JPEG, 100,fileOutputStream);
         fileOutputStream.flush();

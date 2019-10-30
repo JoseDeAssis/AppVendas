@@ -144,19 +144,25 @@ public class AppVendasProductCrud extends AppCompatActivity {
             case RESULT_OK:
                 switch (requestCode) {
                     case ADD_PRODUCT_RESULT_CODE:
-                        Product newProduct = new Product();
-                        newProduct.setProductName(data.getStringExtra("productTitle"));
-                        newProduct.setProductCode(data.getStringExtra("productCode"));
-                        newProduct.setProductDescrition(data.getStringExtra("productDescription"));
-                        newProduct.setProductGroup(data.getStringExtra("productGroup"));
-                        newProduct.setProductPrice(data.getDoubleExtra("productPrice", 0));
+                        try {
+                            Product newProduct = new Product();
+                            newProduct.setProductName(data.getStringExtra("productTitle"));
+                            newProduct.setProductCode(data.getStringExtra("productCode"));
+                            newProduct.setProductDescrition(data.getStringExtra("productDescription"));
+                            newProduct.setProductGroup(data.getStringExtra("productGroup"));
+                            newProduct.setProductPrice(data.getDoubleExtra("productPrice", 0));
 
-                        appVendasProdutosCrudViewModel.insert(newProduct);
+                            appVendasProdutosCrudViewModel.insert(newProduct);
 
-                        if (data.getSerializableExtra("productPhoto") != null) {
-                            HashMap<String, Bitmap> bitmapMap = (HashMap<String, Bitmap>) data.getSerializableExtra("productPhoto");
-                            picture = bitmapMap.get("photoProduct");
-                            createDirectoryAndSaveFile(null);
+                            if (data.getSerializableExtra("productPhoto") != null) {
+                                HashMap<String, Bitmap> bitmapMap = (HashMap<String, Bitmap>) data.getSerializableExtra("productPhoto");
+                                picture = bitmapMap.get("productPhoto");
+                                createDirectoryAndSaveFile(null);
+                            }
+
+                            Toast.makeText(this, "Produto adicionado", Toast.LENGTH_SHORT).show();
+                        } catch(Exception e) {
+                            Toast.makeText(this, "Erro: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         break;
 

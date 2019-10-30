@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,7 +21,6 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -34,9 +32,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
 
 public class AppVendasAddProducts extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
@@ -48,7 +44,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     private TextInputEditText newProductTitle, newProductCode, newProductPrice;
     private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
     private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup, newProductHot;
-    private Uri uriImage;
     private Bitmap photo = null;
     private TextInputLayout productTitleTxtInputLayout, productCodeTxtInputLayout, productPriceTxtInputLayout;
     private SwitchMaterial newProductHotSwitch;
@@ -179,16 +174,11 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
             switch (requestCode) {
                 case IMAGE_CAPTURE_CODE:
                     ImageView image = new ImageView(newProductImageCardView.getContext());
-//                    image.setImageBitmap((Bitmap) data.getExtras().get("data"));
-                    try {
-                        photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
-                        image.setImageBitmap(photo);
-                        image.setMaxWidth(newProductImageCardView.getWidth());
-                        image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        newProductImageCardView.addView(image);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    photo = (Bitmap) data.getExtras().get("data");
+                    image.setImageBitmap(photo);
+                    image.setMaxWidth(newProductImageCardView.getWidth());
+                    image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    newProductImageCardView.addView(image);
                     break;
 
                 case PRODUCT_GROUP_RESPONSE_CODE:
@@ -213,7 +203,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
     private void openCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
     }
 
