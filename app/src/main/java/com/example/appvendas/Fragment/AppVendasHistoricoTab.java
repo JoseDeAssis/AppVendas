@@ -21,25 +21,25 @@ import java.util.List;
 public class AppVendasHistoricoTab extends Fragment {
 
     private RecyclerView appVendasProdutosRecyclerView;
-    private ProductViewModel appVendasProdutosViewModel;
+//    private ProductViewModel appVendasProdutosViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_produtos_tab, container, false);
 
         appVendasProdutosRecyclerView = view.findViewById(R.id.produtosTabRecyclerView);
-        final ProductListRVAdapter adapter = new ProductListRVAdapter(getContext());
-
-        appVendasProdutosRecyclerView.setAdapter(adapter);
-        appVendasProdutosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        appVendasProdutosViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
-        appVendasProdutosViewModel.getAllProducts().observe(this, new Observer<List<Product>>() {
-            @Override
-            public void onChanged(List<Product> products) {
-                adapter.setProducts(products);
-            }
-        });
+//        final ProductListRVAdapter adapter = new ProductListRVAdapter(getContext());
+//
+//        appVendasProdutosRecyclerView.setAdapter(adapter);
+//        appVendasProdutosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//
+//        appVendasProdutosViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
+//        appVendasProdutosViewModel.getAllProducts().observe(this, new Observer<List<Product>>() {
+//            @Override
+//            public void onChanged(List<Product> products) {
+//                adapter.setProducts(products);
+//            }
+//        });
 
         return view;
     }

@@ -15,15 +15,25 @@ import java.util.List;
 public class ProductRepository {
 
     private ProductDao productDao;
-    private LiveData<List<Product>> productList;
+    private LiveData<List<Product>> productList, hotProductList, allProductList;
 
     public ProductRepository(Application application){
         ProductRoomDatabase db = ProductRoomDatabase.getDataBase(application);
         productDao = db.produtoDao();
+        allProductList = productDao.getAllAlphabetizedProducts();
         productList = productDao.getAlphabetizedProducts();
+        hotProductList = productDao.getAlphabetizedHotProducts();
     }
 
     public LiveData<List<Product>> getAllProducts() {
+        return allProductList;
+    }
+
+    public LiveData<List<Product>> getAllHotProducts() {
+        return hotProductList;
+    }
+
+    public LiveData<List<Product>> getProducts() {
         return productList;
     }
 

@@ -31,11 +31,20 @@ public class ImageHandler {
     }
 
     public Bitmap getProductPic (Long id){
-        Bitmap photo = null;
+        Bitmap photo, photoAux;
         File picture = new File (context.getFilesDir(), id.toString());
         if (picture.exists()){
-            photo = BitmapFactory.decodeFile(picture.toString());
+            photoAux = BitmapFactory.decodeFile(picture.toString());
+        } else {
+            photoAux = BitmapFactory.decodeResource(context.getResources(), R.drawable.no_image_picture);
         }
+        photo = Bitmap.createBitmap(
+                photoAux,
+                0,
+                photoAux.getHeight()/2 - photoAux.getWidth()/2,
+                photoAux.getWidth(),
+                photoAux.getWidth()
+        );
         return photo;
     }
 

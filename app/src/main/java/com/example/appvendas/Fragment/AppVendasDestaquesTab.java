@@ -34,7 +34,7 @@ public class AppVendasDestaquesTab extends Fragment {
         appVendasProdutosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         appVendasProdutosViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
-        appVendasProdutosViewModel.getAllProducts().observe(this, new Observer<List<Product>>() {
+        appVendasProdutosViewModel.getAllHotProducts().observe(this, new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
                 adapter.setProducts(products);

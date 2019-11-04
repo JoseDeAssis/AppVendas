@@ -1,6 +1,7 @@
 package com.example.appvendas.Adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -14,8 +15,11 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasProductCrud;
 import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Fragment.AppVendasDestaquesTab;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
+import com.example.appvendas.Helpers.Interface.OnProductListener;
 import com.example.appvendas.R;
 
 import java.io.File;
@@ -28,23 +32,46 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
     private List<Product> productList; // Cached copy of words
     private ImageHandler imagesHandler;
     private Context context;
+    private OnProductListener mOnProductListener;
 
-    public class ProductListRVViewHolder extends RecyclerView.ViewHolder  {
+    public class ProductListRVViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView textView;
+
+        private final TextView primaryTextView, priceTextView;
         private final ImageView imageView;
         private final CheckBox checkBox;
+        private OnProductListener onProductListener;
 
-        private ProductListRVViewHolder(View itemView) {
+        private ProductListRVViewHolder(View itemView, final OnProductListener onProductListener) {
             super(itemView);
-            textView = itemView.findViewById(R.id.recyclerViewMainText);
+            primaryTextView = itemView.findViewById(R.id.recyclerViewPrimaryTxtView);
+            priceTextView = itemView.findViewById(R.id.recyclerViewPriceTxtView);
             imageView = itemView.findViewById(R.id.recyclerViewImg);
             checkBox = itemView.findViewById(R.id.recyclerViewCheckBox);
+
+            this.onProductListener = onProductListener;
+
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Product product = productList.get(getAdapterPosition());
+                    onProductListener.setProductChecked(product, checkBox.isChecked());
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onProductListener.getProductDetails(productList.get(getAdapterPosition()));
+                }
+            });
         }
+
     }
 
-    public ProductListRVAdapter(Context context) {
+    public ProductListRVAdapter(Context context, OnProductListener mOnProductListener) {
         mInflater = LayoutInflater.from(context);
+        this.mOnProductListener = mOnProductListener;
         this.context = context;
     }
 
@@ -53,7 +80,7 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_product_list_item, parent, false);
         imagesHandler = new ImageHandler(itemView.getContext());
 
-        return new ProductListRVViewHolder(itemView);
+        return new ProductListRVViewHolder(itemView, mOnProductListener);
     }
 
     @Override
@@ -62,7 +89,8 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
             Product current = productList.get(position);
             RoundedBitmapDrawable picture = null;
 
-            holder.textView.setText(current.getProductName());
+            holder.primaryTextView.setText(current.getProductName());
+            holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
 
             try {
                 picture = imagesHandler.getRoundPicture(current.getId());
@@ -70,22 +98,18 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
                 e.printStackTrace();
             }
 
-            if(picture != null) {
+            if (picture != null) {
                 holder.imageView.setImageDrawable(picture);
-            } else {
-                //ERRO AQUI!!!!!
-                Bitmap src = BitmapFactory.decodeResource(context.getResources(), R.drawable.no_image_icon);
-                RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(context.getResources(), src);
-                dr.setCornerRadius(Math.max(src.getWidth(), src.getHeight()) / 2.0f);
-                holder.imageView.setImageDrawable(dr);
+                holder.imageView.setMaxWidth(5);
+                holder.imageView.setMaxHeight(5);
             }
         } else {
             // Covers the case of data not being ready yet.
-            holder.textView.setText("Não há produtos registrados");
+            holder.primaryTextView.setText("Não há produtos registrados");
         }
     }
 
-    public void setProducts(List<Product> words){
+    public void setProducts(List<Product> words) {
         productList = words;
         notifyDataSetChanged();
     }

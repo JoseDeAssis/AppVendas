@@ -20,4 +20,9 @@
     <string name="product_group">Categoria*</string>
     <string name="add_an_image">Adicionar uma imagem</string>
     <string name="is_promotion">Produto em destaque</string>
+
+    <!-- Recycler View Product List -->
+    <string name="primary_text">Primary Text</string>
+    <string name="secondary_text">Secondary Text</string>
+    <string name="price_text">Price</string>
 </resources>

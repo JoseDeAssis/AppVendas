@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -12,7 +13,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +24,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Helpers.Handler.ImageHandler;
+import com.example.appvendas.Helpers.Interface.EventListener;
+import com.example.appvendas.Helpers.Singleton.EventSingleton;
+import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -32,8 +37,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.util.HashMap;
-
+import java.io.IOException;
 public class AppVendasAddProducts extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     private static final int PERMISSION_CODE = 1000;
@@ -47,11 +51,16 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     private Bitmap photo = null;
     private TextInputLayout productTitleTxtInputLayout, productCodeTxtInputLayout, productPriceTxtInputLayout;
     private SwitchMaterial newProductHotSwitch;
+    private ProductViewModel appVendasProdutosCrudViewModel;
+    private ImageHandler imageHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_vendas_add_products);
+
+        //ImageHandler
+        imageHandler = new ImageHandler(getApplicationContext());
 
         //Toolbar
         toolbar = findViewById(R.id.myToolbar);
@@ -94,6 +103,9 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
         //Switch
         newProductHotSwitch = findViewById(R.id.productHotSwitch);
+
+        //ViewModel
+        appVendasProdutosCrudViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
     }
 
     @Override
@@ -116,21 +128,26 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent intent = new Intent();
-                                    intent.putExtra("productTitle", newProductTitle.getText().toString());
-                                    intent.putExtra("productCode", newProductCode.getText().toString());
-                                    intent.putExtra("productDescription",
-                                            newProductDescriptionTxt.getText().toString().equals("Descrição") ? "" :
-                                                    newProductDescriptionTxt.getText().toString());
-                                    intent.putExtra("productPrice", Double.parseDouble(newProductPrice.getText().toString()));
-                                    intent.putExtra("productGroup", newProductGroupTxt.getText().toString());
-                                    intent.putExtra("isProductHot", newProductHotSwitch.isChecked() ? 1 : 0);
+                                    try {
+                                        Product newProduct = new Product();
+                                        newProduct.setProductName(newProductTitle.getText().toString());
+                                        newProduct.setProductCode(newProductCode.getText().toString());
+                                        newProduct.setProductDescrition(newProductDescriptionTxt.getText().toString());
+                                        newProduct.setProductGroup(newProductGroupTxt.getText().toString());
+                                        newProduct.setProductPrice(Double.parseDouble(newProductPrice.getText().toString()));
+                                        newProduct.setOnSaleProduct(newProductHotSwitch.isChecked() ? 1 : 0);
 
-                                    HashMap<String, Bitmap> photoMap = new HashMap<String, Bitmap>();
-                                    photoMap.put("productPhoto", photo);
+                                        appVendasProdutosCrudViewModel.insert(newProduct);
 
-                                    intent.putExtra("productPhoto", photoMap);
+                                        if (photo != null) {
+                                            createDirectoryAndSaveFile();
+                                        }
+                                        setResult(RESULT_OK, intent);
+                                    } catch(Exception e) {
+                                        intent.putExtra("erro", e.getMessage());
+                                        setResult(RESULT_CANCELED, intent);
+                                    }
 
-                                    setResult(RESULT_OK, intent);
                                     finish();
                                 }
                             })
@@ -177,6 +194,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                     photo = (Bitmap) data.getExtras().get("data");
                     image.setImageBitmap(photo);
                     image.setMaxWidth(newProductImageCardView.getWidth());
+                    image.setMaxHeight(newProductImageCardView.getHeight());
                     image.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     newProductImageCardView.addView(image);
                     break;
@@ -333,6 +351,23 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         if (!newProductPrice.getText().toString().trim().equals("") &&
                 productPriceTxtInputLayout.isErrorEnabled()) {
             productPriceTxtInputLayout.setErrorEnabled(false);
+        }
+    }
+
+    private void createDirectoryAndSaveFile() {
+
+        if (photo != null) {
+            EventSingleton eventSingleton = EventSingleton.getInstance();
+            eventSingleton.registerEvent(new EventListener() {
+                @Override
+                public void done(Long id) {
+                    try {
+                        imageHandler.savePicture(photo, id.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 
