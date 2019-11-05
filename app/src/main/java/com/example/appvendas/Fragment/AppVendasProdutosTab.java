@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -13,18 +12,20 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasProductDetail;
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
-import com.example.appvendas.Helpers.Interface.OnProductListener;
+import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 
 import java.util.List;
 
-public class AppVendasProdutosTab extends Fragment implements OnProductListener {
+public class AppVendasProdutosTab extends Fragment implements OnProductDetailsListener {
 
     private RecyclerView appVendasProdutosRecyclerView;
     private ProductViewModel appVendasProdutosViewModel;
+    private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,11 +50,13 @@ public class AppVendasProdutosTab extends Fragment implements OnProductListener 
 
     @Override
     public void getProductDetails(Product product) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(getContext(), AppVendasProductDetail.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
         intent.putExtra("productPrice", product.getProductPrice());
+
+        startActivityForResult(intent, PRODUCT_DETAIL_RESULT_CODE);
     }
 
     @Override

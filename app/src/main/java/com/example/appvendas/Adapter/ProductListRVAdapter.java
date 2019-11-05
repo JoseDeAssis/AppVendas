@@ -1,9 +1,6 @@
 package com.example.appvendas.Adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.appvendas.Activitity.AppVendasProductCrud;
 import com.example.appvendas.Entity.Product;
-import com.example.appvendas.Fragment.AppVendasDestaquesTab;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
-import com.example.appvendas.Helpers.Interface.OnProductListener;
+import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
+import com.example.appvendas.Helpers.Interface.OnProductIsCheckedListener;
 import com.example.appvendas.R;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,9 +24,10 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
 
     private final LayoutInflater mInflater;
     private List<Product> productList; // Cached copy of words
-    private ImageHandler imagesHandler;
+    private ImageHandler imageHandler;
     private Context context;
-    private OnProductListener mOnProductListener;
+    private OnProductDetailsListener mOnProductDetailsListener;
+    private OnProductIsCheckedListener mOnProductIsCheckedListener;
 
     public class ProductListRVViewHolder extends RecyclerView.ViewHolder {
 
@@ -40,47 +35,52 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
         private final TextView primaryTextView, priceTextView;
         private final ImageView imageView;
         private final CheckBox checkBox;
-        private OnProductListener onProductListener;
+        private OnProductDetailsListener onProductDetailsListener;
+        private OnProductIsCheckedListener onProductIsCheckedListener;
 
-        private ProductListRVViewHolder(View itemView, final OnProductListener onProductListener) {
+        private ProductListRVViewHolder(View itemView,
+                                        final OnProductDetailsListener onProductDetailsListener,
+                                        final OnProductIsCheckedListener onProductIsCheckedListener) {
             super(itemView);
             primaryTextView = itemView.findViewById(R.id.recyclerViewPrimaryTxtView);
             priceTextView = itemView.findViewById(R.id.recyclerViewPriceTxtView);
             imageView = itemView.findViewById(R.id.recyclerViewImg);
             checkBox = itemView.findViewById(R.id.recyclerViewCheckBox);
 
-            this.onProductListener = onProductListener;
+            this.onProductDetailsListener = onProductDetailsListener;
+            this.onProductIsCheckedListener = onProductIsCheckedListener;
 
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Product product = productList.get(getAdapterPosition());
-                    onProductListener.setProductChecked(product, checkBox.isChecked());
+                    onProductIsCheckedListener.setProductChecked(product, checkBox.isChecked());
                 }
             });
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onProductListener.getProductDetails(productList.get(getAdapterPosition()));
+                    onProductDetailsListener.getProductDetails(productList.get(getAdapterPosition()));
                 }
             });
         }
 
     }
 
-    public ProductListRVAdapter(Context context, OnProductListener mOnProductListener) {
+    public ProductListRVAdapter(Context context, OnProductDetailsListener mOnProductDetailsListener, OnProductIsCheckedListener mOnProductIsCheckedListener) {
         mInflater = LayoutInflater.from(context);
-        this.mOnProductListener = mOnProductListener;
+        this.mOnProductDetailsListener = mOnProductDetailsListener;
+        this.mOnProductIsCheckedListener = mOnProductIsCheckedListener;
         this.context = context;
     }
 
     @Override
     public ProductListRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_product_list_item, parent, false);
-        imagesHandler = new ImageHandler(itemView.getContext());
+        imageHandler = new ImageHandler(itemView.getContext());
 
-        return new ProductListRVViewHolder(itemView, mOnProductListener);
+        return new ProductListRVViewHolder(itemView, mOnProductDetailsListener, mOnProductIsCheckedListener);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
             holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
 
             try {
-                picture = imagesHandler.getRoundPicture(current.getId());
+                picture = imageHandler.getRoundPicture(current.getId());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -109,8 +109,8 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
         }
     }
 
-    public void setProducts(List<Product> words) {
-        productList = words;
+    public void setProducts(List<Product> products) {
+        productList = products;
         notifyDataSetChanged();
     }
 

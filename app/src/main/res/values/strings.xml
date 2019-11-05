@@ -10,6 +10,7 @@
 
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>
+    <string name="product_quantity">1un.</string>
 
     <!--  Activity Add Products  -->
     <string name="add_products">Adicionar Produtos</string>

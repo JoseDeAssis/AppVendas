@@ -2,12 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.appvendas">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18"/>
-
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
 
     <application
@@ -17,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <activity android:name=".Activitity.AppVendasProductDetail"></activity>
         <activity android:name=".Activitity.AppVendasMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +28,7 @@
         </activity>
         <activity
             android:name=".Activitity.AppVendasAddProducts"
-            android:parentActivityName=".Activitity.AppVendasProductCrud" />
+            android:parentActivityName=".Activitity.AppVendasProductDetailsCrud" />
         <activity
             android:name=".Activitity.AppVendasShoppingCart"
             android:parentActivityName=".Activitity.AppVendasMainActivity" />
@@ -36,9 +38,9 @@
         <activity
             android:name=".Activitity.AppVendasProductDescription"
             android:parentActivityName=".Activitity.AppVendasAddProducts" />
-
-        <activity android:name=".Activitity.AppVendasProductCrud"
-            android:parentActivityName=".Activitity.AppVendasMainActivity"/>
+        <activity
+            android:name=".Activitity.AppVendasProductDetailsCrud"
+            android:parentActivityName=".Activitity.AppVendasMainActivity" />
     </application>
 
 </manifest>

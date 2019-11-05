@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
+import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Model.ProductViewModel;
@@ -28,12 +29,10 @@ import com.example.appvendas.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
-public class AppVendasProductCrud extends AppCompatActivity {
+public class AppVendasProductDetailsCrud extends AppCompatActivity implements OnProductDetailsListener {
 
     private RecyclerView appVendasProdutosCrudRecyclerView;
     private ProductViewModel appVendasProdutosCrudViewModel;
@@ -43,6 +42,7 @@ public class AppVendasProductCrud extends AppCompatActivity {
     private Bitmap picture;
     private ImageHandler imageHandler;
     private static final int ADD_PRODUCT_RESULT_CODE = 1000;
+    private static final int EDIT_PRODUCT_RESULT_CODE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +60,13 @@ public class AppVendasProductCrud extends AppCompatActivity {
         addProductFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AppVendasProductCrud.this, AppVendasAddProducts.class);
+                Intent intent = new Intent(AppVendasProductDetailsCrud.this, AppVendasAddProducts.class);
                 startActivityForResult(intent, ADD_PRODUCT_RESULT_CODE);
             }
         });
 
         appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
-        final ProductListRVAdapter adapter = new ProductListRVAdapter(this);
+        final ProductListRVAdapter adapter = new ProductListRVAdapter(this, this);
 
         appVendasProdutosCrudRecyclerView.setAdapter(adapter);
         appVendasProdutosCrudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -109,19 +109,19 @@ public class AppVendasProductCrud extends AppCompatActivity {
 
             switch (menuItem.getItemId()) {
                 case R.id.delete_icon:
-                    new MaterialAlertDialogBuilder(AppVendasProductCrud.this, R.style.Theme_MaterialComponents_Light_Dialog)
+                    new MaterialAlertDialogBuilder(AppVendasProductDetailsCrud.this, R.style.Theme_MaterialComponents_Light_Dialog)
                             .setTitle("Salvar produto?")
                             .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
                             .setPositiveButton("Accept", /* listener = */ new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(AppVendasProductCrud.this, "Show de bola", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AppVendasProductDetailsCrud.this, "Show de bola", Toast.LENGTH_SHORT).show();
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(AppVendasProductCrud.this, "Mó paia man", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AppVendasProductDetailsCrud.this, "Mó paia man", Toast.LENGTH_SHORT).show();
                                 }
                             }).show();
                     return true;
@@ -180,5 +180,21 @@ public class AppVendasProductCrud extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void getProductDetails(Product product) {
+        Intent intent = new Intent();
+        intent.putExtra("productName", product.getProductName());
+        intent.putExtra("productDescription", product.getProductDescrition());
+        intent.putExtra("productId", product.getId());
+        intent.putExtra("productPrice", product.getProductPrice());
+
+        startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
+    }
+
+    @Override
+    public void setProductChecked(Product product, boolean isChecked) {
+        return;
     }
 }

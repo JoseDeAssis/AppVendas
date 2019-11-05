@@ -65,7 +65,7 @@ public class AppVendasMainActivity extends AppCompatActivity {
                 break;
 
             case R.id.addProducts:
-                Intent intent = new Intent(AppVendasMainActivity.this, AppVendasProductCrud.class);
+                Intent intent = new Intent(AppVendasMainActivity.this, AppVendasProductDetailsCrud.class);
                 startActivity(intent);
                 break;
         }

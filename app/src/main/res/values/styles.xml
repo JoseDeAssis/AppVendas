@@ -9,4 +9,10 @@
         <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
     </style>
 
+    <!-- Icon only button -->
+    <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="iconGravity">end</item>
+    </style>
+
 </resources>
