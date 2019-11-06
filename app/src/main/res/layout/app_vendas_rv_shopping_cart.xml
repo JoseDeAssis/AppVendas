@@ -22,64 +22,89 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/shoppingCartRVImgView"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/shoppingCartProductCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="#FFFFFF"
+                android:outlineSpotShadowColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintVertical_bias="0.0">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/shoppingCartRVTitleTxtView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="@string/primary_text"
-                android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="@+id/shoppingCartRVImgView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/shoppingCartRVImgView"
-                app:layout_constraintTop_toTopOf="@+id/shoppingCartRVImgView" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/shoppingCartRVBtn"
-                style="@style/IconOnlyButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                app:icon="@drawable/app_vendas_delete_icon"
-                app:layout_constraintBottom_toBottomOf="@+id/shoppingCartRVTitleTxtView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/shoppingCartRVTitleTxtView"
-                app:layout_constraintTop_toTopOf="@+id/shoppingCartRVTitleTxtView" />
+                    <ImageView
+                        android:id="@+id/shoppingCartRVImgView"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5"
+                        tools:srcCompat="@tools:sample/avatars" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/shoppingCartRVTitleTxtView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:text="@string/primary_text"
+                        android:textSize="24sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/shoppingCartRVImgView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/shoppingCartRVImgView"
+                        app:layout_constraintTop_toTopOf="@+id/shoppingCartRVImgView" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/shoppingCartRVBtn"
+                        style="@style/IconOnlyButton"
+                        android:layout_width="41dp"
+                        android:layout_height="wrap_content"
+                        app:icon="@drawable/app_vendas_delete_icon"
+                        app:layout_constraintBottom_toBottomOf="@+id/shoppingCartRVTitleTxtView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toEndOf="@+id/shoppingCartRVTitleTxtView"
+                        app:layout_constraintTop_toTopOf="@+id/shoppingCartRVTitleTxtView" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
             <View
                 android:id="@+id/shoppingCartRVDivider"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="2dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="#8d8d8d"
+                android:background="#EEEEEE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/shoppingCartRVImgView"
+                app:layout_constraintTop_toBottomOf="@+id/shoppingCartProductCardView"
                 app:layout_constraintVertical_bias="0.0" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/shoppingCartRVPriceTxtView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:text="@string/price_text"
                 android:textSize="16sp"
@@ -92,8 +117,10 @@
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
                 android:hint="@string/product_quantity"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/shoppingCartRVPriceTxtView"

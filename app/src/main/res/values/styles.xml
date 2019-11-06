@@ -10,7 +10,7 @@
     </style>
 
     <!-- Icon only button -->
-    <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="IconOnlyButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="iconPadding">0dp</item>
         <item name="iconGravity">end</item>
     </style>

@@ -47,16 +47,20 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
             imageView = itemView.findViewById(R.id.recyclerViewImg);
             checkBox = itemView.findViewById(R.id.recyclerViewCheckBox);
 
-            this.onProductDetailsListener = onProductDetailsListener;
-            this.onProductIsCheckedListener = onProductIsCheckedListener;
+            if(onProductIsCheckedListener == null) {
+                checkBox.setVisibility(View.GONE);
+            } else {
+                this.onProductIsCheckedListener = onProductIsCheckedListener;
+                checkBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Product product = productList.get(getAdapterPosition());
+                        onProductIsCheckedListener.setProductChecked(product, checkBox.isChecked());
+                    }
+                });
+            }
 
-            checkBox.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Product product = productList.get(getAdapterPosition());
-                    onProductIsCheckedListener.setProductChecked(product, checkBox.isChecked());
-                }
-            });
+            this.onProductDetailsListener = onProductDetailsListener;
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,8 +104,6 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
 
             if (picture != null) {
                 holder.imageView.setImageDrawable(picture);
-                holder.imageView.setMaxWidth(5);
-                holder.imageView.setMaxHeight(5);
             }
         } else {
             // Covers the case of data not being ready yet.

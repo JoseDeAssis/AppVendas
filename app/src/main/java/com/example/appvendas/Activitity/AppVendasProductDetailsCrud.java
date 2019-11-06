@@ -22,6 +22,7 @@ import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
+import com.example.appvendas.Helpers.Interface.OnProductIsCheckedListener;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Model.ProductViewModel;
@@ -66,7 +67,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         });
 
         appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
-        final ProductListRVAdapter adapter = new ProductListRVAdapter(this, this);
+        final ProductListRVAdapter adapter = new ProductListRVAdapter(this, this, null);
 
         appVendasProdutosCrudRecyclerView.setAdapter(adapter);
         appVendasProdutosCrudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -193,8 +194,4 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
     }
 
-    @Override
-    public void setProductChecked(Product product, boolean isChecked) {
-        return;
-    }
 }

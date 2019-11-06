@@ -47,7 +47,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
             titleTextView = itemView.findViewById(R.id.shoppingCartRVTitleTxtView);
             priceTextView = itemView.findViewById(R.id.shoppingCartRVPriceTxtView);
             imageView = itemView.findViewById(R.id.shoppingCartRVImgView);
-            materialCardView = itemView.findViewById(R.id.shoppingCartCardView);
+            materialCardView = itemView.findViewById(R.id.shoppingCartProductCardView);
             deleteBtn = itemView.findViewById(R.id.shoppingCartRVBtn);
 
             this.onProductDetailsListener = onProductDetailsListener;
@@ -104,8 +104,6 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
             if (picture != null) {
                 holder.imageView.setImageDrawable(picture);
-                holder.imageView.setMaxWidth(5);
-                holder.imageView.setMaxHeight(5);
             }
         } else {
             // Covers the case of data not being ready yet.
@@ -113,8 +111,12 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
         }
     }
 
-    public void setProducts(List<Product> products) {
+    public void initializeShoppingCartProducts(List<Product> products) {
         shoppingCartList = products;
+    }
+
+    public void removeProduct(Product product) {
+        shoppingCartList.remove(product);
         notifyDataSetChanged();
     }
 

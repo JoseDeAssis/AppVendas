@@ -8,15 +8,14 @@ import androidx.lifecycle.LiveData;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Repository.ProductRepository;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProductViewModel extends AndroidViewModel {
 
     private ProductRepository produtoRepository;
     private LiveData<List<Product>> productList, hotProductList, allProductList;
-    private Map<Long, Product> shoppingCartList;
+    private HashMap<Long, Product> shoppingCartList;
 
     public ProductViewModel(Application application) {
         super(application);
@@ -24,7 +23,7 @@ public class ProductViewModel extends AndroidViewModel {
         allProductList = produtoRepository.getAllProducts();
         productList = produtoRepository.getProducts();
         hotProductList = produtoRepository.getAllHotProducts();
-        shoppingCartList = new LinkedHashMap<>();
+        shoppingCartList = new HashMap<>();
     }
 
     public LiveData<List<Product>> getAllProducts() {
@@ -39,7 +38,7 @@ public class ProductViewModel extends AndroidViewModel {
         return hotProductList;
     }
 
-    public Map<Long, Product> getShoppingCartList() {
+    public HashMap<Long, Product> getShoppingCartList() {
         return shoppingCartList;
     }
 

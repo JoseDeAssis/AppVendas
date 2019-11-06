@@ -16,12 +16,13 @@ import com.example.appvendas.Activitity.AppVendasProductDetail;
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
+import com.example.appvendas.Helpers.Interface.OnProductIsCheckedListener;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 
 import java.util.List;
 
-public class AppVendasProdutosTab extends Fragment implements OnProductDetailsListener {
+public class AppVendasProdutosTab extends Fragment implements OnProductDetailsListener, OnProductIsCheckedListener {
 
     private RecyclerView appVendasProdutosRecyclerView;
     private ProductViewModel appVendasProdutosViewModel;
@@ -32,12 +33,12 @@ public class AppVendasProdutosTab extends Fragment implements OnProductDetailsLi
         View view =inflater.inflate(R.layout.fragment_produtos_tab, container, false);
 
         appVendasProdutosRecyclerView = view.findViewById(R.id.produtosTabRecyclerView);
-        final ProductListRVAdapter adapter = new ProductListRVAdapter(getContext(), this);
+        final ProductListRVAdapter adapter = new ProductListRVAdapter(getContext(), this, this);
 
         appVendasProdutosRecyclerView.setAdapter(adapter);
         appVendasProdutosRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        appVendasProdutosViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
+        appVendasProdutosViewModel = ViewModelProviders.of(getActivity()).get(ProductViewModel.class);
         appVendasProdutosViewModel.getProducts().observe(this, new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
