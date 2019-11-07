@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/unity1"
+        android:title="@string/unity1" />
+
+    <item
+        android:id="@+id/unity2"
+        android:title="@string/unity2" />
+
+    <item
+        android:id="@+id/unity3"
+        android:title="@string/unity3" />
+
+    <item
+        android:id="@+id/unity4"
+        android:title="@string/unity4" />
+
+    <item
+        android:id="@+id/unity5"
+        android:title="@string/unity5" />
+
+    <item
+        android:id="@+id/unity6"
+        android:title="@string/unity6" />
+
+    <item
+        android:id="@+id/moreUnities"
+        android:title="@string/more_unities" />
+
+</menu>

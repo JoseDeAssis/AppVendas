@@ -1,7 +1,6 @@
 package com.example.appvendas.Adapter;
 
 import android.content.Context;
-import android.graphics.drawable.AnimatedStateListDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
-import com.example.appvendas.Helpers.Interface.OnShoppingCartDeleteItemListener;
+import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -27,33 +26,35 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
     private final LayoutInflater mInflater;
     private List<Product> shoppingCartList;
+    private Integer[] productsQuantities;
     private ImageHandler imageHandler;
     private OnProductDetailsListener mOnProductDetailsListener;
-    private OnShoppingCartDeleteItemListener mOnShoppingCartDeleteItemListener;
+    private OnShoppingCartListener mOnShoppingCartListener;
 
     public class ShoppingCartRVViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView titleTextView, priceTextView;
         private final ImageView imageView;
-        private final MaterialCardView materialCardView;
+        private final MaterialCardView materialProductCardView, materialQuantityCardView;
         private final MaterialButton deleteBtn;
         private OnProductDetailsListener onProductDetailsListener;
-        private OnShoppingCartDeleteItemListener onShoppingCartDeleteItemListener;
+        private OnShoppingCartListener onShoppingCartListener;
 
         public ShoppingCartRVViewHolder(@NonNull View itemView,
                                         final OnProductDetailsListener onProductDetailsListener,
-                                        final OnShoppingCartDeleteItemListener onShoppingCartDeleteItemListener) {
+                                        final OnShoppingCartListener onShoppingCartListener) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.shoppingCartRVTitleTxtView);
             priceTextView = itemView.findViewById(R.id.shoppingCartRVPriceTxtView);
             imageView = itemView.findViewById(R.id.shoppingCartRVImgView);
-            materialCardView = itemView.findViewById(R.id.shoppingCartProductCardView);
+            materialProductCardView = itemView.findViewById(R.id.shoppingCartProductCardView);
+            materialQuantityCardView = itemView.findViewById(R.id.shoppingCartQuantityCardView);
             deleteBtn = itemView.findViewById(R.id.shoppingCartRVBtn);
 
             this.onProductDetailsListener = onProductDetailsListener;
-            this.onShoppingCartDeleteItemListener = onShoppingCartDeleteItemListener;
+            this.onShoppingCartListener = onShoppingCartListener;
 
-            materialCardView.setOnClickListener(new View.OnClickListener() {
+            materialProductCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Product product = shoppingCartList.get(getAdapterPosition());
@@ -61,21 +62,29 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
                 }
             });
 
+            materialQuantityCardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Product product = shoppingCartList.get(getAdapterPosition());
+                    onShoppingCartListener.modifyQuantity(product.getId(), view);
+                }
+            });
+
             deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Product product = shoppingCartList.get(getAdapterPosition());
-                    onShoppingCartDeleteItemListener.deleteItem(product);
+                    onShoppingCartListener.deleteItem(product);
                 }
             });
 
         }
     }
 
-    public ShoppingCartRVAdapter(Context context, OnProductDetailsListener mOnProductDetailsListener, OnShoppingCartDeleteItemListener mOnShoppingCartDeleteItemListener) {
+    public ShoppingCartRVAdapter(Context context, OnProductDetailsListener mOnProductDetailsListener, OnShoppingCartListener mOnShoppingCartListener) {
         mInflater = LayoutInflater.from(context);
         this.mOnProductDetailsListener = mOnProductDetailsListener;
-        this.mOnShoppingCartDeleteItemListener = mOnShoppingCartDeleteItemListener;
+        this.mOnShoppingCartListener = mOnShoppingCartListener;
     }
 
     @NonNull
@@ -84,7 +93,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_shopping_cart, parent, false);
         imageHandler = new ImageHandler(itemView.getContext());
 
-        return new ShoppingCartRVAdapter.ShoppingCartRVViewHolder(itemView, mOnProductDetailsListener, mOnShoppingCartDeleteItemListener);
+        return new ShoppingCartRVAdapter.ShoppingCartRVViewHolder(itemView, mOnProductDetailsListener, mOnShoppingCartListener);
     }
 
     @Override
@@ -111,8 +120,12 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
         }
     }
 
-    public void initializeShoppingCartProducts(List<Product> products) {
+    public void setShoppingCartProducts(List<Product> products) {
         shoppingCartList = products;
+    }
+
+    public void setProductsQuantities(Integer[] productsQuantities) {
+        this.productsQuantities = productsQuantities;
     }
 
     public void removeProduct(Product product) {

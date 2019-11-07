@@ -8,6 +8,15 @@
     <string name="back_icon">Back Button</string>
     <string name="delete_icon">Delete Button</string>
 
+    <!-- Popup Menu ShoppingCart-->
+    <string name="unity1">1 unidade</string>
+    <string name="unity2">2 unidade</string>
+    <string name="unity3">3 unidade</string>
+    <string name="unity4">4 unidade</string>
+    <string name="unity5">5 unidade</string>
+    <string name="unity6">6 unidade</string>
+    <string name="more_unities">mais de 6..</string>
+
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>
     <string name="product_quantity">1un.</string>

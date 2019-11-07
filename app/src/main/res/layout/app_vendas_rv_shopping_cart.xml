@@ -46,7 +46,6 @@
                         android:id="@+id/shoppingCartRVImgView"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
-                        android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -104,36 +103,61 @@
                 android:id="@+id/shoppingCartRVPriceTxtView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:text="@string/price_text"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/shoppingCartQuantityCardView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/shoppingCartRVDivider" />
+                app:layout_constraintTop_toTopOf="@+id/shoppingCartQuantityCardView" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                android:layout_width="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/shoppingCartQuantityCardView"
+                android:layout_width="65dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:hint="@string/product_quantity"
+                android:backgroundTint="#EEEEEE"
+                android:outlineSpotShadowColor="#EEEEEE"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/shoppingCartRVPriceTxtView"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/shoppingCartRVDivider">
 
-                <AutoCompleteTextView
-                    android:id="@+id/filled_exposed_dropdown"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/modifyQuantityTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:fontFamily="monospace"
+                        android:text="@string/product_quantity"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/expandIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="@+id/modifyQuantityTextView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/modifyQuantityTextView"
+                        app:layout_constraintTop_toTopOf="@+id/modifyQuantityTextView"
+                        app:srcCompat="@drawable/shopping_cart_expand_icon" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
