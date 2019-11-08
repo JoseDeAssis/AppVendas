@@ -20,20 +20,22 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAdapter.ShoppingCartRVViewHolder> {
 
     private final LayoutInflater mInflater;
     private List<Product> shoppingCartList;
-    private Integer[] productsQuantities;
+    private HashMap<Long, Integer> productsQuantities;
     private ImageHandler imageHandler;
     private OnProductDetailsListener mOnProductDetailsListener;
     private OnShoppingCartListener mOnShoppingCartListener;
 
     public class ShoppingCartRVViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView titleTextView, priceTextView;
+        private final TextView titleTextView, priceTextView, quantityTextView;
         private final ImageView imageView;
         private final MaterialCardView materialProductCardView, materialQuantityCardView;
         private final MaterialButton deleteBtn;
@@ -46,6 +48,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
             super(itemView);
             titleTextView = itemView.findViewById(R.id.shoppingCartRVTitleTxtView);
             priceTextView = itemView.findViewById(R.id.shoppingCartRVPriceTxtView);
+            quantityTextView = itemView.findViewById(R.id.modifyQuantityTextView);
             imageView = itemView.findViewById(R.id.shoppingCartRVImgView);
             materialProductCardView = itemView.findViewById(R.id.shoppingCartProductCardView);
             materialQuantityCardView = itemView.findViewById(R.id.shoppingCartQuantityCardView);
@@ -83,6 +86,8 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
     public ShoppingCartRVAdapter(Context context, OnProductDetailsListener mOnProductDetailsListener, OnShoppingCartListener mOnShoppingCartListener) {
         mInflater = LayoutInflater.from(context);
+        this.shoppingCartList = new ArrayList<>();
+        this.productsQuantities = new HashMap<>();
         this.mOnProductDetailsListener = mOnProductDetailsListener;
         this.mOnShoppingCartListener = mOnShoppingCartListener;
     }
@@ -102,8 +107,16 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
             Product current = shoppingCartList.get(position);
             RoundedBitmapDrawable picture = null;
 
+            if(productsQuantities != null && productsQuantities.size() > 0) {
+                holder.quantityTextView.setText(productsQuantities.get(current.getId()) + "un.");
+                holder.priceTextView.setText("R$ " + (String.format("%.2f",
+                        (current.getProductPrice() * productsQuantities.get(current.getId())))));
+            } else {
+                holder.quantityTextView.setText("1un.");
+                holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
+            }
+
             holder.titleTextView.setText(current.getProductName());
-            holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
 
             try {
                 picture = imageHandler.getRoundPicture(current.getId());
@@ -124,8 +137,12 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
         shoppingCartList = products;
     }
 
-    public void setProductsQuantities(Integer[] productsQuantities) {
+    public void setProductsQuantities(HashMap<Long, Integer> productsQuantities) {
         this.productsQuantities = productsQuantities;
+    }
+
+    public void setProductQuantity(Long id, int count) {
+        this.productsQuantities.put(id, count);
     }
 
     public void removeProduct(Product product) {

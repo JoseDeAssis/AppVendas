@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -18,20 +19,19 @@ import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener, OnShoppingCartListener, PopupMenu.OnMenuItemClickListener {
+public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener, OnShoppingCartListener {
 
     private Toolbar carrinhoToolbar;
     private RecyclerView shoppingCartRecyclerView;
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
-    private Integer[] productQuantities;
+    private HashMap<Long, Integer> productQuantities;
     private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
 
     @Override
@@ -53,22 +53,16 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         shoppingCartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         shoppingCartViewModel = ViewModelProviders.of(this).get(ShoppingCartViewModel.class);
+        shoppingCartViewModel.setShoppingCartList(getShoppingCartProducts(shoppingCartList));
         shoppingCartAdapter.setShoppingCartProducts(getShoppingCartProducts(shoppingCartList));
 
-        productQuantities = shoppingCartViewModel.getProductQuantities();
+        productQuantities = shoppingCartViewModel.getProductsQuantities();
         if(productQuantities == null) {
             productQuantities = shoppingCartViewModel.initializeQuantities(shoppingCartList.size());
         }
 
         shoppingCartAdapter.setProductsQuantities(productQuantities);
-
-        shoppingCartAdapter.setShoppingCartProducts(shoppingCartList.entrySet());
-
-        // Reinitialize data after reconstruction
-        productQuantities = shoppingCartViewModel.getProductsQuantities();
-        if(shoppingCartViewModel.getTotalPrice()!=null){
-            orderTotal = shoppingCartViewModel.getTotalPrice();
-        }
+        shoppingCartAdapter.setShoppingCartProducts(mapToList(shoppingCartList));
     }
 
     @Override
@@ -98,34 +92,55 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     }
 
     @Override
-    public void modifyQuantity(Long productId, View view) {
-        PopupMenu popupMenu = new PopupMenu(this, view);
-        popupMenu.setOnMenuItemClickListener(this);
+    public void modifyQuantity(final Long productId, View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view, Gravity.LEFT, R.attr.popupMenuStyle, R.style.Widget_AppCompat_Light_PopupMenu_Overflow);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.unity1:
+                        shoppingCartAdapter.setProductQuantity(productId, 1);
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                    case R.id.unity2:
+                        shoppingCartAdapter.setProductQuantity(productId, 2);
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                    case R.id.unity3:
+                        shoppingCartAdapter.setProductQuantity(productId, 3);
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                    case R.id.unity4:
+                        shoppingCartAdapter.setProductQuantity(productId, 4);
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                    case R.id.unity5:
+                        shoppingCartAdapter.setProductQuantity(productId, 5);
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                    case R.id.unity6:
+                        shoppingCartAdapter.setProductQuantity(productId, 6);
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                    case R.id.moreUnities:
+                        shoppingCartAdapter.notifyDataSetChanged();
+                        return true;
+                }
+                return false;
+            }
+        });
         popupMenu.getMenuInflater().inflate(R.menu.shopping_cart_quantity_menu, popupMenu.getMenu());
         popupMenu.show();
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
+    private List<Product> mapToList(HashMap<Long, Product> productsHashMap) {
+        List<Product> returnList = new ArrayList<>();
 
-        switch (item.getItemId()) {
-            case R.id.unity1:
-
-                return true;
-            case R.id.unity2:
-                return true;
-            case R.id.unity3:
-                return true;
-            case R.id.unity4:
-                return true;
-            case R.id.unity5:
-                return true;
-            case R.id.unity6:
-                return true;
-            case R.id.moreUnities:
-                return true;
+        for(Map.Entry<Long, Product> map: productsHashMap.entrySet()) {
+            returnList.add(map.getValue());
         }
 
-        return false;
+        return returnList;
     }
+
 }
