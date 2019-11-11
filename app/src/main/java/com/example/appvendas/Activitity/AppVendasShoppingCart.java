@@ -11,12 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.appvendas.Adapter.ShoppingCartRVAdapter;
 import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Helpers.Dialog.ShoppingCartQuantityDialog;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.Model.ShoppingCartViewModel;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener, OnShoppingCartListener {
+public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener, OnShoppingCartListener, ShoppingCartQuantityDialog.shoppingCartQuantityDialogListener{
 
     private Toolbar carrinhoToolbar;
     private RecyclerView shoppingCartRecyclerView;
@@ -95,7 +95,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     @Override
     public void modifyQuantity(final Long productId, View view) {
-        Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.app_vendas_popup_menu_style);
+        Context wrapper = new ContextThemeWrapper(this, R.style.app_vendas_popup_menu_style);
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -126,7 +126,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
                         shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.moreUnities:
-                        shoppingCartAdapter.notifyDataSetChanged();
+                        openDialog(productId);
                         return true;
                 }
                 return false;
@@ -146,4 +146,17 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         return returnList;
     }
 
+    private void openDialog(Long productId) {
+        ShoppingCartQuantityDialog shoppingCartQuantityDialog = new ShoppingCartQuantityDialog();
+        Bundle bundle = new Bundle();
+        bundle.putLong("productId", productId);
+        shoppingCartQuantityDialog.setArguments(bundle);
+        shoppingCartQuantityDialog.show(getSupportFragmentManager(), "shopping cart dialog");
+    }
+
+    @Override
+    public void applyQuantity(int quantity, Long productId) {
+        shoppingCartAdapter.setProductQuantity(productId, quantity);
+        shoppingCartAdapter.notifyDataSetChanged();
+    }
 }
