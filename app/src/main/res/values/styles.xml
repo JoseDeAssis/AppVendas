@@ -15,4 +15,9 @@
         <item name="iconGravity">end</item>
     </style>
 
+    <!-- Popup Menu -->
+    <style name="app_vendas_popup_menu_style" parent="Widget.MaterialComponents.PopupMenu">
+<!--        <item name="popupMenuStyle">@style/Widget.MaterialComponents.PopupMenu</item>-->
+    </style>
+
 </resources>

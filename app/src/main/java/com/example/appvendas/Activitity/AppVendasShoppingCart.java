@@ -7,8 +7,10 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,7 +95,8 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     @Override
     public void modifyQuantity(final Long productId, View view) {
-        PopupMenu popupMenu = new PopupMenu(this, view, Gravity.LEFT, R.attr.popupMenuStyle, R.style.Widget_AppCompat_Light_PopupMenu_Overflow);
+        Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.app_vendas_popup_menu_style);
+        PopupMenu popupMenu = new PopupMenu(wrapper, view);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
