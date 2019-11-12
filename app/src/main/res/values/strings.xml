@@ -16,7 +16,7 @@
     <string name="unity5">5 unidades</string>
     <string name="unity6">6 unidades</string>
     <string name="more_unities">mais de 6..</string>
-    <string name="quantidade">Quantidade</string>
+    <string name="quantidade">Digite a quantidade</string>
 
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>
