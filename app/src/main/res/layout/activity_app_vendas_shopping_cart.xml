@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,32 +7,41 @@
     android:background="#E0E0E0"
     tools:context=".Activitity.AppVendasShoppingCart">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/shoppingCartAppBar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        android:layout_height="match_parent">
 
-        <include
-            layout="@layout/app_vendas_toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/shoppingCartAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <include
+                layout="@layout/app_vendas_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/shoppingCartRecyclerView"
+        </com.google.android.material.appbar.AppBarLayout>
 
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shoppingCartAppBar"
-        tools:listitem="@layout/app_vendas_rv_shopping_cart" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/shoppingCartRecyclerView"
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/shoppingCartAppBar"
+            tools:listitem="@layout/app_vendas_rv_shopping_cart" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <include layout="@layout/shopping_cart_bottom_sheet_comprar" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

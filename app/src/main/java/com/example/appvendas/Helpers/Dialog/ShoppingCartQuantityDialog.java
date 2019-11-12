@@ -3,21 +3,14 @@ package com.example.appvendas.Helpers.Dialog;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.DialogFragment;
 
 import com.example.appvendas.R;
 import com.google.android.material.button.MaterialButton;
@@ -80,18 +73,12 @@ public class ShoppingCartQuantityDialog extends AppCompatDialogFragment implemen
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_MaterialComponents_Light_Dialog);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
+    public void onAttach(Context context) {
         super.onAttach(context);
 
         try {
             listener = (shoppingCartQuantityDialogListener) context;
-        } catch (Exception e) {
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
     }

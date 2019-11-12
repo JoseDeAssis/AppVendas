@@ -3,6 +3,8 @@ package com.example.appvendas.Activitity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,24 +18,31 @@ import android.view.View;
 
 import com.example.appvendas.Adapter.ShoppingCartRVAdapter;
 import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Helpers.BottomSheet.ShoppingCartBSComprar;
 import com.example.appvendas.Helpers.Dialog.ShoppingCartQuantityDialog;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener, OnShoppingCartListener, ShoppingCartQuantityDialog.shoppingCartQuantityDialogListener{
+public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener,
+        OnShoppingCartListener,
+        ShoppingCartQuantityDialog.shoppingCartQuantityDialogListener,
+        ShoppingCartBSComprar.BottomSheetListener {
 
     private Toolbar carrinhoToolbar;
     private RecyclerView shoppingCartRecyclerView;
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
     private HashMap<Long, Integer> productQuantities;
+    private CoordinatorLayout shoppingCartBSComprar;
+    private BottomSheetBehavior bottomSheetBehavior;
     private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
 
     @Override
@@ -45,6 +54,11 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         setSupportActionBar(carrinhoToolbar);
         getSupportActionBar().setTitle("carrinho");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        shoppingCartBSComprar = (CoordinatorLayout) findViewById(R.id.shoppingCartBSComprar);
+        bottomSheetBehavior = BottomSheetBehavior.from(shoppingCartBSComprar);
+        bottomSheetBehavior.setPeekHeight(300);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         HashMap<Long, Product> shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
 
@@ -158,5 +172,10 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     public void applyQuantity(int quantity, Long productId) {
         shoppingCartAdapter.setProductQuantity(productId, quantity);
         shoppingCartAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBuyBtnClicked() {
+
     }
 }
