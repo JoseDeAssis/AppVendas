@@ -29,6 +29,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
     private final LayoutInflater mInflater;
     private List<Product> shoppingCartList;
     private HashMap<Long, Integer> productsQuantities;
+    private Double shoppingCartTotalPrice;
     private ImageHandler imageHandler;
     private OnProductDetailsListener mOnProductDetailsListener;
     private OnShoppingCartListener mOnShoppingCartListener;
@@ -41,6 +42,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
         private final MaterialButton deleteBtn;
         private OnProductDetailsListener onProductDetailsListener;
         private OnShoppingCartListener onShoppingCartListener;
+        private OnShoppingCartListener mOnShoppingCartListener;
 
         public ShoppingCartRVViewHolder(@NonNull View itemView,
                                         final OnProductDetailsListener onProductDetailsListener,
@@ -56,6 +58,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
             this.onProductDetailsListener = onProductDetailsListener;
             this.onShoppingCartListener = onShoppingCartListener;
+            this.mOnShoppingCartListener = onShoppingCartListener;
 
             materialProductCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -127,6 +130,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
             if (picture != null) {
                 holder.imageView.setImageDrawable(picture);
             }
+
         } else {
             // Covers the case of data not being ready yet.
             holder.titleTextView.setText("Não há produtos registrados");
@@ -143,10 +147,26 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
     public void setProductQuantity(Long id, int count) {
         this.productsQuantities.put(id, count);
+        mOnShoppingCartListener.modifyTotalPrice();
+        notifyDataSetChanged();
     }
 
-    public void removeProduct(Product product) {
+    public Double getShoppingCartTotalPrice() {
+        this.shoppingCartTotalPrice = 0.0;
+        for(Product product: shoppingCartList) {
+            if(productsQuantities != null &&productsQuantities.size() > 0)
+                this.shoppingCartTotalPrice += (product.getProductPrice() * productsQuantities.get(product.getId()));
+            else
+                this.shoppingCartTotalPrice += product.getProductPrice();
+        }
+
+        return shoppingCartTotalPrice;
+    }
+
+    public void deleteProductFromShoppingCart(Product product) {
         shoppingCartList.remove(product);
+        productsQuantities.remove(product.getId());
+        mOnShoppingCartListener.modifyTotalPrice();
         notifyDataSetChanged();
     }
 

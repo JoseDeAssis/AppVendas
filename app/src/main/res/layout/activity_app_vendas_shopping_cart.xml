@@ -41,7 +41,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <include layout="@layout/shopping_cart_bottom_sheet_comprar" />
+    <include layout="@layout/shopping_cart_bottom_sheet_comprar"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

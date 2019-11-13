@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.appvendas.Adapter.ShoppingCartRVAdapter;
 import com.example.appvendas.Entity.Product;
@@ -25,6 +26,8 @@ import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +46,8 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     private HashMap<Long, Integer> productQuantities;
     private CoordinatorLayout shoppingCartBSComprar;
     private BottomSheetBehavior bottomSheetBehavior;
+    private MaterialButton shoppingCartBuyButton;
+    private MaterialTextView shoppingCartTotal;
     private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
 
     @Override
@@ -74,11 +79,22 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
         productQuantities = shoppingCartViewModel.getProductsQuantities();
         if(productQuantities == null) {
-            productQuantities = shoppingCartViewModel.initializeQuantities(shoppingCartList.size());
+            productQuantities = shoppingCartViewModel.initializeQuantities();
         }
 
         shoppingCartAdapter.setProductsQuantities(productQuantities);
         shoppingCartAdapter.setShoppingCartProducts(mapToList(shoppingCartList));
+
+        shoppingCartTotal = findViewById(R.id.shoppingCartTotalTxt);
+        this.modifyTotalPrice();
+
+        shoppingCartBuyButton = findViewById(R.id.shoppingCartBuyBtn);
+        shoppingCartBuyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AppVendasShoppingCart.this, "JAJAJA", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -95,6 +111,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     @Override
     public void deleteItem(Product product) {
         shoppingCartViewModel.deleteProductFromShoppingCart(product);
+        shoppingCartAdapter.deleteProductFromShoppingCart(product);
     }
 
     public List<Product> getShoppingCartProducts(HashMap<Long, Product> shoppingCartList) {
@@ -117,27 +134,21 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
                 switch (item.getItemId()) {
                     case R.id.unity1:
                         shoppingCartAdapter.setProductQuantity(productId, 1);
-                        shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.unity2:
                         shoppingCartAdapter.setProductQuantity(productId, 2);
-                        shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.unity3:
                         shoppingCartAdapter.setProductQuantity(productId, 3);
-                        shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.unity4:
                         shoppingCartAdapter.setProductQuantity(productId, 4);
-                        shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.unity5:
                         shoppingCartAdapter.setProductQuantity(productId, 5);
-                        shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.unity6:
                         shoppingCartAdapter.setProductQuantity(productId, 6);
-                        shoppingCartAdapter.notifyDataSetChanged();
                         return true;
                     case R.id.moreUnities:
                         openDialog(productId);
@@ -148,6 +159,11 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         });
         popupMenu.getMenuInflater().inflate(R.menu.shopping_cart_quantity_menu, popupMenu.getMenu());
         popupMenu.show();
+    }
+
+    @Override
+    public void modifyTotalPrice() {
+        shoppingCartTotal.setText("R$ " + (String.format("%.2f", shoppingCartAdapter.getShoppingCartTotalPrice())));
     }
 
     private List<Product> mapToList(HashMap<Long, Product> productsHashMap) {
@@ -171,7 +187,6 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     @Override
     public void applyQuantity(int quantity, Long productId) {
         shoppingCartAdapter.setProductQuantity(productId, quantity);
-        shoppingCartAdapter.notifyDataSetChanged();
     }
 
     @Override

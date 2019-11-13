@@ -21,16 +21,21 @@ public class ShoppingCartViewModel extends AndroidViewModel {
         super(application);
         shoppingCartList = new ArrayList<>();
         productsQuantities = new HashMap<>();
-        totalPrice = 0.0;
     }
 
-    public HashMap<Long, Integer> initializeQuantities(int size){
+    public HashMap<Long, Integer> initializeQuantities(){
         if (productsQuantities == null){
             for(Product product: shoppingCartList){
                 productsQuantities.put(product.getId(), 1);
             }
         }
         return productsQuantities;
+    }
+
+    public void initializeTotal() {
+        for(Product product: shoppingCartList) {
+
+        }
     }
 
     public HashMap<Long, Integer> getProductsQuantities() {
