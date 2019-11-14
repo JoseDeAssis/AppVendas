@@ -11,6 +11,8 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
+    @NonNull
+    @ColumnInfo(name = "product_id")
     private long id;
 
     @NonNull
