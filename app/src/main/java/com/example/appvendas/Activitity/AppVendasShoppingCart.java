@@ -3,6 +3,7 @@ package com.example.appvendas.Activitity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,7 +14,6 @@ import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.appvendas.Adapter.ShoppingCartRVAdapter;
 import com.example.appvendas.Entity.Product;
@@ -23,6 +23,7 @@ import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -43,8 +44,6 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
     private HashMap<Long, Integer> productQuantities;
-//    private CoordinatorLayout shoppingCartBSComprar;
-//    private BottomSheetBehavior bottomSheetBehavior;
     private MaterialButton shoppingCartBuyButton;
     private MaterialTextView shoppingCartTotal;
     private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
@@ -59,11 +58,6 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         getSupportActionBar().setTitle("carrinho");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        shoppingCartBSComprar = (CoordinatorLayout) findViewById(R.id.shoppingCartBSComprar);
-//        bottomSheetBehavior = BottomSheetBehavior.from(shoppingCartBSComprar);
-//        bottomSheetBehavior.setPeekHeight(300);
-//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
         HashMap<Long, Product> shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
 
         shoppingCartRecyclerView = findViewById(R.id.shoppingCartRecyclerView);
@@ -77,7 +71,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         shoppingCartAdapter.setShoppingCartProducts(getShoppingCartProducts(shoppingCartList));
 
         productQuantities = shoppingCartViewModel.getProductsQuantities();
-        if(productQuantities == null) {
+        if(productQuantities == null || productQuantities.size() == 0) {
             productQuantities = shoppingCartViewModel.initializeQuantities();
         }
 
@@ -91,7 +85,8 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         shoppingCartBuyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AppVendasShoppingCart.this, "JAJAJA", Toast.LENGTH_SHORT).show();
+                ShoppingCartBSComprar shoppingCartBSComprar = new ShoppingCartBSComprar();
+                shoppingCartBSComprar.show(getSupportFragmentManager(), "shoppingCartBSComprar");
             }
         });
     }

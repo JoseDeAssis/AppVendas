@@ -24,7 +24,7 @@ public class ShoppingCartViewModel extends AndroidViewModel {
     }
 
     public HashMap<Long, Integer> initializeQuantities(){
-        if (productsQuantities == null){
+        if (productsQuantities == null || productsQuantities.size() == 0){
             for(Product product: shoppingCartList){
                 productsQuantities.put(product.getId(), 1);
             }

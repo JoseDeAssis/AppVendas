@@ -154,7 +154,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
     public Double getShoppingCartTotalPrice() {
         this.shoppingCartTotalPrice = 0.0;
         for(Product product: shoppingCartList) {
-            if(productsQuantities != null &&productsQuantities.size() > 0)
+            if(productsQuantities != null && productsQuantities.size() > 0)
                 this.shoppingCartTotalPrice += (product.getProductPrice() * productsQuantities.get(product.getId()));
             else
                 this.shoppingCartTotalPrice += product.getProductPrice();
