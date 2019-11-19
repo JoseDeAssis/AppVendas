@@ -23,8 +23,8 @@ import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
 import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
@@ -44,8 +44,9 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
     private HashMap<Long, Integer> productQuantities;
-    private MaterialButton shoppingCartBuyButton;
+    private MaterialButton shoppingCartBuyButton, shoppingCartHomeButton;
     private MaterialTextView shoppingCartTotal;
+    private MaterialCardView shoppingCartCardView, shoppingCartEmptyCartCardView;
     private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
 
     @Override
@@ -59,6 +60,9 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         HashMap<Long, Product> shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
+
+        shoppingCartCardView = findViewById(R.id.shoppingCartCardView);
+        shoppingCartEmptyCartCardView = findViewById(R.id.shoppingCartEmptyCartCardView);
 
         shoppingCartRecyclerView = findViewById(R.id.shoppingCartRecyclerView);
         shoppingCartAdapter = new ShoppingCartRVAdapter(this, this, this);
@@ -89,6 +93,23 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
                 shoppingCartBSComprar.show(getSupportFragmentManager(), "shoppingCartBSComprar");
             }
         });
+
+        shoppingCartHomeButton = findViewById(R.id.shoppingCartHomeButton);
+        shoppingCartHomeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        if(shoppingCartList.size() == 0 || shoppingCartList == null) {
+            shoppingCartEmptyCartCardView.setVisibility(View.VISIBLE);
+            shoppingCartCardView.setVisibility(View.GONE);
+        } else {
+            shoppingCartCardView.setVisibility(View.VISIBLE);
+            shoppingCartEmptyCartCardView.setVisibility(View.GONE);
+
+        }
     }
 
     @Override

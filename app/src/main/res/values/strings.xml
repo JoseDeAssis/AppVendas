@@ -23,6 +23,10 @@
     <string name="product_quantity">1un.</string>
     <string name="total_compra">total do pedido</string>
     <string name="botao_compra">continuar</string>
+    <string name="empty_shopping_cart">Carrinho vazio</string>
+    <string name="empty_shopping_cart_message">Continue com a sua busca por um produto,
+        voltando para a página inicial ou saiba mais sobre os itens em destaque</string>
+    <string name="initial_page_btn">página inicial</string>
 
     <!--  Activity Add Products  -->
     <string name="add_products">Adicionar Produtos</string>
