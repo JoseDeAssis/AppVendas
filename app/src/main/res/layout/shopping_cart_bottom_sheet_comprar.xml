@@ -66,25 +66,44 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/imageView5"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/gmailImageCardView"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        app:cardCornerRadius="25dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.3"
-                        app:srcCompat="@drawable/gmail_icon" />
+                        app:layout_constraintVertical_bias="0.3">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#FFFFFF">
+
+                            <ImageView
+                                android:id="@+id/imageView5"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/gmail_icon" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/gmail"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/imageView5"
-                        app:layout_constraintStart_toStartOf="@+id/imageView5"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+                        app:layout_constraintEnd_toEndOf="@+id/gmailImageCardView"
+                        app:layout_constraintStart_toStartOf="@+id/gmailImageCardView"
+                        app:layout_constraintTop_toBottomOf="@+id/gmailImageCardView" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -105,25 +124,45 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/whatsappImageView"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/whatsappImageCardView"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        app:cardCornerRadius="25dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.3"
-                        app:srcCompat="@drawable/whatsapp_icon" />
+                        app:layout_constraintVertical_bias="0.3">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="#FFFFFF">
+
+                            <ImageView
+                                android:id="@+id/whatsappImageView"
+                                android:layout_width="90dp"
+                                android:layout_height="90dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/whatsapp_icon_foreground" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/whatsapp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/whatsappImageView"
-                        app:layout_constraintStart_toStartOf="@+id/whatsappImageView"
-                        app:layout_constraintTop_toBottomOf="@+id/whatsappImageView" />
+                        app:layout_constraintEnd_toEndOf="@+id/whatsappImageCardView"
+                        app:layout_constraintStart_toStartOf="@+id/whatsappImageCardView"
+                        app:layout_constraintTop_toBottomOf="@+id/whatsappImageCardView" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -131,7 +170,6 @@
 
 
         </GridLayout>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
