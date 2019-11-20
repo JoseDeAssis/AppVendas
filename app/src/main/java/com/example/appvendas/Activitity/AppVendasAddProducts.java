@@ -158,26 +158,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                             }).show();
                 }
                 break;
-
-            case android.R.id.home:
-
-                new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
-                        .setTitle("Descartar rascunho?")
-                        .setMessage("Todas as mudanças não salvas serão perdidas")
-                        .setPositiveButton("Descartar", /* listener = */ new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(AppVendasAddProducts.this, "Show de bola", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(AppVendasAddProducts.this, "Mó paia man", Toast.LENGTH_SHORT).show();
-                            }
-                        }).show();
-//                finish();
-                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -262,11 +242,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                 productPriceTxtInputLayout.setErrorEnabled(true);
             }
             productPriceTxtInputLayout.setError("Insira um valor válido");
-        }
-
-        if (newProductDescriptionTxt.getText().equals("Descrição")) {
-            newProductDescriptionTxt.setText("Insira uma descrição válida");
-            newProductDescriptionTxt.setTextColor(Color.parseColor("#b71c1c"));
         }
 
         if (newProductGroupTxt.getText().equals("Categoria*")) {
@@ -371,4 +346,36 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         }
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+
+        if(newProductTitle.getText().toString().trim().equals("")
+            && newProductCode.getText().toString().trim().equals("")
+            && newProductDescriptionTxt.getText().toString().equals("Descrição")
+            && newProductPrice.getText().toString().trim().equals("")
+            && newProductGroupTxt.getText().toString().equals("Categoria*")
+            && !newProductHotSwitch.isChecked()
+            && photo == null) {
+            setResult(RESULT_CANCELED);
+            finish();
+        } else {
+            new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
+                    .setTitle("Descartar rascunho?")
+                    .setMessage("Todas as mudanças não salvas serão perdidas")
+                    .setPositiveButton("Descartar", /* listener = */ new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            setResult(RESULT_CANCELED);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).show();
+        }
+
+        return true;
+    }
 }

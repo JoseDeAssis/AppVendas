@@ -22,7 +22,6 @@ import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
-import com.example.appvendas.Helpers.Interface.OnProductIsCheckedListener;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Model.ProductViewModel;
@@ -154,7 +153,8 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                 break;
 
             case RESULT_CANCELED:
-                Toast.makeText(this, data.getStringExtra("erro"), Toast.LENGTH_SHORT).show();
+                if(data != null && data.getStringExtra("erro") != null)
+                    Toast.makeText(this, data.getStringExtra("erro"), Toast.LENGTH_SHORT).show();
             default:
                 break;
         }
@@ -185,11 +185,13 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
 
     @Override
     public void getProductDetails(Product product) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(this, AppVendasProductDetail.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
         intent.putExtra("productPrice", product.getProductPrice());
+        intent.putExtra("productGroup", product.getProductGroup());
+        intent.putExtra("productOnSale", product.getOnSaleProduct());
 
         startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
     }

@@ -49,7 +49,8 @@ public class ProductViewModel extends AndroidViewModel {
             shoppingCartList.remove(product.getId());
     }
 
-    public void insert(Product produto) {
-        produtoRepository.insert(produto);
+    public void insert(Product product) {
+        produtoRepository.insert(product);
     }
+
 }

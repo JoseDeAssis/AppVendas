@@ -28,13 +28,14 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
     private Toolbar productDescriptionToolbar;
     private TextInputEditText productDescriptionTxtView;
     private Menu menu;
+    private String productDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_vendas_product_description);
 
-        String productDescription = getIntent().getStringExtra("productDescription");
+        productDescription = getIntent().getStringExtra("productDescription");
 
         productDescriptionToolbar = findViewById(R.id.myToolbar);
         productDescriptionToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
@@ -44,7 +45,7 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
 
         productDescriptionTxtView = findViewById(R.id.productDescriptionTxtView);
 
-        if (!productDescription.equals("Descrição") && !productDescription.equals("Insira uma descrição válida")) {
+        if (!productDescription.equals("Descrição")) {
             productDescriptionTxtView.setText(productDescription);
         }
 
@@ -56,8 +57,10 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.app_vendas_confirm_menu, menu);
-        menu.getItem(0).setEnabled(false);
-        menu.getItem(0).setIcon(R.drawable.app_vendas_confirm_icon_disabled);
+        if(productDescription.equals("Descrição")) {
+            menu.getItem(0).setEnabled(false);
+            menu.getItem(0).setIcon(R.drawable.app_vendas_confirm_icon_disabled);
+        }
 
         return super.onCreateOptionsMenu(menu);
     }

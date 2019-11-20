@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-//TODO ajustar layout de imagens
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -53,10 +53,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     app:layout_constraintBottom_toBottomOf="@+id/productTitleTxtInputLayout"
-                    app:layout_constraintEnd_toStartOf="@+id/productTitleTxtInputLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/productTitleTxtInputLayout"
-                    app:layout_constraintVertical_bias="0.5"
+                    app:layout_constraintVertical_bias="0.33"
                     app:srcCompat="@drawable/short_text_icon" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -109,10 +110,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     app:layout_constraintBottom_toBottomOf="@+id/productCodeTxtInputLayout"
-                    app:layout_constraintEnd_toStartOf="@+id/productCodeTxtInputLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/productCodeTxtInputLayout"
-                    app:layout_constraintVertical_bias="0.5"
+                    app:layout_constraintVertical_bias="0.33"
                     app:srcCompat="@drawable/ic_confirmation_number_black_24dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -208,6 +210,7 @@
             android:id="@+id/productPriceCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="#FFFFFF"
             android:outlineSpotShadowColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -226,9 +229,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     app:layout_constraintBottom_toBottomOf="@+id/productPriceTxtInputLayout"
-                    app:layout_constraintEnd_toStartOf="@+id/productPriceTxtInputLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/productPriceTxtInputLayout"
+                    app:layout_constraintVertical_bias="0.33"
                     app:srcCompat="@drawable/product_price_icon" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -237,7 +242,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
                     android:layout_marginEnd="20dp"
                     app:boxBackgroundColor="#FFFFFF"
                     app:errorEnabled="true"

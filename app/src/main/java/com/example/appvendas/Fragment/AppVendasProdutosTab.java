@@ -56,6 +56,8 @@ public class AppVendasProdutosTab extends Fragment implements OnProductDetailsLi
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
         intent.putExtra("productPrice", product.getProductPrice());
+        intent.putExtra("productGroup", product.getProductGroup());
+        intent.putExtra("productOnSale", product.getOnSaleProduct());
 
         startActivityForResult(intent, PRODUCT_DETAIL_RESULT_CODE);
     }
