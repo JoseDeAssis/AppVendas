@@ -23,7 +23,7 @@ import java.util.List;
 public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdapter.ProductListRVViewHolder> {
 
     private final LayoutInflater mInflater;
-    private List<Product> productList; // Cached copy of words
+    private List<Product> productList;
     private ImageHandler imageHandler;
     private Context context;
     private OnProductDetailsListener mOnProductDetailsListener;
@@ -47,18 +47,14 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
             imageView = itemView.findViewById(R.id.recyclerViewImg);
             checkBox = itemView.findViewById(R.id.recyclerViewCheckBox);
 
-            if(onProductIsCheckedListener == null) {
-                checkBox.setVisibility(View.GONE);
-            } else {
-                this.onProductIsCheckedListener = onProductIsCheckedListener;
-                checkBox.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Product product = productList.get(getAdapterPosition());
-                        onProductIsCheckedListener.setProductChecked(product, checkBox.isChecked());
-                    }
-                });
-            }
+            this.onProductIsCheckedListener = onProductIsCheckedListener;
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Product product = productList.get(getAdapterPosition());
+                    onProductIsCheckedListener.setProductChecked(product, checkBox.isChecked());
+                }
+            });
 
             this.onProductDetailsListener = onProductDetailsListener;
 

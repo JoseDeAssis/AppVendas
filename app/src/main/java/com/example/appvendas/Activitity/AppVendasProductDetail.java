@@ -122,12 +122,14 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
         detailProductGroupTxt.setText(getIntent().getExtras().getString("productGroup"));
         detailProductGroupTxt.setTextColor(Color.BLACK);
         detailProductHotSwitch.setChecked(getIntent().getExtras().getInt("productOnSale") == 1 ? true : false);
-        ImageView image = new ImageView(detailProductImageCardView.getContext());
-        image.setImageBitmap(imageHandler.getProductPic(getIntent().getExtras().getLong("productId")));
-        image.setMaxWidth(detailProductImageCardView.getWidth());
-        image.setMaxHeight(detailProductImageCardView.getHeight());
-        image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        detailProductImageCardView.addView(image);
+        if(imageHandler.productPhotoExists(getIntent().getExtras().getLong("productId"))) {
+            ImageView image = new ImageView(detailProductImageCardView.getContext());
+            image.setImageBitmap(imageHandler.getProductPic(getIntent().getExtras().getLong("productId")));
+            image.setMaxWidth(detailProductImageCardView.getWidth());
+            image.setMaxHeight(detailProductImageCardView.getHeight());
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            detailProductImageCardView.addView(image);
+        }
 
     }
 

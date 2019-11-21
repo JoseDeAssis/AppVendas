@@ -48,6 +48,12 @@ public class ImageHandler {
         return photo;
     }
 
+    public boolean productPhotoExists(Long id) {
+        File picture = new File(context.getFilesDir(), id.toString());
+
+        return picture.exists();
+    }
+
     public static RoundedBitmapDrawable setRoundPicture(Bitmap picture){
         RoundedBitmapDrawable roundedBitmapDrawable;
         Bitmap bitmapAux = Bitmap.createScaledBitmap(picture, picture.getWidth(), picture.getHeight(), false);

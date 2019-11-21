@@ -42,6 +42,7 @@
     <string name="primary_text">Primary Text</string>
     <string name="secondary_text">Secondary Text</string>
     <string name="price_text">Price</string>
+    <string name="group_text">Group</string>
 
     <!-- Bottom sheet -->
     <string name="whatsapp">WhatsApp</string>

@@ -18,10 +18,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.appvendas.Adapter.CRUDProductListRVAdapter;
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
+import com.example.appvendas.Helpers.Interface.OnProductDeleteListener;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
+import com.example.appvendas.Helpers.Interface.OnProductEditListener;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Model.ProductViewModel;
@@ -32,7 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.IOException;
 import java.util.List;
 
-public class AppVendasProductDetailsCrud extends AppCompatActivity implements OnProductDetailsListener {
+public class AppVendasProductDetailsCrud extends AppCompatActivity implements OnProductDeleteListener, OnProductEditListener {
 
     private RecyclerView appVendasProdutosCrudRecyclerView;
     private ProductViewModel appVendasProdutosCrudViewModel;
@@ -67,7 +70,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         });
 
         appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
-        final ProductListRVAdapter adapter = new ProductListRVAdapter(this, this, null);
+        final CRUDProductListRVAdapter adapter = new CRUDProductListRVAdapter(this, this, this);
 
         appVendasProdutosCrudRecyclerView.setAdapter(adapter);
         appVendasProdutosCrudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -77,16 +80,6 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
             @Override
             public void onChanged(List<Product> products) {
                 adapter.setProducts(products);
-            }
-        });
-
-        appVendasProdutosCrudRecyclerView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (mActionMode != null) {
-                    return false;
-                }
-                return true;
             }
         });
     }
@@ -111,15 +104,15 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
             switch (menuItem.getItemId()) {
                 case R.id.delete_icon:
                     new MaterialAlertDialogBuilder(AppVendasProductDetailsCrud.this, R.style.Theme_MaterialComponents_Light_Dialog)
-                            .setTitle("Salvar produto?")
-                            .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
-                            .setPositiveButton("Accept", /* listener = */ new DialogInterface.OnClickListener() {
+                            .setTitle("Deletar produtos?")
+                            .setMessage("Ao deletar os produtos eles não poderão mais ser acessados. /nDeseja mesmo fazer isso?")
+                            .setPositiveButton("Aceitar", /* listener = */ new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(AppVendasProductDetailsCrud.this, "Show de bola", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Toast.makeText(AppVendasProductDetailsCrud.this, "Mó paia man", Toast.LENGTH_SHORT).show();
@@ -189,7 +182,18 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     }
 
     @Override
-    public void getProductDetails(Product product) {
+    public boolean deleteProduct(Product product) {
+        if(mActionMode != null) {
+            return false;
+        }
+
+        mActionMode = startActionMode(mActionModeCallback);
+
+        return true;
+    }
+
+    @Override
+    public void editProduct(Product product) {
         Intent intent = new Intent(this, AppVendasProductDetail.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
@@ -200,5 +204,4 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
 
         startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
     }
-
 }
