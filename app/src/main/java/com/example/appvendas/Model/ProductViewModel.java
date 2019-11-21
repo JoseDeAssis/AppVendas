@@ -13,16 +13,16 @@ import java.util.List;
 
 public class ProductViewModel extends AndroidViewModel {
 
-    private ProductRepository produtoRepository;
+    private ProductRepository productRepository;
     private LiveData<List<Product>> productList, hotProductList, allProductList;
     private HashMap<Long, Product> shoppingCartList;
 
     public ProductViewModel(Application application) {
         super(application);
-        produtoRepository = new ProductRepository(application);
-        allProductList = produtoRepository.getAllProducts();
-        productList = produtoRepository.getProducts();
-        hotProductList = produtoRepository.getAllHotProducts();
+        productRepository = new ProductRepository(application);
+        allProductList = productRepository.getAllProducts();
+        productList = productRepository.getProducts();
+        hotProductList = productRepository.getAllHotProducts();
         shoppingCartList = new HashMap<>();
     }
 
@@ -50,7 +50,15 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
     public void insert(Product product) {
-        produtoRepository.insert(product);
+        productRepository.insert(product);
+    }
+
+    public void update(Product product) {
+        productRepository.update(product);
+    }
+
+    public void delete(Product product) {
+        productRepository.delete(product);
     }
 
 }

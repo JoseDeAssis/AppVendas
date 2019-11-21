@@ -124,7 +124,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                     new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
                             .setTitle("Salvar produto?")
                             .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
-                            .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent intent = new Intent();
@@ -151,7 +151,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                                     finish();
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                 }
@@ -250,7 +250,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         }
 
         if (newProductGroupTxt.getText().equals("Selecione uma categoria válida") ||
-                newProductDescriptionTxt.getText().equals("Insira uma descrição válida") ||
                 newProductPrice.getText().toString().equals("") ||
                 newProductCode.getText().toString().equals("") ||
                 newProductTitle.getText().toString().equals("")) {

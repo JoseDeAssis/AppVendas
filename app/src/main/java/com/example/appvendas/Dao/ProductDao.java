@@ -19,10 +19,10 @@ public interface ProductDao {
     Long insertProduct(Product produto);
 
     @Delete
-    void deleteProduct(Product produto);
+    int deleteProduct(Product produto);
 
     @Update
-    void updateProduct(Product produto);
+    int updateProduct(Product produto);
 
     @Query("SELECT * from product_table ORDER BY product_id ASC")
     LiveData<List<Product>> getAllAlphabetizedProducts();

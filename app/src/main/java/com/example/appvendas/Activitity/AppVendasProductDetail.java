@@ -123,8 +123,7 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
         detailProductGroupTxt.setTextColor(Color.BLACK);
         detailProductHotSwitch.setChecked(getIntent().getExtras().getInt("productOnSale") == 1 ? true : false);
         ImageView image = new ImageView(detailProductImageCardView.getContext());
-        photo = imageHandler.getProductPic(getIntent().getExtras().getLong("productId"));
-        image.setImageBitmap(photo);
+        image.setImageBitmap(imageHandler.getProductPic(getIntent().getExtras().getLong("productId")));
         image.setMaxWidth(detailProductImageCardView.getWidth());
         image.setMaxHeight(detailProductImageCardView.getHeight());
         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -206,21 +205,16 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
         }
     }
 
-    private void createDirectoryAndSaveFile() {
+    private void createDirectoryAndSaveFile(Long id) {
 
-        if (photo != null) {
-            EventSingleton eventSingleton = EventSingleton.getInstance();
-            eventSingleton.registerEvent(new EventListener() {
-                @Override
-                public void done(Long id) {
-                    try {
-                        imageHandler.savePicture(photo, id.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+        if (id != null) {
+            try {
+                imageHandler.savePicture(photo, id.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     @Override
@@ -290,13 +284,6 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
             detailProductTitleTxtInputLayout.setError("Insira um título válido");
         }
 
-        if (detailProductCode.getText().toString().trim().equals("")) {
-            if (!detailProductCodeTxtInputLayout.isErrorEnabled()) {
-                detailProductCodeTxtInputLayout.setErrorEnabled(true);
-            }
-            detailProductCodeTxtInputLayout.setError("Insira um código válido");
-        }
-
         if (detailProductPrice.getText().toString().trim().equals("")) {
             if (!detailProductPriceTxtInputLayout.isErrorEnabled()) {
                 detailProductPriceTxtInputLayout.setErrorEnabled(true);
@@ -310,9 +297,7 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
         }
 
         if (detailProductGroupTxt.getText().equals("Selecione uma categoria válida") ||
-                detailProductDescriptionTxt.getText().equals("Insira uma descrição válida") ||
                 detailProductPrice.getText().toString().equals("") ||
-                detailProductCode.getText().toString().equals("") ||
                 detailProductTitle.getText().toString().equals("")) {
             validate = false;
         }
@@ -323,11 +308,11 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
     @Override
     public boolean onSupportNavigateUp() {
 
-        if(detailProductTitle.getText().toString().trim().equals("")
-                && detailProductDescriptionTxt.getText().toString().equals("Descrição")
-                && detailProductPrice.getText().toString().trim().equals("")
-                && detailProductGroupTxt.getText().toString().equals("Categoria*")
-                && !detailProductHotSwitch.isChecked()
+        if (detailProductTitle.getText().toString().trim().equals(getIntent().getExtras().getString("productName"))
+                && detailProductDescriptionTxt.getText().toString().equals(getIntent().getExtras().getString("productDescription"))
+                && (Double.parseDouble(detailProductPrice.getText().toString()) == getIntent().getExtras().getDouble("productPrice"))
+                && detailProductGroupTxt.getText().toString().equals(getIntent().getExtras().getString("productGroup"))
+                && (detailProductHotSwitch.isChecked() == getIntent().getExtras().getBoolean("productOnSale"))
                 && photo == null) {
             setResult(RESULT_CANCELED);
             finish();
@@ -361,26 +346,27 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
                     new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
                             .setTitle("Salvar produto?")
                             .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
-                            .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+                            .setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent intent = new Intent();
                                     try {
-                                        Product newProduct = new Product();
-                                        newProduct.setProductName(detailProductTitle.getText().toString());
-                                        newProduct.setProductCode(detailProductCode.getText().toString());
-                                        newProduct.setProductDescrition(detailProductDescriptionTxt.getText().toString());
-                                        newProduct.setProductGroup(detailProductGroupTxt.getText().toString());
-                                        newProduct.setProductPrice(Double.parseDouble(detailProductPrice.getText().toString()));
-                                        newProduct.setOnSaleProduct(detailProductHotSwitch.isChecked() ? 1 : 0);
+                                        Product updatedProduct = new Product();
+                                        updatedProduct.setId(getIntent().getExtras().getLong("productId"));
+                                        updatedProduct.setProductName(detailProductTitle.getText().toString());
+                                        updatedProduct.setProductCode(detailProductCode.getText().toString());
+                                        updatedProduct.setProductDescrition(detailProductDescriptionTxt.getText().toString());
+                                        updatedProduct.setProductGroup(detailProductGroupTxt.getText().toString());
+                                        updatedProduct.setProductPrice(Double.parseDouble(detailProductPrice.getText().toString()));
+                                        updatedProduct.setOnSaleProduct(detailProductHotSwitch.isChecked() ? 1 : 0);
 
-//                                        appVendasProdutosCrudViewModel.update(newProduct);
+                                        appVendasProdutosCrudViewModel.update(updatedProduct);
 
                                         if (photo != null) {
-                                            createDirectoryAndSaveFile();
+                                            createDirectoryAndSaveFile(updatedProduct.getId());
                                         }
                                         setResult(RESULT_OK, intent);
-                                    } catch(Exception e) {
+                                    } catch (Exception e) {
                                         intent.putExtra("erro", e.getMessage());
                                         setResult(RESULT_CANCELED, intent);
                                     }
@@ -388,7 +374,7 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
                                     finish();
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                 }

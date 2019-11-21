@@ -37,8 +37,16 @@ public class ProductRepository {
         return productList;
     }
 
-    public void insert (Product word) {
-        new insertAsyncTask(productDao).execute(word);
+    public void insert (Product product) {
+        new insertAsyncTask(productDao).execute(product);
+    }
+
+    public void update (Product product) {
+        new updateAsyncTask(productDao).execute(product);
+    }
+
+    public void delete (Product product) {
+        new deleteAsyncTask(productDao).execute(product);
     }
 
     private static class insertAsyncTask extends AsyncTask<Product, Void, Long> {
@@ -59,6 +67,34 @@ public class ProductRepository {
             super.onPostExecute(result);
             EventSingleton eventSingleton = EventSingleton.getInstance();
             eventSingleton.emitterDone(result);
+        }
+    }
+
+    private static class updateAsyncTask extends AsyncTask<Product, Void, Integer> {
+
+        private ProductDao mAsyncTaskDao;
+
+        updateAsyncTask(ProductDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Integer doInBackground(final Product... params) {
+            return mAsyncTaskDao.updateProduct(params[0]);
+        }
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<Product, Void, Integer> {
+
+        private ProductDao mAsyncTaskDao;
+
+        deleteAsyncTask(ProductDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Integer doInBackground(final Product... params) {
+            return mAsyncTaskDao.deleteProduct(params[0]);
         }
     }
 }

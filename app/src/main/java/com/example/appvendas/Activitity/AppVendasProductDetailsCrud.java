@@ -43,6 +43,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     private ImageHandler imageHandler;
     private static final int ADD_PRODUCT_RESULT_CODE = 1000;
     private static final int EDIT_PRODUCT_RESULT_CODE = 1001;
+    private static final int DELETE_PRODUCT_RESULT_CODE = 1002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +146,10 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                 switch (requestCode) {
                     case ADD_PRODUCT_RESULT_CODE:
                         Toast.makeText(this, "Produto adicionado", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case EDIT_PRODUCT_RESULT_CODE:
+                        Toast.makeText(this, "Produto alterado", Toast.LENGTH_SHORT).show();
                         break;
 
                     default:
