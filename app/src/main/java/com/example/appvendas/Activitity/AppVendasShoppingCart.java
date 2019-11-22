@@ -58,6 +58,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         setSupportActionBar(carrinhoToolbar);
         getSupportActionBar().setTitle("carrinho");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.app_vendas_back_icon);
 
         HashMap<Long, Product> shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
 

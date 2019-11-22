@@ -39,6 +39,7 @@
             android:name=".Activitity.AppVendasProductDescription"
             android:parentActivityName=".Activitity.AppVendasAddProducts" />
         <activity
+            android:theme="@style/ToolBarStyle"
             android:name=".Activitity.AppVendasProductDetailsCrud"
             android:parentActivityName=".Activitity.AppVendasMainActivity" />
     </application>

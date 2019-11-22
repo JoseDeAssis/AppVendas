@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -53,10 +54,9 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_vendas_product_crud);
 
-        toolbar = findViewById(R.id.myToolbar);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Produtos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.app_vendas_back_icon);
 
         imageHandler = new ImageHandler(getApplicationContext());
 
@@ -88,13 +88,14 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.app_vendas_contextual_actionbar, menu);
-            actionMode.setTitle("Excluir");
 
-            return false;
+            return true;
         }
 
         @Override
         public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            actionMode.setTitle("Excluir");
+
             return false;
         }
 
@@ -105,7 +106,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                 case R.id.delete_icon:
                     new MaterialAlertDialogBuilder(AppVendasProductDetailsCrud.this, R.style.Theme_MaterialComponents_Light_Dialog)
                             .setTitle("Deletar produtos?")
-                            .setMessage("Ao deletar os produtos eles não poderão mais ser acessados. /nDeseja mesmo fazer isso?")
+                            .setMessage("Ao deletar os produtos eles não poderão mais ser acessados. \nDeseja mesmo fazer isso?")
                             .setPositiveButton("Aceitar", /* listener = */ new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -204,4 +205,5 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
 
         startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
     }
+
 }
