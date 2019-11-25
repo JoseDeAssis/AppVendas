@@ -3,21 +3,20 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="android:splitMotionEvents">false</item>
     </style>
 
     <style name="ToolBarStyle" parent="Theme.MaterialComponents.Light">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:splitMotionEvents">false</item>
 
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeStyle">@style/MyActionMode</item>
     </style>
 
     <style name="MyActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="android:statusBarColor">@color/colorPurpleDark</item>
         <item name="background">@color/colorPurple</item>
     </style>
 

@@ -3,6 +3,7 @@ package com.example.appvendas.Activitity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,11 +13,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.example.appvendas.Adapter.CRUDProductListRVAdapter;
@@ -40,6 +43,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
 
     private RecyclerView appVendasProdutosCrudRecyclerView;
     private ProductViewModel appVendasProdutosCrudViewModel;
+    private CRUDProductListRVAdapter adapter;
     private Toolbar toolbar;
     private ActionMode mActionMode;
     private FloatingActionButton addProductFAB;
@@ -70,7 +74,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         });
 
         appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
-        final CRUDProductListRVAdapter adapter = new CRUDProductListRVAdapter(this, this, this);
+        adapter = new CRUDProductListRVAdapter(this, this, this);
 
         appVendasProdutosCrudRecyclerView.setAdapter(adapter);
         appVendasProdutosCrudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -88,6 +92,9 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.app_vendas_contextual_actionbar, menu);
+            Window window = getWindow();
+            window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPurpleDark));
+
 
             return true;
         }
@@ -128,6 +135,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             mActionMode = null;
+            getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
         }
     };
 
@@ -152,7 +160,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                 break;
 
             case RESULT_CANCELED:
-                if(data != null && data.getStringExtra("erro") != null)
+                if (data != null && data.getStringExtra("erro") != null)
                     Toast.makeText(this, data.getStringExtra("erro"), Toast.LENGTH_SHORT).show();
             default:
                 break;
@@ -183,9 +191,15 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     }
 
     @Override
-    public boolean deleteProduct(Product product) {
-        if(mActionMode != null) {
+    public boolean deleteProduct(final Product product) {
+        adapter.toggleProduct(product);
+        mActionModeCallback.onDestroyActionMode(mActionMode);
+        if(adapter.isRecyclerViewSelected()){
+            mActionModeCallback.onDestroyActionMode(mActionMode);
             return false;
+        }
+        if (mActionMode != null) {
+            return true;
         }
 
         mActionMode = startActionMode(mActionModeCallback);
@@ -194,16 +208,23 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     }
 
     @Override
-    public void editProduct(Product product) {
-        Intent intent = new Intent(this, AppVendasProductDetail.class);
-        intent.putExtra("productName", product.getProductName());
-        intent.putExtra("productDescription", product.getProductDescrition());
-        intent.putExtra("productId", product.getId());
-        intent.putExtra("productPrice", product.getProductPrice());
-        intent.putExtra("productGroup", product.getProductGroup());
-        intent.putExtra("productOnSale", product.getOnSaleProduct());
+    public void editProduct(final Product product) {
+        if (mActionMode != null) {
+            adapter.toggleProduct(product);
+            if(adapter.isRecyclerViewSelected()){
+                mActionModeCallback.onDestroyActionMode(mActionMode);
+            }
+        } else {
+            Intent intent = new Intent(this, AppVendasProductDetail.class);
+            intent.putExtra("productName", product.getProductName());
+            intent.putExtra("productDescription", product.getProductDescrition());
+            intent.putExtra("productId", product.getId());
+            intent.putExtra("productPrice", product.getProductPrice());
+            intent.putExtra("productGroup", product.getProductGroup());
+            intent.putExtra("productOnSale", product.getOnSaleProduct());
 
-        startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
+            startActivityForResult(intent, EDIT_PRODUCT_RESULT_CODE);
+        }
     }
 
 }

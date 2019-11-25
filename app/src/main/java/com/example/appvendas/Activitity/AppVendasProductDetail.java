@@ -314,7 +314,7 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
                 && detailProductDescriptionTxt.getText().toString().equals(getIntent().getExtras().getString("productDescription"))
                 && (Double.parseDouble(detailProductPrice.getText().toString()) == getIntent().getExtras().getDouble("productPrice"))
                 && detailProductGroupTxt.getText().toString().equals(getIntent().getExtras().getString("productGroup"))
-                && (detailProductHotSwitch.isChecked() == getIntent().getExtras().getBoolean("productOnSale"))
+                && (detailProductHotSwitch.isChecked() == (getIntent().getExtras().getInt("productOnSale") == 1 ? true : false))
                 && photo == null) {
             setResult(RESULT_CANCELED);
             finish();
