@@ -47,11 +47,11 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
     private static final int IMAGE_CAPTURE_CODE = 1001;
     private static final int PRODUCT_GROUP_RESPONSE_CODE = 1002;
     private static final int PRODUCT_DESCRIPTION_RESULT_CODE = 1003;
-    private MaterialCardView detailProductCodeCardView, detailProductDescription, detailProductGroup, detailProductImageCardView;
+    private MaterialCardView detailProductDescription, detailProductGroup, detailProductImageCardView;
     private Toolbar toolbar;
-    private TextInputEditText detailProductTitle, detailProductCode, detailProductPrice;
+    private TextInputEditText detailProductTitle, detailProductPrice;
     private Bitmap photo = null;
-    private TextInputLayout detailProductTitleTxtInputLayout, detailProductCodeTxtInputLayout, detailProductPriceTxtInputLayout;
+    private TextInputLayout detailProductTitleTxtInputLayout, detailProductPriceTxtInputLayout;
     private MaterialTextView detailProductDescriptionTxt, detailProductGroupTxt;
     private SwitchMaterial detailProductHotSwitch;
     private ProductViewModel appVendasProdutosCrudViewModel;
@@ -63,9 +63,6 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_app_vendas_add_products);
 
         //CardView
-        detailProductCodeCardView = findViewById(R.id.productCodeCardView);
-        detailProductCodeCardView.setVisibility(View.GONE);
-
         detailProductDescription = findViewById(R.id.productDescriptionCardView);
         detailProductDescription.setOnClickListener(this);
 
@@ -87,15 +84,11 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
 
         //Text input layout
         detailProductTitleTxtInputLayout = findViewById(R.id.productTitleTxtInputLayout);
-        detailProductCodeTxtInputLayout = findViewById(R.id.productCodeTxtInputLayout);
         detailProductPriceTxtInputLayout = findViewById(R.id.productPriceTxtInputLayout);
 
         //Edit Text input
         detailProductTitle = findViewById(R.id.productTitleEdtTxt);
         detailProductTitle.addTextChangedListener(this);
-
-        detailProductCode = findViewById(R.id.productCodeEdtTxt);
-        detailProductCode.addTextChangedListener(this);
 
         detailProductPrice = findViewById(R.id.productPriceEdtTxt);
         detailProductPrice.addTextChangedListener(this);
@@ -194,11 +187,6 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
         if (!detailProductTitle.getText().toString().trim().equals("") &&
                 detailProductTitleTxtInputLayout.isErrorEnabled()) {
             detailProductTitleTxtInputLayout.setErrorEnabled(false);
-        }
-
-        if (!detailProductCode.getText().toString().trim().equals("") &&
-                detailProductCodeTxtInputLayout.isErrorEnabled()) {
-            detailProductCodeTxtInputLayout.setErrorEnabled(false);
         }
 
         if (!detailProductPrice.getText().toString().trim().equals("") &&
@@ -356,11 +344,11 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
                                         Product updatedProduct = new Product();
                                         updatedProduct.setId(getIntent().getExtras().getLong("productId"));
                                         updatedProduct.setProductName(detailProductTitle.getText().toString());
-                                        updatedProduct.setProductCode(detailProductCode.getText().toString());
                                         updatedProduct.setProductDescrition(detailProductDescriptionTxt.getText().toString());
                                         updatedProduct.setProductGroup(detailProductGroupTxt.getText().toString());
                                         updatedProduct.setProductPrice(Double.parseDouble(detailProductPrice.getText().toString()));
                                         updatedProduct.setOnSaleProduct(detailProductHotSwitch.isChecked() ? 1 : 0);
+                                        updatedProduct.setOnAvailableProduct(1);
 
                                         appVendasProdutosCrudViewModel.update(updatedProduct);
 

@@ -86,20 +86,22 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
     @Override
     public void onBindViewHolder(ProductListRVViewHolder holder, int position) {
         if (productList != null) {
-            Product current = productList.get(position);
-            RoundedBitmapDrawable picture = null;
+            if (productList.get(position).getOnAvailableProduct() == 1) {
+                Product current = productList.get(position);
+                RoundedBitmapDrawable picture = null;
 
-            holder.primaryTextView.setText(current.getProductName());
-            holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
+                holder.primaryTextView.setText(current.getProductName());
+                holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
 
-            try {
-                picture = imageHandler.getRoundPicture(current.getId());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                try {
+                    picture = imageHandler.getRoundPicture(current.getId());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            if (picture != null) {
-                holder.imageView.setImageDrawable(picture);
+                if (picture != null) {
+                    holder.imageView.setImageDrawable(picture);
+                }
             }
         } else {
             // Covers the case of data not being ready yet.

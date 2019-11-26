@@ -19,10 +19,6 @@ public class Product implements Serializable {
     @ColumnInfo(name = "product_name")
     private String productName;
 
-    @NonNull
-    @ColumnInfo(name = "product_code")
-    private String productCode;
-
     @ColumnInfo(name = "product_description")
     private String productDescrition;
 
@@ -37,6 +33,10 @@ public class Product implements Serializable {
     @NonNull
     @ColumnInfo(name = "product_on_sale")
     private int onSaleProduct;
+
+    @NonNull
+    @ColumnInfo(name = "product_availability")
+    private int onAvailableProduct;
 
     public long getId() {
         return id;
@@ -53,15 +53,6 @@ public class Product implements Serializable {
 
     public void setProductName(@NonNull String productName) {
         this.productName = productName;
-    }
-
-    @NonNull
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(@NonNull String productCode) {
-        this.productCode = productCode;
     }
 
     public String getProductDescrition() {
@@ -95,5 +86,13 @@ public class Product implements Serializable {
 
     public void setOnSaleProduct(int onSaleProduct) {
         this.onSaleProduct = onSaleProduct;
+    }
+
+    public int getOnAvailableProduct() {
+        return onAvailableProduct;
+    }
+
+    public void setOnAvailableProduct(int onAvailableProduct) {
+        this.onAvailableProduct = onAvailableProduct;
     }
 }

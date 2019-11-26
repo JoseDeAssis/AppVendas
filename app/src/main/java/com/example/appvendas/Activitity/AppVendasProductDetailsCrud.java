@@ -119,7 +119,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
 
                                     if(productList != null && productList.size() > 0) {
                                         for(Product product: productList) {
-                                            appVendasProdutosCrudViewModel.delete(product);
+                                            appVendasProdutosCrudViewModel.toggleProductAvailability(product);
                                         }
                                         adapter.notifyDataSetChanged();
                                     }

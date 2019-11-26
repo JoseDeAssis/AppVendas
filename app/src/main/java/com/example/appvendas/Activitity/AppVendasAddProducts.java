@@ -45,11 +45,11 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     private static final int PRODUCT_GROUP_RESPONSE_CODE = 1002;
     private static final int PRODUCT_DESCRIPTION_RESULT_CODE = 1003;
     private Toolbar toolbar;
-    private TextInputEditText newProductTitle, newProductCode, newProductPrice;
+    private TextInputEditText newProductTitle, newProductPrice;
     private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
     private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup, newProductHot;
     private Bitmap photo = null;
-    private TextInputLayout productTitleTxtInputLayout, productCodeTxtInputLayout, productPriceTxtInputLayout;
+    private TextInputLayout productTitleTxtInputLayout, productPriceTxtInputLayout;
     private SwitchMaterial newProductHotSwitch;
     private ProductViewModel appVendasProdutosCrudViewModel;
     private ImageHandler imageHandler;
@@ -70,15 +70,11 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
         //Text input layout
         productTitleTxtInputLayout = findViewById(R.id.productTitleTxtInputLayout);
-        productCodeTxtInputLayout = findViewById(R.id.productCodeTxtInputLayout);
         productPriceTxtInputLayout = findViewById(R.id.productPriceTxtInputLayout);
 
         //Edit Text input
         newProductTitle = findViewById(R.id.productTitleEdtTxt);
         newProductTitle.addTextChangedListener(this);
-
-        newProductCode = findViewById(R.id.productCodeEdtTxt);
-        newProductCode.addTextChangedListener(this);
 
         newProductPrice = findViewById(R.id.productPriceEdtTxt);
         newProductPrice.addTextChangedListener(this);
@@ -131,11 +127,11 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                                     try {
                                         Product newProduct = new Product();
                                         newProduct.setProductName(newProductTitle.getText().toString());
-                                        newProduct.setProductCode(newProductCode.getText().toString());
                                         newProduct.setProductDescrition(newProductDescriptionTxt.getText().toString());
                                         newProduct.setProductGroup(newProductGroupTxt.getText().toString());
                                         newProduct.setProductPrice(Double.parseDouble(newProductPrice.getText().toString()));
                                         newProduct.setOnSaleProduct(newProductHotSwitch.isChecked() ? 1 : 0);
+                                        newProduct.setOnAvailableProduct(1);
 
                                         appVendasProdutosCrudViewModel.insert(newProduct);
 
@@ -230,13 +226,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
             productTitleTxtInputLayout.setError("Insira um título válido");
         }
 
-        if (newProductCode.getText().toString().trim().equals("")) {
-            if (!productCodeTxtInputLayout.isErrorEnabled()) {
-                productCodeTxtInputLayout.setErrorEnabled(true);
-            }
-            productCodeTxtInputLayout.setError("Insira um código válido");
-        }
-
         if (newProductPrice.getText().toString().trim().equals("")) {
             if (!productPriceTxtInputLayout.isErrorEnabled()) {
                 productPriceTxtInputLayout.setErrorEnabled(true);
@@ -251,7 +240,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
 
         if (newProductGroupTxt.getText().equals("Selecione uma categoria válida") ||
                 newProductPrice.getText().toString().equals("") ||
-                newProductCode.getText().toString().equals("") ||
                 newProductTitle.getText().toString().equals("")) {
             validate = false;
         }
@@ -317,11 +305,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
             productTitleTxtInputLayout.setErrorEnabled(false);
         }
 
-        if (!newProductCode.getText().toString().trim().equals("") &&
-                productCodeTxtInputLayout.isErrorEnabled()) {
-            productCodeTxtInputLayout.setErrorEnabled(false);
-        }
-
         if (!newProductPrice.getText().toString().trim().equals("") &&
                 productPriceTxtInputLayout.isErrorEnabled()) {
             productPriceTxtInputLayout.setErrorEnabled(false);
@@ -349,7 +332,6 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     public boolean onSupportNavigateUp() {
 
         if(newProductTitle.getText().toString().trim().equals("")
-            && newProductCode.getText().toString().trim().equals("")
             && newProductDescriptionTxt.getText().toString().equals("Descrição")
             && newProductPrice.getText().toString().trim().equals("")
             && newProductGroupTxt.getText().toString().equals("Categoria*")

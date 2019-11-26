@@ -61,4 +61,13 @@ public class ProductViewModel extends AndroidViewModel {
         productRepository.delete(product);
     }
 
+    public void toggleProductAvailability(Product product) {
+        if(product.getOnAvailableProduct() == 0)
+            product.setOnAvailableProduct(1);
+        else
+            product.setOnAvailableProduct(0);
+
+        productRepository.update(product);
+    }
+
 }
