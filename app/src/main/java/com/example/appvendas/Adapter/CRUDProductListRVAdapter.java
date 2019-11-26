@@ -19,6 +19,7 @@ import com.example.appvendas.Helpers.Interface.OnProductEditListener;
 import com.example.appvendas.R;
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,8 +149,26 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
             if(map.getValue())
                 return true;
         }
-
         return false;
+    }
+
+    public void deselectRecyclerView() {
+        for(Map.Entry<Product, Boolean> map: mapProductList.entrySet()) {
+            map.setValue(false);
+        }
+
+        notifyDataSetChanged();
+    }
+
+    public List<Product> selectedItemsRecyclerView() {
+        List<Product> productListReturn = new ArrayList<>();
+
+        for(Map.Entry<Product, Boolean> products: mapProductList.entrySet()) {
+            if(products.getValue())
+                productListReturn.add(products.getKey());
+        }
+
+        return productListReturn;
     }
 
     // getItemCount() is called many times, and when it is first called,

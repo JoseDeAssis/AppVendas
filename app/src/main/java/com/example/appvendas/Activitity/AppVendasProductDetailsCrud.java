@@ -13,21 +13,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.ActionMode;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
 import com.example.appvendas.Adapter.CRUDProductListRVAdapter;
-import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDeleteListener;
-import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnProductEditListener;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Helpers.Interface.EventListener;
@@ -37,6 +33,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppVendasProductDetailsCrud extends AppCompatActivity implements OnProductDeleteListener, OnProductEditListener {
@@ -92,9 +89,9 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.app_vendas_contextual_actionbar, menu);
+//            getMenuInflater().inflate(R.menu.app_vendas_contextual_actionbar, menu);
             Window window = getWindow();
             window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPurpleDark));
-
 
             return true;
         }
@@ -107,7 +104,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         }
 
         @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
 
             switch (menuItem.getItemId()) {
                 case R.id.delete_icon:
@@ -117,13 +114,22 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                             .setPositiveButton("Aceitar", /* listener = */ new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(AppVendasProductDetailsCrud.this, "Show de bola", Toast.LENGTH_SHORT).show();
+                                    List<Product> productList = new ArrayList<>();
+                                    productList = adapter.selectedItemsRecyclerView();
+
+                                    if(productList != null && productList.size() > 0) {
+                                        for(Product product: productList) {
+                                            appVendasProdutosCrudViewModel.delete(product);
+                                        }
+                                        adapter.notifyDataSetChanged();
+                                    }
+
+                                    actionMode.finish();
                                 }
                             })
                             .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Toast.makeText(AppVendasProductDetailsCrud.this, "Mó paia man", Toast.LENGTH_SHORT).show();
                                 }
                             }).show();
                     return true;
@@ -135,6 +141,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             mActionMode = null;
+            adapter.deselectRecyclerView();
             getWindow().setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimaryDark));
         }
     };
@@ -193,9 +200,8 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     @Override
     public boolean deleteProduct(final Product product) {
         adapter.toggleProduct(product);
-        mActionModeCallback.onDestroyActionMode(mActionMode);
-        if(adapter.isRecyclerViewSelected()){
-            mActionModeCallback.onDestroyActionMode(mActionMode);
+        if(!adapter.isRecyclerViewSelected()){
+            mActionMode.finish();
             return false;
         }
         if (mActionMode != null) {
@@ -211,8 +217,8 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     public void editProduct(final Product product) {
         if (mActionMode != null) {
             adapter.toggleProduct(product);
-            if(adapter.isRecyclerViewSelected()){
-                mActionModeCallback.onDestroyActionMode(mActionMode);
+            if(!adapter.isRecyclerViewSelected()){
+                mActionMode.finish();
             }
         } else {
             Intent intent = new Intent(this, AppVendasProductDetail.class);
