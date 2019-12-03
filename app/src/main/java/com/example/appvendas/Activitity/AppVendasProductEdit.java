@@ -26,8 +26,6 @@ import android.widget.Toast;
 
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
-import com.example.appvendas.Helpers.Interface.EventListener;
-import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 import com.google.android.material.card.MaterialCardView;
@@ -37,11 +35,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 
-public class AppVendasProductDetail extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+public class AppVendasProductEdit extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
@@ -137,14 +133,14 @@ public class AppVendasProductDetail extends AppCompatActivity implements View.On
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.productDescriptionCardView:
-                Intent productDescriptionIntent = new Intent(AppVendasProductDetail.this, AppVendasProductDescription.class);
+                Intent productDescriptionIntent = new Intent(AppVendasProductEdit.this, AppVendasProductDescription.class);
                 productDescriptionIntent.putExtra("productDescription", detailProductDescriptionTxt.getText().toString());
                 startActivityForResult(productDescriptionIntent, PRODUCT_DESCRIPTION_RESULT_CODE);
 
                 break;
 
             case R.id.productGroupCardView:
-                Intent productGroupIntent = new Intent(AppVendasProductDetail.this, AppVendasProductGroup.class);
+                Intent productGroupIntent = new Intent(AppVendasProductEdit.this, AppVendasProductGroup.class);
                 productGroupIntent.putExtra("groupSelected", detailProductGroupTxt.getText().toString());
                 startActivityForResult(productGroupIntent, PRODUCT_GROUP_RESPONSE_CODE);
 

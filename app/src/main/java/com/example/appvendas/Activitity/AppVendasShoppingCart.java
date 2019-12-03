@@ -3,7 +3,6 @@ package com.example.appvendas.Activitity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,27 +15,33 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.appvendas.Adapter.ShoppingCartRVAdapter;
+import com.example.appvendas.Entity.Item;
+import com.example.appvendas.Entity.Order;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.BottomSheet.ShoppingCartBSComprar;
 import com.example.appvendas.Helpers.Dialog.ShoppingCartQuantityDialog;
+import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnShoppingCartListener;
+import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
+import com.example.appvendas.Repository.ItemRepository;
+import com.example.appvendas.Repository.OrderRepository;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*TODO
-    implementar banco histórico + bottom sheet de envio da compra
-*/
 public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener,
         OnShoppingCartListener,
+        ShoppingCartBSComprar.BottomSheetListener,
         ShoppingCartQuantityDialog.shoppingCartQuantityDialogListener {
 
     private Toolbar carrinhoToolbar;
@@ -44,6 +49,8 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
     private HashMap<Long, Integer> productQuantities;
+    private HashMap<Long, Product> shoppingCartList;
+    private List<Item> itemList;
     private MaterialButton shoppingCartBuyButton, shoppingCartHomeButton;
     private MaterialTextView shoppingCartTotal;
     private MaterialCardView shoppingCartCardView, shoppingCartEmptyCartCardView;
@@ -60,7 +67,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.app_vendas_back_icon);
 
-        HashMap<Long, Product> shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
+        shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
 
         shoppingCartCardView = findViewById(R.id.shoppingCartCardView);
         shoppingCartEmptyCartCardView = findViewById(R.id.shoppingCartEmptyCartCardView);
@@ -92,6 +99,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
             public void onClick(View view) {
                 ShoppingCartBSComprar shoppingCartBSComprar = new ShoppingCartBSComprar();
                 shoppingCartBSComprar.show(getSupportFragmentManager(), "shoppingCartBSComprar");
+                sendOrder();
             }
         });
 
@@ -103,19 +111,22 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
             }
         });
 
-        if(shoppingCartList.size() == 0 || shoppingCartList == null) {
+        isShoppingCartEmpty();
+    }
+
+    public void isShoppingCartEmpty() {
+        if(shoppingCartViewModel.getShoppingCartList().size() == 0 || shoppingCartViewModel.getShoppingCartList() == null) {
             shoppingCartEmptyCartCardView.setVisibility(View.VISIBLE);
             shoppingCartCardView.setVisibility(View.GONE);
         } else {
             shoppingCartCardView.setVisibility(View.VISIBLE);
             shoppingCartEmptyCartCardView.setVisibility(View.GONE);
-
         }
     }
 
     @Override
     public void getProductDetails(Product product) {
-        Intent intent = new Intent(this, AppVendasProductDetail.class);
+        Intent intent = new Intent(this, AppVendasProductEdit.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
@@ -130,6 +141,7 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     public void deleteItem(Product product) {
         shoppingCartViewModel.deleteProductFromShoppingCart(product);
         shoppingCartAdapter.deleteProductFromShoppingCart(product);
+        isShoppingCartEmpty();
     }
 
     public List<Product> getShoppingCartProducts(HashMap<Long, Product> shoppingCartList) {
@@ -207,4 +219,52 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         shoppingCartAdapter.setProductQuantity(productId, quantity);
     }
 
+    public void sendOrder() {
+        Order order = createNewOrder();
+
+        OrderRepository orderRepository = new OrderRepository(getApplication());
+        orderRepository.insert(order);
+        getOrder();
+
+        final EventSingleton eventSingleton = EventSingleton.getInstance();
+
+        eventSingleton.registerEvent(new EventListener() {
+            @Override
+            public void done(Long aLong) {
+                ItemRepository itemRepository = new ItemRepository(getApplication());
+
+                for(Item item: itemList) {
+                    item.setOrderId(aLong);
+                    itemRepository.insert(item);
+                }
+            }
+        });
+
+        finish();
+    }
+
+    private List<Item> getOrder(){
+        itemList = new ArrayList<Item>();
+        for(Product product: shoppingCartViewModel.getShoppingCartList()){
+            Item item = new Item();
+            item.setProductId(product.getId());
+            item.setQuantity(productQuantities.get(product.getId()));
+            item.setItemPrice(product.getProductPrice());
+            itemList.add(item);
+        }
+        return itemList;
+    }
+
+    public Order createNewOrder() {
+        Order order = new Order();
+        Date currentTime = Calendar.getInstance().getTime();
+        order.setOrder_date(currentTime);
+
+        return order;
+    }
+
+    @Override
+    public void onBuyBtnClicked() {
+
+    }
 }

@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.appvendas.Activitity.AppVendasProductDetail;
+import com.example.appvendas.Activitity.AppVendasProductEdit;
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
@@ -51,7 +51,7 @@ public class AppVendasDestaquesTab extends Fragment implements OnProductDetailsL
 
     @Override
     public void getProductDetails(Product product) {
-        Intent intent = new Intent(getContext(), AppVendasProductDetail.class);
+        Intent intent = new Intent(getContext(), AppVendasProductEdit.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());

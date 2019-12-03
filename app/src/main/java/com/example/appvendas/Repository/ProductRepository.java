@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import com.example.appvendas.Dao.ProductDao;
 import com.example.appvendas.Entity.Product;
-import com.example.appvendas.Room.ProductRoomDatabase;
+import com.example.appvendas.Room.AppVendasRoomDatabase;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 
 import java.util.List;
@@ -15,14 +15,15 @@ import java.util.List;
 public class ProductRepository {
 
     private ProductDao productDao;
-    private LiveData<List<Product>> productList, hotProductList, allProductList;
+    private LiveData<List<Product>> productList, hotProductList, allProductList, availableProductList;
 
     public ProductRepository(Application application){
-        ProductRoomDatabase db = ProductRoomDatabase.getDataBase(application);
+        AppVendasRoomDatabase db = AppVendasRoomDatabase.getDataBase(application);
         productDao = db.produtoDao();
         allProductList = productDao.getAllAlphabetizedProducts();
         productList = productDao.getAlphabetizedProducts();
         hotProductList = productDao.getAlphabetizedHotProducts();
+        availableProductList = productDao.getAvailableProducts();
     }
 
     public LiveData<List<Product>> getAllProducts() {
@@ -35,6 +36,10 @@ public class ProductRepository {
 
     public LiveData<List<Product>> getProducts() {
         return productList;
+    }
+
+    public LiveData<List<Product>> getAvailableProducts() {
+        return availableProductList;
     }
 
     public void insert (Product product) {

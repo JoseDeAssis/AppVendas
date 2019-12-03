@@ -48,4 +48,8 @@
     <string name="whatsapp">WhatsApp</string>
     <string name="gmail">Gmail</string>
     <string name="bottom_sheet_title">compartilhar por:</string>
+
+    <!-- Recycler View Orders -->
+    <string name="product_name">Product</string>
+    <string name="order_date">Date</string>
 </resources>

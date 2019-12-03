@@ -24,13 +24,16 @@ public interface ProductDao {
     @Update
     int updateProduct(Product produto);
 
-    @Query("SELECT * from product_table ORDER BY product_id ASC")
+    @Query("SELECT * from product_table ORDER BY product_availability DESC")
     LiveData<List<Product>> getAllAlphabetizedProducts();
 
-    @Query("SELECT * from product_table where product_on_sale == 0 ORDER BY product_id ASC")
+    @Query("SELECT * from product_table where product_on_sale == 0 ORDER BY product_availability DESC")
     LiveData<List<Product>> getAlphabetizedProducts();
 
-    @Query(("SELECT * from product_table where product_on_sale == 1 ORDER BY product_id ASC"))
+    @Query("SELECT * from product_table where product_on_sale == 1 ORDER BY product_availability DESC")
     LiveData<List<Product>> getAlphabetizedHotProducts();
+
+    @Query("SELECT * from product_table where product_availability == 1 ORDER BY product_id ASC")
+    LiveData<List<Product>> getAvailableProducts();
 
 }

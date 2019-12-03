@@ -1,6 +1,7 @@
 package com.example.appvendas.Adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,23 +87,29 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
     @Override
     public void onBindViewHolder(ProductListRVViewHolder holder, int position) {
         if (productList != null) {
+            Product current = productList.get(position);
+            RoundedBitmapDrawable picture = null;
+
+            holder.primaryTextView.setText(current.getProductName());
+
             if (productList.get(position).getOnAvailableProduct() == 1) {
-                Product current = productList.get(position);
-                RoundedBitmapDrawable picture = null;
-
-                holder.primaryTextView.setText(current.getProductName());
                 holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
-
-                try {
-                    picture = imageHandler.getRoundPicture(current.getId());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if (picture != null) {
-                    holder.imageView.setImageDrawable(picture);
-                }
+            } else {
+                holder.priceTextView.setText("Não disponível.");
+                holder.priceTextView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
+                holder.checkBox.setVisibility(View.GONE);
             }
+
+            try {
+                picture = imageHandler.getRoundPicture(current.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (picture != null) {
+                holder.imageView.setImageDrawable(picture);
+            }
+
         } else {
             // Covers the case of data not being ready yet.
             holder.primaryTextView.setText("Não há produtos registrados");

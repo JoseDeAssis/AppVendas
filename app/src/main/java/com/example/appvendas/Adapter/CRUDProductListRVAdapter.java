@@ -12,6 +12,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Entity.Item;
+import com.example.appvendas.Entity.OrderWithItems;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDeleteListener;
@@ -21,6 +23,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +31,7 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
 
     private final LayoutInflater mInflater;
     private List<Product> productList;
+    private LinkedHashMap<OrderWithItems, List<Product>> orderMap;
     private HashMap<Product, Boolean> mapProductList;
     private Context context;
     private ImageHandler imageHandler;

@@ -77,7 +77,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         appVendasProdutosCrudRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         appVendasProdutosCrudViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
-        appVendasProdutosCrudViewModel.getAllProducts().observe(this, new Observer<List<Product>>() {
+        appVendasProdutosCrudViewModel.getAvailableProducts().observe(this, new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
                 adapter.setProducts(products);
@@ -221,7 +221,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                 mActionMode.finish();
             }
         } else {
-            Intent intent = new Intent(this, AppVendasProductDetail.class);
+            Intent intent = new Intent(this, AppVendasProductEdit.class);
             intent.putExtra("productName", product.getProductName());
             intent.putExtra("productDescription", product.getProductDescrition());
             intent.putExtra("productId", product.getId());
