@@ -120,7 +120,7 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
 
             if (mapProductList.get(productList.get(position))) {
                 holder.crudRVProductCheckedCardView.setVisibility(View.VISIBLE);
-                holder.crudConstraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.backgroudSelectedGray));
+                holder.crudConstraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.backgroundSelectedGray));
             } else {
                 holder.crudRVProductCheckedCardView.setVisibility(View.GONE);
                 holder.crudConstraintLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white));

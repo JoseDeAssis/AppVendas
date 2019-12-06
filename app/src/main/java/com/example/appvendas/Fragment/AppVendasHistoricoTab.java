@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.appvendas.Adapter.OrderListRVAdapter;
 import com.example.appvendas.Entity.ItemWithOrder;
 import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Helpers.Interface.OnOrderDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.R;
 import com.example.appvendas.Repository.ItemWithOrderRepository;
@@ -21,7 +22,7 @@ import com.example.appvendas.Repository.ProductRepository;
 
 import java.util.List;
 
-public class AppVendasHistoricoTab extends Fragment implements OnProductDetailsListener {
+public class AppVendasHistoricoTab extends Fragment implements OnOrderDetailsListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,7 +51,7 @@ public class AppVendasHistoricoTab extends Fragment implements OnProductDetailsL
     }
 
     @Override
-    public void getProductDetails(Product product) {
+    public void getOrderDetails(ItemWithOrder itemWithOrder) {
 
     }
 }

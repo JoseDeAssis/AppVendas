@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">AppVendas</string>
+    <string name="product_unavailable">Indisponível no momento</string>
 
     <!--  Menu  -->
     <string name="search_icon">Search</string>
@@ -7,6 +8,7 @@
     <string name="confirm_icon">Confirm Button</string>
     <string name="back_icon">Back Button</string>
     <string name="delete_icon">Delete Button</string>
+    <string name="share_icon">Share Button</string>
 
     <!-- Popup Menu ShoppingCart-->
     <string name="unity1">1 unidade</string>
@@ -52,4 +54,9 @@
     <!-- Recycler View Orders -->
     <string name="product_name">Product</string>
     <string name="order_date">Date</string>
+
+    <!--  Product details  -->
+    <string name="buy_btn">Comprar</string>
+    <string name="notify_btn">Notificar quando disponível</string>
+
 </resources>

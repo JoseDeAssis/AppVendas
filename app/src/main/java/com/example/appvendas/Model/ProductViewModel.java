@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Repository.ProductRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class ProductViewModel extends AndroidViewModel {
     private ProductRepository productRepository;
     private LiveData<List<Product>> productList, hotProductList, allProductList, availableProductList;
     private HashMap<Long, Product> shoppingCartList;
+    private ArrayList<Long> productsList = new ArrayList<>();
 
     public ProductViewModel(Application application) {
         super(application);
@@ -47,11 +49,18 @@ public class ProductViewModel extends AndroidViewModel {
         return shoppingCartList;
     }
 
+    public ArrayList<Long> getProductsList() {
+        return productsList;
+    }
+
     public void addProductToShoppingCart(Product product, boolean isChecked) {
-        if(isChecked)
+        if(isChecked) {
             shoppingCartList.put(product.getId(), product);
-        else
+            productsList.add(product.getId());
+        } else {
             shoppingCartList.remove(product.getId());
+            productsList.remove(product.getId());
+        }
     }
 
     public void insert(Product product) {

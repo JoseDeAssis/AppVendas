@@ -9,5 +9,5 @@
     <color name="colorPurple">#4a148c</color>
     <color name="colorPurpleDark">#12005e</color>
     <color name="backgroundGray">#E0E0E0</color>
-    <color name="backgroudSelectedGray">#F0F0F0</color>
+    <color name="backgroundSelectedGray">#F0F0F0</color>
 </resources>

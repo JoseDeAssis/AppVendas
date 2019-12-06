@@ -15,7 +15,7 @@ import java.util.List;
 public class ProductRepository {
 
     private ProductDao productDao;
-    private LiveData<List<Product>> productList, hotProductList, allProductList, availableProductList;
+    private LiveData<List<Product>> productList, hotProductList, allProductList, availableProductList, productsByIdList;
 
     public ProductRepository(Application application){
         AppVendasRoomDatabase db = AppVendasRoomDatabase.getDataBase(application);
@@ -40,6 +40,10 @@ public class ProductRepository {
 
     public LiveData<List<Product>> getAvailableProducts() {
         return availableProductList;
+    }
+
+    public LiveData<List<Product>> getProductsById(List<Long> listId) {
+        return productDao.getProductsById(listId);
     }
 
     public void insert (Product product) {

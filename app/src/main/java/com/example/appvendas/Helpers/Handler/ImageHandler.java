@@ -32,12 +32,8 @@ public class ImageHandler {
 
     public Bitmap getProductPic (Long id){
         Bitmap photo, photoAux;
-        File picture = new File (context.getFilesDir(), id.toString());
-        if (picture.exists()){
-            photoAux = BitmapFactory.decodeFile(picture.toString());
-        } else {
-            photoAux = BitmapFactory.decodeResource(context.getResources(), R.drawable.no_image_picture);
-        }
+        photoAux = getPhoto(id);
+
         photo = Bitmap.createBitmap(
                 photoAux,
                 0,
@@ -45,6 +41,17 @@ public class ImageHandler {
                 photoAux.getWidth(),
                 photoAux.getWidth()
         );
+        return photo;
+    }
+
+    public Bitmap getPhoto (Long id){
+        Bitmap photo;
+        File picture = new File (context.getFilesDir(), id.toString());
+        if (picture.exists()){
+            photo = BitmapFactory.decodeFile(picture.toString());
+        } else {
+            photo = BitmapFactory.decodeResource(context.getResources(), R.drawable.no_image_picture);
+        }
         return photo;
     }
 

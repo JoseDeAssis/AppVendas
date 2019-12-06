@@ -59,6 +59,7 @@ public class AppVendasMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AppVendasMainActivity.this, AppVendasShoppingCart.class);
                 intent.putExtra("shoppingCartList", appVendasProductViewModel.getShoppingCartList());
+                intent.putExtra("shoppingCartListProducts", appVendasProductViewModel.getProductsList());
                 startActivityForResult(intent, SHOPPING_CART_RESULT_CODE);
             }
         });

@@ -17,6 +17,7 @@ import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.Helpers.Interface.OnProductIsCheckedListener;
 import com.example.appvendas.R;
+import com.google.android.material.card.MaterialCardView;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,7 +33,7 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
 
     public class ProductListRVViewHolder extends RecyclerView.ViewHolder {
 
-
+        private final MaterialCardView productListCardView;
         private final TextView primaryTextView, priceTextView;
         private final ImageView imageView;
         private final CheckBox checkBox;
@@ -43,6 +44,7 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
                                         final OnProductDetailsListener onProductDetailsListener,
                                         final OnProductIsCheckedListener onProductIsCheckedListener) {
             super(itemView);
+            productListCardView = itemView.findViewById(R.id.productListCardView);
             primaryTextView = itemView.findViewById(R.id.recyclerViewPrimaryTxtView);
             priceTextView = itemView.findViewById(R.id.recyclerViewPriceTxtView);
             imageView = itemView.findViewById(R.id.recyclerViewImg);
@@ -59,7 +61,7 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
 
             this.onProductDetailsListener = onProductDetailsListener;
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            productListCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     onProductDetailsListener.getProductDetails(productList.get(getAdapterPosition()));

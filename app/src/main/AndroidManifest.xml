@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activitity.AppVendasProductEdit"></activity>
+        <activity android:name=".Activitity.AppVendasOrderDetailsActivity" />
+        <activity android:name=".Activitity.AppVendasProductEdit" />
         <activity android:name=".Activitity.AppVendasMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,8 +40,11 @@
             android:name=".Activitity.AppVendasProductDescription"
             android:parentActivityName=".Activitity.AppVendasAddProducts" />
         <activity
-            android:theme="@style/ToolBarStyle"
             android:name=".Activitity.AppVendasProductDetailsCrud"
+            android:parentActivityName=".Activitity.AppVendasMainActivity"
+            android:theme="@style/ToolBarStyle" />
+        <activity
+            android:name=".Activitity.AppVendasProductDetailsActivity"
             android:parentActivityName=".Activitity.AppVendasMainActivity" />
     </application>
 

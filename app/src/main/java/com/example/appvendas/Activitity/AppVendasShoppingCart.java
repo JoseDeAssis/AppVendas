@@ -3,6 +3,7 @@ package com.example.appvendas.Activitity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,7 @@ import com.example.appvendas.Model.ShoppingCartViewModel;
 import com.example.appvendas.R;
 import com.example.appvendas.Repository.ItemRepository;
 import com.example.appvendas.Repository.OrderRepository;
+import com.example.appvendas.Repository.ProductRepository;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
@@ -46,6 +48,8 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     private Toolbar carrinhoToolbar;
     private RecyclerView shoppingCartRecyclerView;
+    private List<Product> productList;
+    private ProductRepository productRepository;
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
     private HashMap<Long, Integer> productQuantities;
@@ -79,19 +83,28 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         shoppingCartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         shoppingCartViewModel = ViewModelProviders.of(this).get(ShoppingCartViewModel.class);
-        shoppingCartViewModel.setShoppingCartList(getShoppingCartProducts(shoppingCartList));
-        shoppingCartAdapter.setShoppingCartProducts(getShoppingCartProducts(shoppingCartList));
+//        shoppingCartViewModel.setShoppingCartList(getShoppingCartProducts(shoppingCartList));
+//        shoppingCartAdapter.setShoppingCartProducts(getShoppingCartProducts(shoppingCartList));
 
-        productQuantities = shoppingCartViewModel.getProductsQuantities();
-        if(productQuantities == null || productQuantities.size() == 0) {
-            productQuantities = shoppingCartViewModel.initializeQuantities();
-        }
+        productRepository = new ProductRepository(getApplication());
+        productRepository.getProductsById((ArrayList<Long>) getIntent().getSerializableExtra("shoppingCartListProducts")).observe(this, new Observer<List<Product>>() {
+            @Override
+            public void onChanged(List<Product> products) {
+                shoppingCartViewModel.setShoppingCartList(products);
+                shoppingCartAdapter.setShoppingCartProducts(products);
 
-        shoppingCartAdapter.setProductsQuantities(productQuantities);
-        shoppingCartAdapter.setShoppingCartProducts(mapToList(shoppingCartList));
+                productQuantities = shoppingCartViewModel.getProductsQuantities();
+                if(productQuantities == null || productQuantities.size() == 0) {
+                    productQuantities = shoppingCartViewModel.initializeQuantities();
+                }
+
+                shoppingCartAdapter.setProductsQuantities(productQuantities);
+                modifyTotalPrice();
+                isShoppingCartEmpty();
+            }
+        });
 
         shoppingCartTotal = findViewById(R.id.shoppingCartTotalPriceTxt);
-        this.modifyTotalPrice();
 
         shoppingCartBuyButton = findViewById(R.id.shoppingCartBuyBtn);
         shoppingCartBuyButton.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +124,6 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
             }
         });
 
-        isShoppingCartEmpty();
     }
 
     public void isShoppingCartEmpty() {
@@ -126,13 +138,15 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     @Override
     public void getProductDetails(Product product) {
-        Intent intent = new Intent(this, AppVendasProductEdit.class);
+        Intent intent = new Intent(this, AppVendasProductDetailsActivity.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
         intent.putExtra("productPrice", product.getProductPrice());
         intent.putExtra("productGroup", product.getProductGroup());
         intent.putExtra("productOnSale", product.getOnSaleProduct());
+        intent.putExtra("isProductAvailable", product.getOnAvailableProduct());
+        intent.putExtra("parentName", this.getClass().toString());
 
         startActivityForResult(intent, PRODUCT_DETAIL_RESULT_CODE);
     }

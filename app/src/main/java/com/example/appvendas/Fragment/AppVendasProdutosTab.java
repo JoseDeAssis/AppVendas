@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasProductDetailsActivity;
 import com.example.appvendas.Activitity.AppVendasProductEdit;
 import com.example.appvendas.Adapter.ProductListRVAdapter;
 import com.example.appvendas.Entity.Product;
@@ -51,13 +52,15 @@ public class AppVendasProdutosTab extends Fragment implements OnProductDetailsLi
 
     @Override
     public void getProductDetails(Product product) {
-        Intent intent = new Intent(getContext(), AppVendasProductEdit.class);
+        Intent intent = new Intent(getContext(), AppVendasProductDetailsActivity.class);
         intent.putExtra("productName", product.getProductName());
         intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
         intent.putExtra("productPrice", product.getProductPrice());
         intent.putExtra("productGroup", product.getProductGroup());
         intent.putExtra("productOnSale", product.getOnSaleProduct());
+        intent.putExtra("isProductAvailable", product.getOnAvailableProduct());
+        intent.putExtra("parentName", this.getClass().toString());
 
         startActivityForResult(intent, PRODUCT_DETAIL_RESULT_CODE);
     }

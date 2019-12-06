@@ -36,4 +36,7 @@ public interface ProductDao {
     @Query("SELECT * from product_table where product_availability == 1 ORDER BY product_id ASC")
     LiveData<List<Product>> getAvailableProducts();
 
+    @Query("SELECT * from product_table where product_id in (:listId) ORDER BY product_id ASC")
+    LiveData<List<Product>> getProductsById(List<Long> listId);
+
 }
