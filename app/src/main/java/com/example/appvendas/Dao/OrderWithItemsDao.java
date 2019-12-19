@@ -16,4 +16,8 @@ public interface OrderWithItemsDao {
     @Query("SELECT * FROM order_table ORDER BY order_date DESC")
     LiveData<List<OrderWithItems>> getOrderSummary();
 
+    @Transaction
+    @Query("SELECT * FROM order_table WHERE order_id == :id")
+    LiveData<OrderWithItems> getOrderSummaryById(Long id);
+
 }

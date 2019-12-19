@@ -23,4 +23,8 @@ public class OrderWithItemsRepository {
         return orderWithItemsDao.getOrderSummary();
     }
 
+    public LiveData<OrderWithItems> getOrderSummaryById(Long id) {
+        return orderWithItemsDao.getOrderSummaryById(id);
+    }
+
 }

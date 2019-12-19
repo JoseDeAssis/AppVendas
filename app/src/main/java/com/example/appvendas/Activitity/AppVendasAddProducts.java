@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,16 +39,17 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.io.IOException;
+
 public class AppVendasAddProducts extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
     private static final int PRODUCT_GROUP_RESPONSE_CODE = 1002;
     private static final int PRODUCT_DESCRIPTION_RESULT_CODE = 1003;
-    private Toolbar toolbar;
+    private long mLastClickTime = 0;
     private TextInputEditText newProductTitle, newProductPrice;
     private MaterialTextView newProductDescriptionTxt, newProductGroupTxt;
-    private MaterialCardView newProductImageCardView, newProductDescription, newProductGroup, newProductHot;
+    private MaterialCardView newProductImageCardView;
     private Bitmap photo = null;
     private TextInputLayout productTitleTxtInputLayout, productPriceTxtInputLayout;
     private SwitchMaterial newProductHotSwitch;
@@ -63,7 +65,7 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         imageHandler = new ImageHandler(getApplicationContext());
 
         //Toolbar
-        toolbar = findViewById(R.id.myToolbar);
+        Toolbar toolbar = findViewById(R.id.myToolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Adicionar Produto");
@@ -80,13 +82,13 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
         newProductPrice.addTextChangedListener(this);
 
         //Card view
-        newProductDescription = findViewById(R.id.productDescriptionCardView);
+        MaterialCardView newProductDescription = findViewById(R.id.productDescriptionCardView);
         newProductDescription.setOnClickListener(this);
 
-        newProductGroup = findViewById(R.id.productGroupCardView);
+        MaterialCardView newProductGroup = findViewById(R.id.productGroupCardView);
         newProductGroup.setOnClickListener(this);
 
-        newProductHot = findViewById(R.id.productHotCardView);
+        MaterialCardView newProductHot = findViewById(R.id.productHotCardView);
         newProductHot.setOnClickListener(this);
 
         newProductImageCardView = findViewById(R.id.productImageCardView);
@@ -114,46 +116,44 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.confirmIcon:
-                if (validadeFields()) {
-                    new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
-                            .setTitle("Salvar produto?")
-                            .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
-                            .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent();
-                                    try {
-                                        Product newProduct = new Product();
-                                        newProduct.setProductName(newProductTitle.getText().toString());
-                                        newProduct.setProductDescrition(newProductDescriptionTxt.getText().toString());
-                                        newProduct.setProductGroup(newProductGroupTxt.getText().toString());
-                                        newProduct.setProductPrice(Double.parseDouble(newProductPrice.getText().toString()));
-                                        newProduct.setOnSaleProduct(newProductHotSwitch.isChecked() ? 1 : 0);
-                                        newProduct.setOnAvailableProduct(1);
+        if (item.getItemId() == R.id.confirmIcon) {
+            if (validadeFields()) {
+                new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
+                        .setTitle("Salvar produto?")
+                        .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
+                        .setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent();
+                                try {
+                                    Product newProduct = new Product();
+                                    newProduct.setProductName(newProductTitle.getText().toString());
+                                    newProduct.setProductDescrition(newProductDescriptionTxt.getText().toString());
+                                    newProduct.setProductGroup(newProductGroupTxt.getText().toString());
+                                    newProduct.setProductPrice(Double.parseDouble(newProductPrice.getText().toString()));
+                                    newProduct.setOnSaleProduct(newProductHotSwitch.isChecked() ? 1 : 0);
+                                    newProduct.setOnAvailableProduct(1);
 
-                                        appVendasProdutosCrudViewModel.insert(newProduct);
+                                    appVendasProdutosCrudViewModel.insert(newProduct);
 
-                                        if (photo != null) {
-                                            createDirectoryAndSaveFile();
-                                        }
-                                        setResult(RESULT_OK, intent);
-                                    } catch(Exception e) {
-                                        intent.putExtra("erro", e.getMessage());
-                                        setResult(RESULT_CANCELED, intent);
+                                    if (photo != null) {
+                                        createDirectoryAndSaveFile();
                                     }
+                                    setResult(RESULT_OK, intent);
+                                } catch (Exception e) {
+                                    intent.putExtra("erro", e.getMessage());
+                                    setResult(RESULT_CANCELED, intent);
+                                }
 
-                                    finish();
-                                }
-                            })
-                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).show();
-                }
-                break;
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -204,14 +204,12 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case PERMISSION_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openCamera();
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -250,6 +248,11 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
 
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         switch (v.getId()) {
             case R.id.productDescriptionCardView:
                 Intent productDescriptionIntent = new Intent(AppVendasAddProducts.this, AppVendasProductDescription.class);
@@ -284,8 +287,8 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
                 }
 
                 break;
-        }
 
+        }
     }
 
     @Override
@@ -331,12 +334,12 @@ public class AppVendasAddProducts extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onSupportNavigateUp() {
 
-        if(newProductTitle.getText().toString().trim().equals("")
-            && newProductDescriptionTxt.getText().toString().equals("Descrição")
-            && newProductPrice.getText().toString().trim().equals("")
-            && newProductGroupTxt.getText().toString().equals("Categoria*")
-            && !newProductHotSwitch.isChecked()
-            && photo == null) {
+        if (newProductTitle.getText().toString().trim().equals("")
+                && newProductDescriptionTxt.getText().toString().equals("Descrição")
+                && newProductPrice.getText().toString().trim().equals("")
+                && newProductGroupTxt.getText().toString().equals("Categoria*")
+                && !newProductHotSwitch.isChecked()
+                && photo == null) {
             setResult(RESULT_CANCELED);
             finish();
         } else {

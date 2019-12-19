@@ -39,4 +39,10 @@ public interface ProductDao {
     @Query("SELECT * from product_table where product_id in (:listId) ORDER BY product_id ASC")
     LiveData<List<Product>> getProductsById(List<Long> listId);
 
+    @Query("SELECT * from product_table where product_id == :id ORDER BY product_id ASC")
+    LiveData<Product> getProduct(Long id);
+
+    @Query("SELECT * FROM product_table WHERE product_name OR product_group OR product_description LIKE :word ORDER BY product_on_sale DESC")
+    LiveData<List<Product>> getProductFiltered(String word);
+
 }

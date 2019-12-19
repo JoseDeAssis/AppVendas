@@ -10,7 +10,7 @@ import static androidx.room.ForeignKey.SET_DEFAULT;
 
 @Entity(tableName = "item_table",
         primaryKeys = {"order_id", "product_id"},
-        foreignKeys = { @ForeignKey(entity = Order.class,
+        foreignKeys = {@ForeignKey(entity = Order.class,
                 parentColumns = "order_id",
                 childColumns = "order_id",
                 onDelete = CASCADE),

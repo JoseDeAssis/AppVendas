@@ -28,8 +28,6 @@ import java.util.List;
 
 public class AppVendasProductGroup extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private RecyclerView productGroupRecyclerView;
     private ProductGroupViewModel productGroupViewModel;
     private ProductGroupListRVAdapter adapter;
 
@@ -38,7 +36,7 @@ public class AppVendasProductGroup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_vendas_product_group);
 
-        toolbar = findViewById(R.id.myToolbar);
+        Toolbar toolbar = findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
         getSupportActionBar().setTitle("Selecione a categoria");
@@ -51,7 +49,7 @@ public class AppVendasProductGroup extends AppCompatActivity {
 
         String groupSelected = getIntent().getExtras().getString("groupSelected");
 
-        productGroupRecyclerView = findViewById(R.id.productGroupRecyclerView);
+        RecyclerView productGroupRecyclerView = findViewById(R.id.productGroupRecyclerView);
         adapter = new ProductGroupListRVAdapter(this);
 
         productGroupRecyclerView.setAdapter(adapter);

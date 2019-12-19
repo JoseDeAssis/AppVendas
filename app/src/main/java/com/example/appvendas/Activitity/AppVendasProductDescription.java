@@ -25,7 +25,6 @@ import com.google.android.material.textview.MaterialTextView;
 
 public class AppVendasProductDescription extends AppCompatActivity implements TextWatcher {
 
-    private Toolbar productDescriptionToolbar;
     private TextInputEditText productDescriptionTxtView;
     private Menu menu;
     private String productDescription;
@@ -37,7 +36,7 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
 
         productDescription = getIntent().getStringExtra("productDescription");
 
-        productDescriptionToolbar = findViewById(R.id.myToolbar);
+        Toolbar productDescriptionToolbar = findViewById(R.id.myToolbar);
         productDescriptionToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
 
         setSupportActionBar(productDescriptionToolbar);
@@ -57,7 +56,7 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
         getMenuInflater().inflate(R.menu.app_vendas_confirm_menu, menu);
-        if(productDescription.equals("Descrição")) {
+        if (productDescription.equals("Descrição")) {
             menu.getItem(0).setEnabled(false);
             menu.getItem(0).setIcon(R.drawable.app_vendas_confirm_icon_disabled);
         }
@@ -67,13 +66,11 @@ public class AppVendasProductDescription extends AppCompatActivity implements Te
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.confirmIcon:
-                Intent intent = new Intent();
-                intent.putExtra("productDescription", productDescriptionTxtView.getText().toString());
-                setResult(RESULT_OK, intent);
-                finish();
-                break;
+        if (item.getItemId() == R.id.confirmIcon) {
+            Intent intent = new Intent();
+            intent.putExtra("productDescription", productDescriptionTxtView.getText().toString());
+            setResult(RESULT_OK, intent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

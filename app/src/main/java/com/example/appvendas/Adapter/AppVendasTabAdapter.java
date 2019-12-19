@@ -3,7 +3,9 @@ package com.example.appvendas.Adapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
+import com.example.appvendas.Activitity.AppVendasMainActivity;
 import com.example.appvendas.Fragment.AppVendasDestaquesTab;
 import com.example.appvendas.Fragment.AppVendasHistoricoTab;
 import com.example.appvendas.Fragment.AppVendasProdutosTab;

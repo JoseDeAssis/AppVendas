@@ -7,13 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appvendas.Entity.ProductGroup;
 import com.example.appvendas.R;
-import com.google.android.material.card.MaterialCardView;
-
-import java.util.List;
 
 public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroupListRVAdapter.ProductGroupListRVViewHolder> {
 
@@ -33,11 +31,10 @@ public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroup
 
         private final TextView textView;
         private final ImageView productGroupImageView, selectedImageView;
-        private final MaterialCardView productGroupCardView;
 
         private ProductGroupListRVViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
-            productGroupCardView = itemView.findViewById(R.id.productGroupRVCardView);
+//            MaterialCardView productGroupCardView = itemView.findViewById(R.id.productGroupRVCardView);
             textView = itemView.findViewById(R.id.productGroupRVTextView);
             productGroupImageView = itemView.findViewById(R.id.productGroupRVImgView);
             selectedImageView = itemView.findViewById(R.id.productGroupRVSelectedImgView);
@@ -62,13 +59,13 @@ public class ProductGroupListRVAdapter extends RecyclerView.Adapter<ProductGroup
     }
 
     @Override
-    public ProductGroupListRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProductGroupListRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_product_group_list, parent, false);
         return new ProductGroupListRVAdapter.ProductGroupListRVViewHolder(itemView, mListener);
     }
 
     @Override
-    public void onBindViewHolder(ProductGroupListRVViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProductGroupListRVViewHolder holder, int position) {
         if (productGroupList != null) {
             ProductGroup current = productGroupList[position];
             holder.textView.setText(current.getGroupName());

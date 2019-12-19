@@ -1,6 +1,8 @@
 package com.example.appvendas.Model;
 
 import android.app.Application;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -45,6 +47,10 @@ public class ProductViewModel extends AndroidViewModel {
         return hotProductList;
     }
 
+    public LiveData<List<Product>> getProductFiltered(String word) {
+        return productRepository.getProductFiltered(word);
+    }
+
     public HashMap<Long, Product> getShoppingCartList() {
         return shoppingCartList;
     }
@@ -83,5 +89,4 @@ public class ProductViewModel extends AndroidViewModel {
 
         productRepository.update(product);
     }
-
 }

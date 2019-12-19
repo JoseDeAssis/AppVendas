@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 
 import com.example.appvendas.Dao.OrderWithItemsAndProductsDao;
+import com.example.appvendas.Entity.ItemWithProducts;
 import com.example.appvendas.Entity.OrderWithItemsAndProducts;
 import com.example.appvendas.Room.AppVendasRoomDatabase;
 
@@ -21,5 +22,9 @@ public class OrderWithItemsAndProductsRepository {
 
     public LiveData<List<OrderWithItemsAndProducts>> getOrderItems(){
         return orderWithItemsAndProductsDao.getAllOrderWithItems();
+    }
+
+    public LiveData<OrderWithItemsAndProducts> getItemSummaryByOrderId(Long orderId) {
+        return orderWithItemsAndProductsDao.getItemSummaryByOrderId(orderId);
     }
 }

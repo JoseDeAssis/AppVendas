@@ -24,7 +24,6 @@ import java.util.List;
 
 public class AppVendasDestaquesTab extends Fragment implements OnProductDetailsListener, OnProductIsCheckedListener {
 
-    private RecyclerView appVendasProdutosRecyclerView;
     private ProductViewModel appVendasProdutosViewModel;
     private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
 
@@ -32,7 +31,7 @@ public class AppVendasDestaquesTab extends Fragment implements OnProductDetailsL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_produtos_tab, container, false);
 
-        appVendasProdutosRecyclerView = view.findViewById(R.id.produtosTabRecyclerView);
+        RecyclerView appVendasProdutosRecyclerView = view.findViewById(R.id.produtosTabRecyclerView);
         final ProductListRVAdapter adapter = new ProductListRVAdapter(getContext(), this, this);
 
         appVendasProdutosRecyclerView.setAdapter(adapter);
@@ -52,13 +51,7 @@ public class AppVendasDestaquesTab extends Fragment implements OnProductDetailsL
     @Override
     public void getProductDetails(Product product) {
         Intent intent = new Intent(getContext(), AppVendasProductDetailsActivity.class);
-        intent.putExtra("productName", product.getProductName());
-        intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
-        intent.putExtra("productPrice", product.getProductPrice());
-        intent.putExtra("productGroup", product.getProductGroup());
-        intent.putExtra("productOnSale", product.getOnSaleProduct());
-        intent.putExtra("isProductAvailable", product.getOnAvailableProduct());
         intent.putExtra("parentName", this.getClass().toString());
 
         startActivityForResult(intent, PRODUCT_DETAIL_RESULT_CODE);

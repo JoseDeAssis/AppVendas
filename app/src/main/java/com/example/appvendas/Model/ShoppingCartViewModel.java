@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 
 import com.example.appvendas.Entity.Product;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,5 +65,26 @@ public class ShoppingCartViewModel extends AndroidViewModel {
 
     public void deleteProductFromShoppingCart(Product product) {
         this.shoppingCartList.remove(product);
+    }
+
+    public String getProductsDetails() {
+        String detailsReturn = "------------------- NOTA FISCAL -------------------\n";
+        double totalOrder = 0.0;
+        DecimalFormat df = new DecimalFormat("#.00");
+
+        for(Product product : shoppingCartList) {
+            double productPrice = product.getProductPrice();
+            String textProductPrice = "R$ " + df.format(productPrice);
+            totalOrder = totalOrder + productPrice * productsQuantities.get(product.getId());
+            String productDetail = "Descrição: " + product.getProductDescrition() + "\n"
+                                + "Preço: " + textProductPrice + "\n" + "Quantidade: "
+                                + productsQuantities.get(product.getId()) + "\n\n----------------------------------------------------------------\n\n";
+            detailsReturn = detailsReturn + productDetail;
+        }
+
+        String totalOrderText = "Total: R$ " + df.format(totalOrder);
+        detailsReturn = detailsReturn + totalOrderText;
+
+        return detailsReturn;
     }
 }

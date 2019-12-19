@@ -2,14 +2,16 @@ package com.example.appvendas.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.appvendas.Entity.Item;
+import com.example.appvendas.Activitity.AppVendasMainActivity;
 import com.example.appvendas.Entity.ItemWithOrder;
 import com.example.appvendas.Entity.Order;
 import com.example.appvendas.Entity.Product;
@@ -28,30 +30,33 @@ public class OrderListRVAdapter extends RecyclerView.Adapter<OrderListRVAdapter.
     private final LayoutInflater mLayoutInflater;
     private OnOrderDetailsListener onOrderDetailsListener;
     private List<ItemWithOrder> itemsList;
-    private  ImageHandler imageHandler;
+    private ImageHandler imageHandler;
+    private long mLastClickTime = 0;
 
 
     public class OrderListRVViewHolder extends RecyclerView.ViewHolder {
 
-        private final MaterialCardView orderCardView;
         private final MaterialTextView orderProductNameTextView, orderDateTextView;
         private final ImageView orderProductImg;
-        private OnOrderDetailsListener onOrderDetailsListener;
 
-        public OrderListRVViewHolder(View itemView, final OnOrderDetailsListener onOrderDetailsListener) {
+        private OrderListRVViewHolder(View itemView, final OnOrderDetailsListener onOrderDetailsListener) {
             super(itemView);
 
-            orderCardView = itemView.findViewById(R.id.orderProductCardView);
+//            final MaterialCardView orderCardView = itemView.findViewById(R.id.orderProductCardView);
+            final MaterialCardView moreOptionsOrderCardView = itemView.findViewById(R.id.moreOptionsOrderCardView);
             orderProductNameTextView = itemView.findViewById(R.id.orderProductNameTextView);
             orderDateTextView = itemView.findViewById(R.id.orderProductTextView);
             orderProductImg = itemView.findViewById(R.id.orderProductImg);
 
-            this.onOrderDetailsListener = onOrderDetailsListener;
-
-            orderCardView.setOnClickListener(new View.OnClickListener() {
+            moreOptionsOrderCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onOrderDetailsListener.getOrderDetails(itemsList.get(getAdapterPosition()));
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
+                    onOrderDetailsListener.getOrderOptionsDetails(itemsList.get(getAdapterPosition()), view);
                 }
             });
         }
@@ -63,7 +68,7 @@ public class OrderListRVAdapter extends RecyclerView.Adapter<OrderListRVAdapter.
     }
 
     @Override
-    public OrderListRVAdapter.OrderListRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OrderListRVAdapter.OrderListRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mLayoutInflater.inflate(R.layout.app_vendas_rv_orders, parent, false);
         imageHandler = new ImageHandler(itemView.getContext());
 
@@ -71,9 +76,8 @@ public class OrderListRVAdapter extends RecyclerView.Adapter<OrderListRVAdapter.
     }
 
     @Override
-    public void onBindViewHolder(OrderListRVViewHolder holder, int position) {
-        if(itemsList != null) {
-            Item currentItem = itemsList.get(position).getItem();
+    public void onBindViewHolder(@NonNull OrderListRVViewHolder holder, int position) {
+        if (itemsList != null) {
             Product currentProduct = itemsList.get(position).getProduct();
             Order currentOrder = itemsList.get(position).getOrder();
             DateFormat dayFormat = new SimpleDateFormat("dd");
@@ -81,14 +85,16 @@ public class OrderListRVAdapter extends RecyclerView.Adapter<OrderListRVAdapter.
             DateFormat yearFormat = new SimpleDateFormat("yyyy");
 
             holder.orderProductNameTextView.setText(currentProduct.getProductName());
-            holder.orderDateTextView.setText("pedido em " +
+
+            String orderDate = "pedido em " +
                     dayFormat.format(currentOrder.getOrder_date()) + " de " +
                     monthFormat.format(currentOrder.getOrder_date()) + " de " +
-                    yearFormat.format(currentOrder.getOrder_date()));
+                    yearFormat.format(currentOrder.getOrder_date());
+            holder.orderDateTextView.setText(orderDate);
 
             Bitmap productPic = imageHandler.getProductPic(currentProduct.getId());
 
-            if(productPic != null)
+            if (productPic != null)
                 holder.orderProductImg.setImageBitmap(productPic);
         }
     }
@@ -100,7 +106,7 @@ public class OrderListRVAdapter extends RecyclerView.Adapter<OrderListRVAdapter.
 
     @Override
     public int getItemCount() {
-        if(itemsList != null)
+        if (itemsList != null)
             return itemsList.size();
         else
             return 0;

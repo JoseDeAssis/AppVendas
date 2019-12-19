@@ -1,7 +1,9 @@
 package com.example.appvendas.Activitity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,32 +14,34 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 
 import com.example.appvendas.Entity.Product;
-import com.example.appvendas.Helpers.BottomSheet.ShoppingCartBSComprar;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.R;
+import com.example.appvendas.Repository.ProductRepository;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.util.HashMap;
+import java.text.DecimalFormat;
 
 public class AppVendasProductDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Toolbar toolbar;
     private MaterialCardView productAvailableBuyCardView, productUnavailableBuyCardView;
     private ImageView productDetailsImg;
     private MaterialTextView productDetailsNameTxt, productDetailsPriceTxt, productDetailsDescriptionTxt;
-    private MaterialButton productDetailsBuyBtn, productDetailsNotifyBtn;
-    private ImageHandler imageHandler;
+    private String textProductPrice;
+    private Product thisProduct;
+    private long mLastClickTime = 0;
+    private static final int SHOPPING_CART_RESULT_OK = 1000;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_vendas_product_detail);
 
-        toolbar = findViewById(R.id.myToolbar);
+        Toolbar toolbar = findViewById(R.id.myToolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
         setSupportActionBar(toolbar);
 
@@ -50,28 +54,39 @@ public class AppVendasProductDetailsActivity extends AppCompatActivity implement
 
         productDetailsImg = findViewById(R.id.productDetailsImg);
 
-        productDetailsBuyBtn = findViewById(R.id.productDetailsBuyBtn);
+        MaterialButton productDetailsBuyBtn = findViewById(R.id.productDetailsBuyBtn);
         productDetailsBuyBtn.setOnClickListener(this);
-        productDetailsNotifyBtn = findViewById(R.id.productDetailsUnavailableButton);
+
+        MaterialButton productDetailsNotifyBtn = findViewById(R.id.productDetailsUnavailableButton);
         productDetailsNotifyBtn.setOnClickListener(this);
 
-        initializeFields();
+        ProductRepository productRepository = new ProductRepository(getApplication());
+        productRepository.getProduct(getIntent().getExtras().getLong("productId")).observe(this, new Observer<Product>() {
+            @Override
+            public void onChanged(Product product) {
+                thisProduct = product;
+                initializeFields();
+            }
+        });
     }
 
     private void initializeFields() {
-        productDetailsNameTxt.setText(getIntent().getExtras().getString("productName"));
-        productDetailsDescriptionTxt.setText(getIntent().getExtras().getString("productDescription"));
+        productDetailsNameTxt.setText(thisProduct.getProductName());
+        productDetailsDescriptionTxt.setText(thisProduct.getProductDescrition());
 
-        imageHandler = new ImageHandler(getApplicationContext());
-        Bitmap photo = imageHandler.getPhoto(getIntent().getExtras().getLong("productId"));
+        ImageHandler imageHandler = new ImageHandler(getApplicationContext());
+        Bitmap photo = imageHandler.getPhoto(thisProduct.getId());
 
         productDetailsImg.setImageBitmap(photo);
 
-        if(getIntent().getExtras().getInt("isProductAvailable") == 0) {
+        if (thisProduct.getOnAvailableProduct() == 0) {
             productUnavailableBuyCardView.setVisibility(View.VISIBLE);
             productAvailableBuyCardView.setVisibility(View.GONE);
         } else {
-            productDetailsPriceTxt.setText("R$ " + (String.format("%.2f", getIntent().getExtras().getDouble("productPrice"))));
+            double productPrice = thisProduct.getProductPrice();
+            DecimalFormat df = new DecimalFormat("#.00");
+            textProductPrice = "R$ " + df.format(productPrice);
+            productDetailsPriceTxt.setText(textProductPrice);
         }
     }
 
@@ -84,10 +99,10 @@ public class AppVendasProductDetailsActivity extends AppCompatActivity implement
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId() == R.id.shareIcon) {
-            if(getIntent().getExtras().getInt("isProductAvailable") == 1) {
-                ShoppingCartBSComprar shoppingCartBSComprar = new ShoppingCartBSComprar();
-                shoppingCartBSComprar.show(getSupportFragmentManager(), "productDetailsActivity");
+        if (item.getItemId() == R.id.shareIcon) {
+            if (thisProduct.getOnAvailableProduct() == 1) {
+                String text = thisProduct.getProductDescrition() + " por " + textProductPrice;
+                shareIntent(text);
             } else {
                 Toast.makeText(this, "Necessário escolher um produto disponível!", Toast.LENGTH_SHORT).show();
             }
@@ -104,18 +119,42 @@ public class AppVendasProductDetailsActivity extends AppCompatActivity implement
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
+        switch (view.getId()) {
             case R.id.productDetailsBuyBtn:
-                if(getIntent().getExtras().getString("parentName").equals(AppVendasShoppingCart.class.toString())) {
+                if (getIntent().getExtras().getString("parentName").equals(AppVendasShoppingCart.class.toString())) {
                     finish();
                 } else {
-//                    HashMap<Long, Product> shoppingCartItem = new HashMap<>();
-//                    shoppingCartItem.put(product)
+                    Intent intent = new Intent(this, AppVendasShoppingCart.class);
+                    intent.putExtra("productId", thisProduct.getId());
+                    startActivityForResult(intent, SHOPPING_CART_RESULT_OK);
                 }
                 break;
 
             case R.id.productDetailsUnavailableButton:
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == SHOPPING_CART_RESULT_OK) {
+            finish();
+        }
+    }
+
+    public void shareIntent(String text) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 }

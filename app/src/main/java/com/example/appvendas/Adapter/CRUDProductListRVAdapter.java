@@ -2,6 +2,7 @@ package com.example.appvendas.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasMainActivity;
 import com.example.appvendas.Entity.Item;
 import com.example.appvendas.Entity.OrderWithItems;
 import com.example.appvendas.Entity.Product;
@@ -37,17 +39,15 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
     private ImageHandler imageHandler;
     private OnProductEditListener onProductEditListener;
     private OnProductDeleteListener onProductDeleteListener;
-    private boolean isOnLongClick = false;
+    private long mLastClickTime = 0;
 
     public class CRUDProductListRVViewHolder extends RecyclerView.ViewHolder {
 
 
         private final TextView primaryTextView, priceTextView, groupTextView;
-        private final MaterialCardView itemCardView, crudRVProductCheckedCardView;
+        private final MaterialCardView crudRVProductCheckedCardView;
         private final ImageView imageView;
         private final ConstraintLayout crudConstraintLayout;
-        private OnProductEditListener onProductEditListener;
-        private OnProductDeleteListener onProductDeleteListener;
 
         private CRUDProductListRVViewHolder(View itemView,
                                             final OnProductEditListener onProductEditListener,
@@ -56,19 +56,15 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
             primaryTextView = itemView.findViewById(R.id.recyclerViewCRUDPrimaryTxtView);
             priceTextView = itemView.findViewById(R.id.recyclerViewCRUDPriceTxtView);
             groupTextView = itemView.findViewById(R.id.recyclerViewCRUDGroupTxtView);
-            itemCardView = itemView.findViewById(R.id.itemRecyclerViewCRUDCardView);
+            MaterialCardView itemCardView = itemView.findViewById(R.id.itemRecyclerViewCRUDCardView);
             crudConstraintLayout = itemView.findViewById(R.id.itemRecyclerViewCRUDConstraintLayout);
             crudRVProductCheckedCardView = itemView.findViewById(R.id.crudRVProductCheckedCardView);
             imageView = itemView.findViewById(R.id.recyclerViewCRUDImg);
-
-            this.onProductEditListener = onProductEditListener;
-            this.onProductDeleteListener = onProductDeleteListener;
 
             itemCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     onProductEditListener.editProduct(productList.get(getAdapterPosition()));
-
                 }
             });
 
@@ -140,7 +136,7 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
     }
 
     public void toggleProduct(Product product) {
-        if(mapProductList.get(product))
+        if (mapProductList.get(product))
             mapProductList.put(product, false);
         else
             mapProductList.put(product, true);
@@ -149,15 +145,15 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
     }
 
     public boolean isRecyclerViewSelected() {
-        for(Map.Entry<Product, Boolean> map: mapProductList.entrySet()) {
-            if(map.getValue())
+        for (Map.Entry<Product, Boolean> map : mapProductList.entrySet()) {
+            if (map.getValue())
                 return true;
         }
         return false;
     }
 
     public void deselectRecyclerView() {
-        for(Map.Entry<Product, Boolean> map: mapProductList.entrySet()) {
+        for (Map.Entry<Product, Boolean> map : mapProductList.entrySet()) {
             map.setValue(false);
         }
 
@@ -167,8 +163,8 @@ public class CRUDProductListRVAdapter extends RecyclerView.Adapter<CRUDProductLi
     public List<Product> selectedItemsRecyclerView() {
         List<Product> productListReturn = new ArrayList<>();
 
-        for(Map.Entry<Product, Boolean> products: mapProductList.entrySet()) {
-            if(products.getValue())
+        for (Map.Entry<Product, Boolean> products : mapProductList.entrySet()) {
+            if (products.getValue())
                 productListReturn.add(products.getKey());
         }
 

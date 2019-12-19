@@ -20,6 +20,10 @@
     <string name="more_unities">mais de 6..</string>
     <string name="quantidade">Digite a quantidade</string>
 
+    <!-- Popup Menu Order -->
+    <string name="product_order_detail">Detalhes do pedido</string>
+    <string name="order_detail">Detalhes do produto</string>
+
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>
     <string name="product_quantity">1un.</string>
@@ -58,5 +62,16 @@
     <!--  Product details  -->
     <string name="buy_btn">Comprar</string>
     <string name="notify_btn">Notificar quando disponível</string>
+
+    <!-- Order Details -->
+    <string name="order_details">Detalhes do pedido</string>
+    <string name="order_items">Itens do pedido</string>
+    <string name="order_date_detail">Data do pedido</string>
+    <string name="total_order_price">Total do pedido</string>
+    <string name="number_of_items">Qtd items</string>
+    <string name="item_name">Item name</string>
+    <string name="item_price">Item price</string>
+    <string name="item_quantity">Qtd:</string>
+    <string name="buy_again">Comprar novamente</string>
 
 </resources>

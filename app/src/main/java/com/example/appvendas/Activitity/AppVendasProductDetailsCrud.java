@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,17 +39,12 @@ import java.util.List;
 
 public class AppVendasProductDetailsCrud extends AppCompatActivity implements OnProductDeleteListener, OnProductEditListener {
 
-    private RecyclerView appVendasProdutosCrudRecyclerView;
     private ProductViewModel appVendasProdutosCrudViewModel;
     private CRUDProductListRVAdapter adapter;
-    private Toolbar toolbar;
     private ActionMode mActionMode;
-    private FloatingActionButton addProductFAB;
-    private Bitmap picture;
-    private ImageHandler imageHandler;
+    private long mLastClickTime = 0;
     private static final int ADD_PRODUCT_RESULT_CODE = 1000;
     private static final int EDIT_PRODUCT_RESULT_CODE = 1001;
-    private static final int DELETE_PRODUCT_RESULT_CODE = 1002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +55,22 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.app_vendas_back_icon);
 
-        imageHandler = new ImageHandler(getApplicationContext());
-
-        addProductFAB = findViewById(R.id.appVendasProductCrudFAB);
+        FloatingActionButton addProductFAB = findViewById(R.id.appVendasProductCrudFAB);
         addProductFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 Intent intent = new Intent(AppVendasProductDetailsCrud.this, AppVendasAddProducts.class);
                 startActivityForResult(intent, ADD_PRODUCT_RESULT_CODE);
+
             }
         });
 
-        appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
+        RecyclerView appVendasProdutosCrudRecyclerView = findViewById(R.id.productCrudRecyclerView);
         adapter = new CRUDProductListRVAdapter(this, this, this);
 
         appVendasProdutosCrudRecyclerView.setAdapter(adapter);
@@ -89,7 +89,6 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             actionMode.getMenuInflater().inflate(R.menu.app_vendas_contextual_actionbar, menu);
-//            getMenuInflater().inflate(R.menu.app_vendas_contextual_actionbar, menu);
             Window window = getWindow();
             window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(), R.color.colorPurpleDark));
 
@@ -117,8 +116,8 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
                                     List<Product> productList = new ArrayList<>();
                                     productList = adapter.selectedItemsRecyclerView();
 
-                                    if(productList != null && productList.size() > 0) {
-                                        for(Product product: productList) {
+                                    if (productList != null && productList.size() > 0) {
+                                        for (Product product : productList) {
                                             appVendasProdutosCrudViewModel.toggleProductAvailability(product);
                                         }
                                         adapter.notifyDataSetChanged();
@@ -174,33 +173,10 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
         }
     }
 
-    private void createDirectoryAndSaveFile(Long id) {
-
-        if (id == null && picture != null) {
-            EventSingleton eventSingleton = EventSingleton.getInstance();
-            eventSingleton.registerEvent(new EventListener() {
-                @Override
-                public void done(Long id) {
-                    try {
-                        imageHandler.savePicture(picture, id.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        } else if (picture != null) {
-            try {
-                imageHandler.savePicture(picture, id.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     @Override
     public boolean deleteProduct(final Product product) {
         adapter.toggleProduct(product);
-        if(!adapter.isRecyclerViewSelected()){
+        if (!adapter.isRecyclerViewSelected()) {
             mActionMode.finish();
             return false;
         }
@@ -217,7 +193,7 @@ public class AppVendasProductDetailsCrud extends AppCompatActivity implements On
     public void editProduct(final Product product) {
         if (mActionMode != null) {
             adapter.toggleProduct(product);
-            if(!adapter.isRecyclerViewSelected()){
+            if (!adapter.isRecyclerViewSelected()) {
                 mActionMode.finish();
             }
         } else {

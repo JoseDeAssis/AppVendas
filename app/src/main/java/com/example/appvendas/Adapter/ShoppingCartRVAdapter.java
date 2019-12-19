@@ -1,6 +1,7 @@
 package com.example.appvendas.Adapter;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasMainActivity;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
@@ -20,6 +22,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +32,6 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
     private final LayoutInflater mInflater;
     private List<Product> shoppingCartList;
     private HashMap<Long, Integer> productsQuantities;
-    private Double shoppingCartTotalPrice;
     private ImageHandler imageHandler;
     private OnProductDetailsListener mOnProductDetailsListener;
     private OnShoppingCartListener mOnShoppingCartListener;
@@ -38,27 +40,19 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
         private final TextView titleTextView, priceTextView, quantityTextView;
         private final ImageView imageView;
-        private final MaterialCardView materialProductCardView, materialQuantityCardView;
-        private final MaterialButton deleteBtn;
-        private OnProductDetailsListener onProductDetailsListener;
-        private OnShoppingCartListener onShoppingCartListener;
-        private OnShoppingCartListener mOnShoppingCartListener;
+        private long mLastClickTime = 0;
 
-        public ShoppingCartRVViewHolder(@NonNull View itemView,
-                                        final OnProductDetailsListener onProductDetailsListener,
-                                        final OnShoppingCartListener onShoppingCartListener) {
+        private ShoppingCartRVViewHolder(@NonNull View itemView,
+                                         final OnProductDetailsListener onProductDetailsListener,
+                                         final OnShoppingCartListener onShoppingCartListener) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.shoppingCartRVTitleTxtView);
             priceTextView = itemView.findViewById(R.id.shoppingCartRVPriceTxtView);
             quantityTextView = itemView.findViewById(R.id.modifyQuantityTextView);
             imageView = itemView.findViewById(R.id.shoppingCartRVImgView);
-            materialProductCardView = itemView.findViewById(R.id.shoppingCartProductCardView);
-            materialQuantityCardView = itemView.findViewById(R.id.shoppingCartQuantityCardView);
-            deleteBtn = itemView.findViewById(R.id.shoppingCartRVBtn);
-
-            this.onProductDetailsListener = onProductDetailsListener;
-            this.onShoppingCartListener = onShoppingCartListener;
-            this.mOnShoppingCartListener = onShoppingCartListener;
+            MaterialCardView materialProductCardView = itemView.findViewById(R.id.shoppingCartProductCardView);
+            MaterialCardView materialQuantityCardView = itemView.findViewById(R.id.shoppingCartQuantityCardView);
+            MaterialButton deleteBtn = itemView.findViewById(R.id.shoppingCartRVBtn);
 
             materialProductCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -97,7 +91,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
     @NonNull
     @Override
-    public ShoppingCartRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ShoppingCartRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_shopping_cart, parent, false);
         imageHandler = new ImageHandler(itemView.getContext());
 
@@ -110,13 +104,20 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
             Product current = shoppingCartList.get(position);
             RoundedBitmapDrawable picture = null;
 
-            if(productsQuantities != null && productsQuantities.size() > 0) {
-                holder.quantityTextView.setText(productsQuantities.get(current.getId()) + "un.");
-                holder.priceTextView.setText("R$ " + (String.format("%.2f",
-                        (current.getProductPrice() * productsQuantities.get(current.getId())))));
+            DecimalFormat df = new DecimalFormat("#.00");
+            if (productsQuantities != null && productsQuantities.size() > 0) {
+                String productQuantity = productsQuantities.get(current.getId()) + "un.";
+                holder.quantityTextView.setText(productQuantity);
+
+                double productPrice = current.getProductPrice() * productsQuantities.get(current.getId());
+                String priceText = "R$ " + df.format(productPrice);
+                holder.priceTextView.setText(priceText);
             } else {
                 holder.quantityTextView.setText("1un.");
-                holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
+
+                double productPrice = current.getProductPrice();
+                String priceText = "R$ " + df.format(productPrice);
+                holder.priceTextView.setText(priceText);
             }
 
             holder.titleTextView.setText(current.getProductName());
@@ -152,12 +153,12 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
     }
 
     public Double getShoppingCartTotalPrice() {
-        this.shoppingCartTotalPrice = 0.0;
-        for(Product product: shoppingCartList) {
-            if(productsQuantities != null && productsQuantities.size() > 0)
-                this.shoppingCartTotalPrice += (product.getProductPrice() * productsQuantities.get(product.getId()));
+        double shoppingCartTotalPrice = 0.0;
+        for (Product product : shoppingCartList) {
+            if (productsQuantities != null && productsQuantities.size() > 0)
+                shoppingCartTotalPrice += (product.getProductPrice() * productsQuantities.get(product.getId()));
             else
-                this.shoppingCartTotalPrice += product.getProductPrice();
+                shoppingCartTotalPrice += product.getProductPrice();
         }
 
         return shoppingCartTotalPrice;
@@ -172,7 +173,7 @@ public class ShoppingCartRVAdapter extends RecyclerView.Adapter<ShoppingCartRVAd
 
     @Override
     public int getItemCount() {
-        if(shoppingCartList.size() != 0)
+        if (shoppingCartList.size() != 0)
             return shoppingCartList.size();
         else return 0;
     }

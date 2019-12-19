@@ -2,6 +2,7 @@ package com.example.appvendas.Adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasMainActivity;
 import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Handler.ImageHandler;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
@@ -20,6 +23,7 @@ import com.example.appvendas.R;
 import com.google.android.material.card.MaterialCardView;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdapter.ProductListRVViewHolder> {
@@ -27,30 +31,26 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
     private final LayoutInflater mInflater;
     private List<Product> productList;
     private ImageHandler imageHandler;
-    private Context context;
     private OnProductDetailsListener mOnProductDetailsListener;
     private OnProductIsCheckedListener mOnProductIsCheckedListener;
+    private long mLastClickTime = 0;
 
     public class ProductListRVViewHolder extends RecyclerView.ViewHolder {
 
-        private final MaterialCardView productListCardView;
         private final TextView primaryTextView, priceTextView;
         private final ImageView imageView;
         private final CheckBox checkBox;
-        private OnProductDetailsListener onProductDetailsListener;
-        private OnProductIsCheckedListener onProductIsCheckedListener;
 
         private ProductListRVViewHolder(View itemView,
                                         final OnProductDetailsListener onProductDetailsListener,
                                         final OnProductIsCheckedListener onProductIsCheckedListener) {
             super(itemView);
-            productListCardView = itemView.findViewById(R.id.productListCardView);
+            MaterialCardView productListCardView = itemView.findViewById(R.id.productListCardView);
             primaryTextView = itemView.findViewById(R.id.recyclerViewPrimaryTxtView);
             priceTextView = itemView.findViewById(R.id.recyclerViewPriceTxtView);
             imageView = itemView.findViewById(R.id.recyclerViewImg);
             checkBox = itemView.findViewById(R.id.recyclerViewCheckBox);
 
-            this.onProductIsCheckedListener = onProductIsCheckedListener;
             checkBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -59,11 +59,14 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
                 }
             });
 
-            this.onProductDetailsListener = onProductDetailsListener;
-
             productListCardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                        return;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
                     onProductDetailsListener.getProductDetails(productList.get(getAdapterPosition()));
                 }
             });
@@ -75,11 +78,10 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
         mInflater = LayoutInflater.from(context);
         this.mOnProductDetailsListener = mOnProductDetailsListener;
         this.mOnProductIsCheckedListener = mOnProductIsCheckedListener;
-        this.context = context;
     }
 
     @Override
-    public ProductListRVViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProductListRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.app_vendas_rv_product_list_item, parent, false);
         imageHandler = new ImageHandler(itemView.getContext());
 
@@ -87,7 +89,7 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
     }
 
     @Override
-    public void onBindViewHolder(ProductListRVViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProductListRVViewHolder holder, int position) {
         if (productList != null) {
             Product current = productList.get(position);
             RoundedBitmapDrawable picture = null;
@@ -95,7 +97,10 @@ public class ProductListRVAdapter extends RecyclerView.Adapter<ProductListRVAdap
             holder.primaryTextView.setText(current.getProductName());
 
             if (productList.get(position).getOnAvailableProduct() == 1) {
-                holder.priceTextView.setText("R$ " + (String.format("%.2f", current.getProductPrice())));
+                double productPrice = current.getProductPrice();
+                DecimalFormat df = new DecimalFormat("#.00");
+                String priceText = "R$ " + df.format(productPrice);
+                holder.priceTextView.setText(priceText);
             } else {
                 holder.priceTextView.setText("Não disponível.");
                 holder.priceTextView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));

@@ -122,6 +122,7 @@
                 android:layout_marginBottom="10dp"
                 android:backgroundTint="#EEEEEE"
                 android:outlineSpotShadowColor="#EEEEEE"
+                android:splitMotionEvents="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/shoppingCartRVPriceTxtView"
                 app:layout_constraintHorizontal_bias="0.0"

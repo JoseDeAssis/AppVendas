@@ -1,5 +1,6 @@
 package com.example.appvendas.Activitity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +21,6 @@ import com.example.appvendas.Adapter.ShoppingCartRVAdapter;
 import com.example.appvendas.Entity.Item;
 import com.example.appvendas.Entity.Order;
 import com.example.appvendas.Entity.Product;
-import com.example.appvendas.Helpers.BottomSheet.ShoppingCartBSComprar;
 import com.example.appvendas.Helpers.Dialog.ShoppingCartQuantityDialog;
 import com.example.appvendas.Helpers.Interface.EventListener;
 import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
@@ -34,89 +35,83 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AppVendasShoppingCart extends AppCompatActivity implements OnProductDetailsListener,
         OnShoppingCartListener,
-        ShoppingCartBSComprar.BottomSheetListener,
         ShoppingCartQuantityDialog.shoppingCartQuantityDialogListener {
 
-    private Toolbar carrinhoToolbar;
-    private RecyclerView shoppingCartRecyclerView;
-    private List<Product> productList;
-    private ProductRepository productRepository;
     private ShoppingCartViewModel shoppingCartViewModel;
     private ShoppingCartRVAdapter shoppingCartAdapter;
     private HashMap<Long, Integer> productQuantities;
-    private HashMap<Long, Product> shoppingCartList;
     private List<Item> itemList;
-    private MaterialButton shoppingCartBuyButton, shoppingCartHomeButton;
     private MaterialTextView shoppingCartTotal;
     private MaterialCardView shoppingCartCardView, shoppingCartEmptyCartCardView;
-    private static final int PRODUCT_DETAIL_RESULT_CODE = 1000;
+    private long mLastClickTime = 0;
+    private static final int SHARE_RESULT = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_vendas_shopping_cart);
 
-        carrinhoToolbar = findViewById(R.id.myToolbar);
-        setSupportActionBar(carrinhoToolbar);
+        Toolbar toolbar = findViewById(R.id.myToolbar);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
+        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("carrinho");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.app_vendas_back_icon);
-
-        shoppingCartList = (HashMap<Long, Product>) getIntent().getSerializableExtra("shoppingCartList");
 
         shoppingCartCardView = findViewById(R.id.shoppingCartCardView);
         shoppingCartEmptyCartCardView = findViewById(R.id.shoppingCartEmptyCartCardView);
 
-        shoppingCartRecyclerView = findViewById(R.id.shoppingCartRecyclerView);
+        RecyclerView shoppingCartRecyclerView = findViewById(R.id.shoppingCartRecyclerView);
         shoppingCartAdapter = new ShoppingCartRVAdapter(this, this, this);
 
         shoppingCartRecyclerView.setAdapter(shoppingCartAdapter);
         shoppingCartRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         shoppingCartViewModel = ViewModelProviders.of(this).get(ShoppingCartViewModel.class);
-//        shoppingCartViewModel.setShoppingCartList(getShoppingCartProducts(shoppingCartList));
-//        shoppingCartAdapter.setShoppingCartProducts(getShoppingCartProducts(shoppingCartList));
 
-        productRepository = new ProductRepository(getApplication());
-        productRepository.getProductsById((ArrayList<Long>) getIntent().getSerializableExtra("shoppingCartListProducts")).observe(this, new Observer<List<Product>>() {
-            @Override
-            public void onChanged(List<Product> products) {
-                shoppingCartViewModel.setShoppingCartList(products);
-                shoppingCartAdapter.setShoppingCartProducts(products);
+        ProductRepository productRepository = new ProductRepository(getApplication());
 
-                productQuantities = shoppingCartViewModel.getProductsQuantities();
-                if(productQuantities == null || productQuantities.size() == 0) {
-                    productQuantities = shoppingCartViewModel.initializeQuantities();
+        if (getIntent().getExtras().getLong("productId", 0) != 0) {
+            productRepository.getProduct(getIntent().getExtras().getLong("productId")).observe(this, new Observer<Product>() {
+                @Override
+                public void onChanged(Product product) {
+                    List<Product> productList = new ArrayList<>();
+                    productList.add(product);
+                    initializeShoppingCart(productList);
                 }
-
-                shoppingCartAdapter.setProductsQuantities(productQuantities);
-                modifyTotalPrice();
-                isShoppingCartEmpty();
-            }
-        });
+            });
+        } else {
+            productRepository.getProductsById((ArrayList<Long>) getIntent().getSerializableExtra("shoppingCartListProducts")).observe(this, new Observer<List<Product>>() {
+                @Override
+                public void onChanged(List<Product> products) {
+                    initializeShoppingCart(products);
+                }
+            });
+        }
 
         shoppingCartTotal = findViewById(R.id.shoppingCartTotalPriceTxt);
 
-        shoppingCartBuyButton = findViewById(R.id.shoppingCartBuyBtn);
+        MaterialButton shoppingCartBuyButton = findViewById(R.id.shoppingCartBuyBtn);
         shoppingCartBuyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShoppingCartBSComprar shoppingCartBSComprar = new ShoppingCartBSComprar();
-                shoppingCartBSComprar.show(getSupportFragmentManager(), "shoppingCartBSComprar");
-                sendOrder();
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                shareIntent(shoppingCartViewModel.getProductsDetails());
             }
         });
 
-        shoppingCartHomeButton = findViewById(R.id.shoppingCartHomeButton);
+        MaterialButton shoppingCartHomeButton = findViewById(R.id.shoppingCartHomeButton);
         shoppingCartHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,8 +121,22 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     }
 
+    public void initializeShoppingCart(List<Product> products) {
+        shoppingCartViewModel.setShoppingCartList(products);
+        shoppingCartAdapter.setShoppingCartProducts(products);
+
+        productQuantities = shoppingCartViewModel.getProductsQuantities();
+        if (productQuantities == null || productQuantities.size() == 0) {
+            productQuantities = shoppingCartViewModel.initializeQuantities();
+        }
+
+        shoppingCartAdapter.setProductsQuantities(productQuantities);
+        modifyTotalPrice();
+        isShoppingCartEmpty();
+    }
+
     public void isShoppingCartEmpty() {
-        if(shoppingCartViewModel.getShoppingCartList().size() == 0 || shoppingCartViewModel.getShoppingCartList() == null) {
+        if (shoppingCartViewModel.getShoppingCartList().size() == 0 || shoppingCartViewModel.getShoppingCartList() == null) {
             shoppingCartEmptyCartCardView.setVisibility(View.VISIBLE);
             shoppingCartCardView.setVisibility(View.GONE);
         } else {
@@ -138,17 +147,16 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     @Override
     public void getProductDetails(Product product) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         Intent intent = new Intent(this, AppVendasProductDetailsActivity.class);
-        intent.putExtra("productName", product.getProductName());
-        intent.putExtra("productDescription", product.getProductDescrition());
         intent.putExtra("productId", product.getId());
-        intent.putExtra("productPrice", product.getProductPrice());
-        intent.putExtra("productGroup", product.getProductGroup());
-        intent.putExtra("productOnSale", product.getOnSaleProduct());
-        intent.putExtra("isProductAvailable", product.getOnAvailableProduct());
         intent.putExtra("parentName", this.getClass().toString());
 
-        startActivityForResult(intent, PRODUCT_DETAIL_RESULT_CODE);
+        startActivity(intent);
     }
 
     @Override
@@ -158,18 +166,13 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
         isShoppingCartEmpty();
     }
 
-    public List<Product> getShoppingCartProducts(HashMap<Long, Product> shoppingCartList) {
-        List<Product> shoppingCartListReturn = new ArrayList<>();
-
-        for(Map.Entry<Long, Product> map: shoppingCartList.entrySet()) {
-            shoppingCartListReturn.add(map.getValue());
-        }
-
-        return shoppingCartListReturn;
-    }
-
     @Override
     public void modifyQuantity(final Long productId, View view) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         Context wrapper = new ContextThemeWrapper(this, R.style.app_vendas_popup_menu_style);
         PopupMenu popupMenu = new PopupMenu(wrapper, view);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -207,17 +210,10 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
 
     @Override
     public void modifyTotalPrice() {
-        shoppingCartTotal.setText("R$ " + (String.format("%.2f", shoppingCartAdapter.getShoppingCartTotalPrice())));
-    }
-
-    private List<Product> mapToList(HashMap<Long, Product> productsHashMap) {
-        List<Product> returnList = new ArrayList<>();
-
-        for(Map.Entry<Long, Product> map: productsHashMap.entrySet()) {
-            returnList.add(map.getValue());
-        }
-
-        return returnList;
+        double totalShoppingCart = shoppingCartAdapter.getShoppingCartTotalPrice();
+        DecimalFormat df = new DecimalFormat("#.00");
+        String textTotalShoppingCart = "R$ " + df.format(totalShoppingCart);
+        shoppingCartTotal.setText(textTotalShoppingCart);
     }
 
     private void openDialog(Long productId) {
@@ -247,26 +243,26 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
             public void done(Long aLong) {
                 ItemRepository itemRepository = new ItemRepository(getApplication());
 
-                for(Item item: itemList) {
+                for (Item item : itemList) {
                     item.setOrderId(aLong);
                     itemRepository.insert(item);
                 }
+
+                setResult(RESULT_OK, new Intent());
+                finish();
             }
         });
-
-        finish();
     }
 
-    private List<Item> getOrder(){
-        itemList = new ArrayList<Item>();
-        for(Product product: shoppingCartViewModel.getShoppingCartList()){
+    private void getOrder() {
+        itemList = new ArrayList<>();
+        for (Product product : shoppingCartViewModel.getShoppingCartList()) {
             Item item = new Item();
             item.setProductId(product.getId());
             item.setQuantity(productQuantities.get(product.getId()));
             item.setItemPrice(product.getProductPrice());
             itemList.add(item);
         }
-        return itemList;
     }
 
     public Order createNewOrder() {
@@ -278,7 +274,27 @@ public class AppVendasShoppingCart extends AppCompatActivity implements OnProduc
     }
 
     @Override
-    public void onBuyBtnClicked() {
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
 
+    public void shareIntent(String text) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivityForResult(shareIntent, SHARE_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SHARE_RESULT) {
+            sendOrder();
+        }
     }
 }

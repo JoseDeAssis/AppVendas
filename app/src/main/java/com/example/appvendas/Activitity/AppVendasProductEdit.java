@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -43,8 +44,7 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
     private static final int IMAGE_CAPTURE_CODE = 1001;
     private static final int PRODUCT_GROUP_RESPONSE_CODE = 1002;
     private static final int PRODUCT_DESCRIPTION_RESULT_CODE = 1003;
-    private MaterialCardView detailProductDescription, detailProductGroup, detailProductImageCardView;
-    private Toolbar toolbar;
+    private MaterialCardView detailProductImageCardView;
     private TextInputEditText detailProductTitle, detailProductPrice;
     private Bitmap photo = null;
     private TextInputLayout detailProductTitleTxtInputLayout, detailProductPriceTxtInputLayout;
@@ -52,6 +52,7 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
     private SwitchMaterial detailProductHotSwitch;
     private ProductViewModel appVendasProdutosCrudViewModel;
     private ImageHandler imageHandler;
+    private long mLastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +60,10 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_app_vendas_add_products);
 
         //CardView
-        detailProductDescription = findViewById(R.id.productDescriptionCardView);
+        MaterialCardView detailProductDescription = findViewById(R.id.productDescriptionCardView);
         detailProductDescription.setOnClickListener(this);
 
-        detailProductGroup = findViewById(R.id.productGroupCardView);
+        MaterialCardView detailProductGroup = findViewById(R.id.productGroupCardView);
         detailProductGroup.setOnClickListener(this);
 
         detailProductImageCardView = findViewById(R.id.productImageCardView);
@@ -73,7 +74,7 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
         imageHandler = new ImageHandler(getApplicationContext());
 
         //Toolbar
-        toolbar = findViewById(R.id.myToolbar);
+        Toolbar toolbar = findViewById(R.id.myToolbar);
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.app_vendas_back_icon));
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Alterar Produto");
@@ -110,8 +111,8 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
         detailProductPrice.setText(getIntent().getExtras().getDouble("productPrice") + "");
         detailProductGroupTxt.setText(getIntent().getExtras().getString("productGroup"));
         detailProductGroupTxt.setTextColor(Color.BLACK);
-        detailProductHotSwitch.setChecked(getIntent().getExtras().getInt("productOnSale") == 1 ? true : false);
-        if(imageHandler.productPhotoExists(getIntent().getExtras().getLong("productId"))) {
+        detailProductHotSwitch.setChecked(getIntent().getExtras().getInt("productOnSale") == 1);
+        if (imageHandler.productPhotoExists(getIntent().getExtras().getLong("productId"))) {
             ImageView image = new ImageView(detailProductImageCardView.getContext());
             image.setImageBitmap(imageHandler.getProductPic(getIntent().getExtras().getLong("productId")));
             image.setMaxWidth(detailProductImageCardView.getWidth());
@@ -131,6 +132,11 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            return;
+        }
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         switch (view.getId()) {
             case R.id.productDescriptionCardView:
                 Intent productDescriptionIntent = new Intent(AppVendasProductEdit.this, AppVendasProductDescription.class);
@@ -248,14 +254,12 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case PERMISSION_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openCamera();
-                } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -298,7 +302,7 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
                 && detailProductDescriptionTxt.getText().toString().equals(getIntent().getExtras().getString("productDescription"))
                 && (Double.parseDouble(detailProductPrice.getText().toString()) == getIntent().getExtras().getDouble("productPrice"))
                 && detailProductGroupTxt.getText().toString().equals(getIntent().getExtras().getString("productGroup"))
-                && (detailProductHotSwitch.isChecked() == (getIntent().getExtras().getInt("productOnSale") == 1 ? true : false))
+                && (detailProductHotSwitch.isChecked() == (getIntent().getExtras().getInt("productOnSale") == 1))
                 && photo == null) {
             setResult(RESULT_CANCELED);
             finish();
@@ -326,47 +330,45 @@ public class AppVendasProductEdit extends AppCompatActivity implements View.OnCl
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.confirmIcon:
-                if (validadeFields()) {
-                    new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
-                            .setTitle("Salvar produto?")
-                            .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
-                            .setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent();
-                                    try {
-                                        Product updatedProduct = new Product();
-                                        updatedProduct.setId(getIntent().getExtras().getLong("productId"));
-                                        updatedProduct.setProductName(detailProductTitle.getText().toString());
-                                        updatedProduct.setProductDescrition(detailProductDescriptionTxt.getText().toString());
-                                        updatedProduct.setProductGroup(detailProductGroupTxt.getText().toString());
-                                        updatedProduct.setProductPrice(Double.parseDouble(detailProductPrice.getText().toString()));
-                                        updatedProduct.setOnSaleProduct(detailProductHotSwitch.isChecked() ? 1 : 0);
-                                        updatedProduct.setOnAvailableProduct(1);
+        if (item.getItemId() == R.id.confirmIcon) {
+            if (validadeFields()) {
+                new MaterialAlertDialogBuilder(this, R.style.Theme_MaterialComponents_Light_Dialog)
+                        .setTitle("Salvar produto?")
+                        .setMessage("Ao salvar o produto ele aparecerá em alguma das tabs da tela principal")
+                        .setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent();
+                                try {
+                                    Product updatedProduct = new Product();
+                                    updatedProduct.setId(getIntent().getExtras().getLong("productId"));
+                                    updatedProduct.setProductName(detailProductTitle.getText().toString());
+                                    updatedProduct.setProductDescrition(detailProductDescriptionTxt.getText().toString());
+                                    updatedProduct.setProductGroup(detailProductGroupTxt.getText().toString());
+                                    updatedProduct.setProductPrice(Double.parseDouble(detailProductPrice.getText().toString()));
+                                    updatedProduct.setOnSaleProduct(detailProductHotSwitch.isChecked() ? 1 : 0);
+                                    updatedProduct.setOnAvailableProduct(1);
 
-                                        appVendasProdutosCrudViewModel.update(updatedProduct);
+                                    appVendasProdutosCrudViewModel.update(updatedProduct);
 
-                                        if (photo != null) {
-                                            createDirectoryAndSaveFile(updatedProduct.getId());
-                                        }
-                                        setResult(RESULT_OK, intent);
-                                    } catch (Exception e) {
-                                        intent.putExtra("erro", e.getMessage());
-                                        setResult(RESULT_CANCELED, intent);
+                                    if (photo != null) {
+                                        createDirectoryAndSaveFile(updatedProduct.getId());
                                     }
+                                    setResult(RESULT_OK, intent);
+                                } catch (Exception e) {
+                                    intent.putExtra("erro", e.getMessage());
+                                    setResult(RESULT_CANCELED, intent);
+                                }
 
-                                    finish();
-                                }
-                            })
-                            .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            }).show();
-                }
-                break;
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);

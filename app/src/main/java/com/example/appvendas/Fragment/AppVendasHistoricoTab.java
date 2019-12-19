@@ -1,24 +1,27 @@
 package com.example.appvendas.Fragment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appvendas.Activitity.AppVendasOrderDetailsActivity;
+import com.example.appvendas.Activitity.AppVendasProductDetailsActivity;
 import com.example.appvendas.Adapter.OrderListRVAdapter;
 import com.example.appvendas.Entity.ItemWithOrder;
-import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Helpers.Interface.OnOrderDetailsListener;
-import com.example.appvendas.Helpers.Interface.OnProductDetailsListener;
 import com.example.appvendas.R;
 import com.example.appvendas.Repository.ItemWithOrderRepository;
-import com.example.appvendas.Repository.OrderWithItemsAndProductsRepository;
-import com.example.appvendas.Repository.ProductRepository;
 
 import java.util.List;
 
@@ -51,7 +54,32 @@ public class AppVendasHistoricoTab extends Fragment implements OnOrderDetailsLis
     }
 
     @Override
-    public void getOrderDetails(ItemWithOrder itemWithOrder) {
+    public void getOrderOptionsDetails(final ItemWithOrder itemWithOrder, View view) {
+        Context wrapper = new ContextThemeWrapper(getActivity(), R.style.app_vendas_popup_menu_style);
 
+        PopupMenu popupMenu = new PopupMenu(wrapper, view);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent intent;
+                switch (menuItem.getItemId()) {
+                    case R.id.productOrderDetail:
+                        intent = new Intent(getActivity(), AppVendasProductDetailsActivity.class);
+                        intent.putExtra("productId", itemWithOrder.getProduct().getId());
+                        intent.putExtra("parentName", this.getClass().toString());
+                        startActivity(intent);
+                        return true;
+
+                    case R.id.orderDetail:
+                        intent = new Intent(getActivity(), AppVendasOrderDetailsActivity.class);
+                        intent.putExtra("orderId", itemWithOrder.getOrder().getId());
+                        startActivity(intent);
+                        return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.getMenuInflater().inflate(R.menu.app_vendas_product_order_menu, popupMenu.getMenu());
+        popupMenu.show();
     }
 }
