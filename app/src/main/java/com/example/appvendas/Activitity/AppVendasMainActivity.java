@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
@@ -20,8 +21,11 @@ import android.view.inputmethod.EditorInfo;
 
 import com.example.appvendas.Adapter.AppVendasTabAdapter;
 import com.example.appvendas.Entity.Product;
+import com.example.appvendas.Fragment.AppVendasFavoriteFragment;
+import com.example.appvendas.Fragment.AppVendasUserFragment;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -45,6 +49,9 @@ public class AppVendasMainActivity extends AppCompatActivity {
 
         Toolbar appVendasToolbar = findViewById(R.id.myToolbar);
         setSupportActionBar(appVendasToolbar);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
         appVendasProductViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
 
@@ -117,4 +124,28 @@ public class AppVendasMainActivity extends AppCompatActivity {
             recreate();
         }
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Fragment selectedFragment = null;
+
+                    switch (item.getItemId()) {
+                        case R.id.bottomNavigationHome:
+                            return false;
+
+                        case R.id.bottomNavigationFavorites:
+                            selectedFragment = new AppVendasFavoriteFragment();
+                            break;
+
+                        case R.id.bottomNavigationUser:
+                            selectedFragment = new AppVendasUserFragment();
+                            break;
+                    }
+
+                    getSupportFragmentManager().beginTransaction().replace(R.id.mainViewPager, selectedFragment).commit();
+                    return true;
+                }
+            };
 }
