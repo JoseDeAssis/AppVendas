@@ -2,6 +2,12 @@
     <string name="app_name">AppVendas</string>
     <string name="product_unavailable">Indisponível no momento</string>
 
+    <!--  Login  -->
+    <string name="email_hint">E-mail</string>
+    <string name="password_hint">Senha</string>
+    <string name="sign_up">Sign up</string>
+    <string name="log_in">Log in</string>
+
     <!--  Menu  -->
     <string name="search_icon">Search</string>
     <string name="add_products_icon">Add Products</string>

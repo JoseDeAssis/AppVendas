@@ -18,7 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activitity.AppVendasFilteredProductsActivity"></activity>
+        <activity android:name=".Activitity.SignUpActivity"></activity>
+        <activity android:name=".Activitity.LoginActivity" />
+        <activity android:name=".Activitity.AppVendasFilteredProductsActivity" />
         <activity android:name=".Activitity.AppVendasOrderDetailsActivity" />
         <activity android:name=".Activitity.AppVendasProductEdit" />
         <activity android:name=".Activitity.AppVendasMainActivity">
