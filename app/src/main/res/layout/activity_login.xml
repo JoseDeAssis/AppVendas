@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activitity.LoginActivity">
+    tools:context=".Activitity.AppVendasLoginActivity">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/logInEmailMaterialTxtInput"
@@ -57,7 +57,7 @@
         android:id="@+id/imageView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +65,7 @@
         app:layout_constraintVertical_bias="0.050000012"
         app:srcCompat="@drawable/market" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/logInButton"
         android:layout_width="254dp"
         android:layout_height="wrap_content"
@@ -81,18 +81,61 @@
         app:layout_constraintTop_toBottomOf="@+id/logInPassWordMaterialTxtInput"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/signInButtonActivity"
-        android:layout_width="254dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="@string/sign_up"
-        android:textSize="24sp"
-        android:backgroundTint="#F9AA33"
+    <View
+        android:id="@+id/dividerLoginLeft"
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:background="#8d8d8d"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logInButton"
         app:layout_constraintVertical_bias="0.0" />
+
+    <View
+        android:id="@+id/dividerLoginRight"
+        android:layout_width="130dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="30dp"
+        android:background="#8d8d8d"
+        app:layout_constraintBottom_toBottomOf="@+id/dividerLoginLeft"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/dividerLoginLeft"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/loginSignUnButton"
+        android:layout_width="254dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:backgroundTint="#00000000"
+        android:outlineSpotShadowColor="#00000000"
+        android:outlineAmbientShadowColor="#00000000"
+        android:textColor="#00b0ff"
+        android:text="@string/sign_up"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/divider"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dividerLoginLeft"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dividerLoginLeft" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
