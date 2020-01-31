@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Activitity.AppVendasSignUpActivity" />
-        <activity android:name=".Activitity.AppVendasLoginActivity">
+        <activity android:name=".Activitity.AppVendasLoginActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

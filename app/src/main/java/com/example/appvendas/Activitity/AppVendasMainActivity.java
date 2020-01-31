@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
@@ -17,26 +16,24 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.widget.Toast;
 
 import com.example.appvendas.Adapter.AppVendasTabAdapter;
-import com.example.appvendas.Entity.Product;
 import com.example.appvendas.Fragment.AppVendasFavoriteFragment;
 import com.example.appvendas.Fragment.AppVendasUserFragment;
+import com.example.appvendas.Helpers.Singleton.FirebaseSingleton;
+import com.example.appvendas.Helpers.Singleton.PreferencesSingleton;
 import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 public class AppVendasMainActivity extends AppCompatActivity {
 
     private ProductViewModel appVendasProductViewModel;
+    private FirebaseSingleton mFirebaseSingleton;
+    private PreferencesSingleton preferencesSingleton;
     private long mLastClickTime = 0;
     private static final int SHOPPING_CART_RESULT_CODE = 1000;
 
@@ -44,6 +41,15 @@ public class AppVendasMainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.app_vendas_main);
+
+        mFirebaseSingleton = FirebaseSingleton.getInstance();
+//        preferencesSingleton = PreferencesSingleton.getInstance(getApplication());
+
+//        if(!preferencesSingleton.isLoggedIn()){
+//            startActivity(new Intent(this, AppVendasLoginActivity.class));
+//        } else {
+//
+//        }
 
         FloatingActionButton appVendasFAB = findViewById(R.id.appVendasMainFab);
 
@@ -77,6 +83,25 @@ public class AppVendasMainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        if(preferencesSingleton.isLoggedIn())
+            Toast.makeText(this, "Seja bem vindo " + mFirebaseSingleton.getCurrentUserName() + "!" , Toast.LENGTH_LONG).show();
+    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        mFirebaseSingleton.initializeAuthStateListener();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        mFirebaseSingleton.dettatchDatabaseValueEventListener();
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

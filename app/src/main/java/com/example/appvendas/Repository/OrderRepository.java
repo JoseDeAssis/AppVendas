@@ -51,7 +51,6 @@ public class OrderRepository {
         @Override
         protected void onPostExecute(Long result) {
             super.onPostExecute(result);
-            System.out.println(result);
             EventSingleton eventSingleton = EventSingleton.getInstance();
             eventSingleton.emitterDone(result);
         }

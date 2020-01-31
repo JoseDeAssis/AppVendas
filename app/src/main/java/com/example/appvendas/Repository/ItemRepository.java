@@ -51,7 +51,6 @@ public class ItemRepository {
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-            System.out.println(aLong);
         }
     }
 }

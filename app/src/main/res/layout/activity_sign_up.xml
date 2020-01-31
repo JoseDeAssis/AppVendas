@@ -60,6 +60,7 @@
                     android:id="@+id/signUpEmailMaterialEditTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -229,6 +230,7 @@
                     android:id="@+id/signUpCPFMaterialEditTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="number"
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -253,6 +255,7 @@
                     android:id="@+id/signUpBirthDateMaterialEditTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="number"
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -278,6 +281,7 @@
                     android:id="@+id/signUpPhoneNumberMaterialEditTxt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="number"
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
