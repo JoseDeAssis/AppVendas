@@ -30,7 +30,6 @@ public class FirebaseSingleton {
     private FirebaseSingleton() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
-        attatchFirebaseAuthStateListener();
         mDatabaseReference = mFirebaseDatabase.getReference();
     }
 
@@ -51,6 +50,9 @@ public class FirebaseSingleton {
                 if (!task.isSuccessful()) {
                     EventSingleton eventSingleton = EventSingleton.getInstance();
                     eventSingleton.emitterDone(task.isSuccessful());
+                } else {
+                    attatchFirebaseAuthStateListener();
+                    signedInInitialize();
                 }
             }
         });
@@ -111,18 +113,16 @@ public class FirebaseSingleton {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                if(user != null) {
-                    signedInInitialize();
+                if (user != null) {
+//                    signedInInitialize();
                 }
             }
         };
-    }
-
-    public void initializeAuthStateListener() {
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+
     }
 
-    private void signedInInitialize() {
+    public void signedInInitialize() {
 
         if (mValueEventListener == null) {
             mValueEventListener = new ValueEventListener() {
@@ -148,26 +148,26 @@ public class FirebaseSingleton {
     }
 
     private void saveCurrentUser(DataSnapshot dataSnapshot) {
-        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            user = new User(
-                    ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserName(),
-                    ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserPassword(),
-                    ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserEmail()
-            );
+        DataSnapshot currentUser = dataSnapshot.child("Users").child(getCurrentUser().getUid());
+        user = new User(
+                currentUser.getValue(User.class).getUserName(),
+                currentUser.getValue(User.class).getUserPassword(),
+                currentUser.getValue(User.class).getUserEmail()
+        );
 
-            if (ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserCPF() != null) {
-                user.setUserCPF(ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserCPF());
-            }
-            if (ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserPhoneNumber() != null) {
-                user.setUserPhoneNumber(ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserPhoneNumber());
-            }
-            if (ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserBirthday() != null) {
-                user.setUserBirthday(ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserBirthday());
-            }
-            if (ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserGender() != null) {
-                user.setUserGender(ds.child(mFirebaseAuth.getCurrentUser().getUid()).getValue(User.class).getUserGender());
-            }
+        if (currentUser.getValue(User.class).getUserCPF() != null) {
+            user.setUserCPF(currentUser.getValue(User.class).getUserCPF());
         }
+        if (currentUser.getValue(User.class).getUserPhoneNumber() != null) {
+            user.setUserPhoneNumber(currentUser.getValue(User.class).getUserPhoneNumber());
+        }
+        if (currentUser.getValue(User.class).getUserBirthday() != null) {
+            user.setUserBirthday(currentUser.getValue(User.class).getUserBirthday());
+        }
+        if (currentUser.getValue(User.class).getUserGender() != null) {
+            user.setUserGender(currentUser.getValue(User.class).getUserGender());
+        }
+
         EventSingleton eventSingleton = EventSingleton.getInstance();
         eventSingleton.emitterDone(true);
     }
@@ -181,8 +181,8 @@ public class FirebaseSingleton {
         return user.getUserName();
     }
 
-    public User getCurrentUser() {
-        return user;
+    public FirebaseUser getCurrentUser() {
+        return mFirebaseAuth.getCurrentUser();
     }
 
 }
