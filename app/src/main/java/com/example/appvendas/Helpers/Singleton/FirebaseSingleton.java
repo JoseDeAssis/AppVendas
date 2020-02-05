@@ -14,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class FirebaseSingleton {
@@ -22,15 +23,17 @@ public class FirebaseSingleton {
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
     private DatabaseReference mDatabaseReference;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
-    private ValueEventListener mValueEventListener;
+    private ValueEventListener mUserValueEventListener;
     private ChildEventListener mChildEventListener;
+    private EventSingleton eventSingleton;
     private User user;
 
     private FirebaseSingleton() {
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
+        eventSingleton = EventSingleton.getInstance();
+        mFirebaseAuth.signOut();
     }
 
     public static FirebaseSingleton getInstance() {
@@ -43,89 +46,70 @@ public class FirebaseSingleton {
         return INSTANCE;
     }
 
-    public void signIn(String email, String password) {
+    public void signIn(final String email, String password) {
         mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (!task.isSuccessful()) {
-                    EventSingleton eventSingleton = EventSingleton.getInstance();
-                    eventSingleton.emitterDone(task.isSuccessful());
+                    eventSingleton.emitterLogInFailed();
+                    System.out.println(task.getException() + "");
                 } else {
-                    attatchFirebaseAuthStateListener();
-                    signedInInitialize();
+                    getUserData();
                 }
             }
         });
     }
 
-    private void attachDatabaseReadListener() {
-        if (mChildEventListener == null) {
-            mChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            };
-            mDatabaseReference.addChildEventListener(mChildEventListener);
-        }
+    public void getUserData() {
+        Query query = mFirebaseDatabase.getReference("Users").child(getCurrentUser().getUid());
+        createUserValueEventListener();
+        query.addValueEventListener(mUserValueEventListener);
     }
 
-    private void attatchDatabaseReferenceReadListener() {
-        if (mValueEventListener == null) {
-            mValueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+    public void signUp(final String email, final String password, final String fullName, final String gender,
+                       final String cpf, final String phoneNumber, final String birthday) {
+        mFirebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            User user = new User(fullName, password, email);
+                            if (cpf != null) {
+                                user.setUserCPF(cpf);
+                            } else {
+                                user.setUserCPF("");
+                            }
 
-                }
+                            if (phoneNumber != null) {
+                                user.setUserPhoneNumber(phoneNumber);
+                            } else {
+                                user.setUserPhoneNumber("");
+                            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                            if (birthday != null) {
+                                user.setUserBirthday(birthday);
+                            } else {
+                                user.setUserBirthday("");
+                            }
 
-                }
-            };
-            mDatabaseReference.addValueEventListener(mValueEventListener);
-        }
+                            mFirebaseDatabase.getReference("Users").child(getCurrentUser().getUid())
+                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    eventSingleton.emitterSignUpDone(task.isSuccessful(), task.getException() + "");
+                                }
+                            });
+                        } else {
+                            eventSingleton.emitterSignUpDone(task.isSuccessful(), task.getException() + "");
+                        }
+                    }
+                });
     }
 
-    public void attatchFirebaseAuthStateListener() {
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+    private void createUserValueEventListener() {
 
-                if (user != null) {
-//                    signedInInitialize();
-                }
-            }
-        };
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-
-    }
-
-    public void signedInInitialize() {
-
-        if (mValueEventListener == null) {
-            mValueEventListener = new ValueEventListener() {
+        if (mUserValueEventListener == null) {
+            mUserValueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     saveCurrentUser(dataSnapshot);
@@ -136,45 +120,31 @@ public class FirebaseSingleton {
 
                 }
             };
-            mDatabaseReference.addValueEventListener(mValueEventListener);
         }
     }
 
-    public void dettatchDatabaseValueEventListener() {
-        if (mValueEventListener != null) {
-            mDatabaseReference.removeEventListener(mValueEventListener);
-            mValueEventListener = null;
-        }
-    }
 
     private void saveCurrentUser(DataSnapshot dataSnapshot) {
-        DataSnapshot currentUser = dataSnapshot.child("Users").child(getCurrentUser().getUid());
         user = new User(
-                currentUser.getValue(User.class).getUserName(),
-                currentUser.getValue(User.class).getUserPassword(),
-                currentUser.getValue(User.class).getUserEmail()
+                dataSnapshot.getValue(User.class).getUserName(),
+                dataSnapshot.getValue(User.class).getUserPassword(),
+                dataSnapshot.getValue(User.class).getUserEmail()
         );
 
-        if (currentUser.getValue(User.class).getUserCPF() != null) {
-            user.setUserCPF(currentUser.getValue(User.class).getUserCPF());
+        if (dataSnapshot.getValue(User.class).getUserCPF() != null) {
+            user.setUserCPF(dataSnapshot.getValue(User.class).getUserCPF());
         }
-        if (currentUser.getValue(User.class).getUserPhoneNumber() != null) {
-            user.setUserPhoneNumber(currentUser.getValue(User.class).getUserPhoneNumber());
+        if (dataSnapshot.getValue(User.class).getUserPhoneNumber() != null) {
+            user.setUserPhoneNumber(dataSnapshot.getValue(User.class).getUserPhoneNumber());
         }
-        if (currentUser.getValue(User.class).getUserBirthday() != null) {
-            user.setUserBirthday(currentUser.getValue(User.class).getUserBirthday());
+        if (dataSnapshot.getValue(User.class).getUserBirthday() != null) {
+            user.setUserBirthday(dataSnapshot.getValue(User.class).getUserBirthday());
         }
-        if (currentUser.getValue(User.class).getUserGender() != null) {
-            user.setUserGender(currentUser.getValue(User.class).getUserGender());
+        if (dataSnapshot.getValue(User.class).getUserGender() != null) {
+            user.setUserGender(dataSnapshot.getValue(User.class).getUserGender());
         }
 
-        EventSingleton eventSingleton = EventSingleton.getInstance();
-        eventSingleton.emitterDone(true);
-    }
-
-    private void onSignedOutCleanup() {
-        user = null;
-        dettatchDatabaseValueEventListener();
+        eventSingleton.emitterLogInDone();
     }
 
     public String getCurrentUserName() {

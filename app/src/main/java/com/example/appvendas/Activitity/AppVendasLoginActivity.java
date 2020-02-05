@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.appvendas.Helpers.Handler.KeyboardHandler;
 import com.example.appvendas.Helpers.Singleton.FirebaseSingleton;
 import com.example.appvendas.Helpers.Interface.FirebaseEventListener;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
@@ -34,19 +35,11 @@ public class AppVendasLoginActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_login);
 
         firebaseSingleton = FirebaseSingleton.getInstance();
-        eventSingleton = EventSingleton.getInstance();
-        firebaseSingleton.attatchFirebaseAuthStateListener();
 
-        if(firebaseSingleton.getCurrentUser() != null) {
-            firebaseSingleton.attatchFirebaseAuthStateListener();
-            firebaseSingleton.signedInInitialize();
-            eventSingleton.registerFirebaseEvent(new FirebaseEventListener() {
-                @Override
-                public void done(boolean isSuccessfull) {
-                    if(isSuccessfull)
-                        signUp();
-                }
-            });
+        eventSingleton = EventSingleton.getInstance();
+
+        if (firebaseSingleton.getCurrentUser() != null) {
+            firebaseSingleton.getUserData();
         }
 
         emailLoginTextView = findViewById(R.id.logInEmailMateriaEditTxt);
@@ -61,36 +54,43 @@ public class AppVendasLoginActivity extends AppCompatActivity implements View.On
         signUpBtn.setOnClickListener(this);
 
     }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        firebaseSingleton.attatchFirebaseAuthStateListener();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        firebaseSingleton.dettatchDatabaseValueEventListener();
-//    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        eventSingleton.registerFirebaseEvent(new FirebaseEventListener() {
+            @Override
+            public void signUpDone(boolean isSuccessfull, String signUpException) {
+
+            }
+
+            @Override
+            public void logInDone() {
+                signUp();
+            }
+
+            @Override
+            public void logInFailed() {
+                loginBtn.setEnabled(true);
+                Toast.makeText(AppVendasLoginActivity.this, "email ou senha errado", Toast.LENGTH_SHORT).show();
+                loginProgressBar.setVisibility(View.GONE);
+            }
+        });
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.logInButton:
                 loginProgressBar.setVisibility(View.VISIBLE);
-                firebaseSingleton.signIn(emailLoginTextView.getText().toString(), passwordLoginTextView.getText().toString());
-                eventSingleton.registerFirebaseEvent(new FirebaseEventListener() {
-                    @Override
-                    public void done(boolean isSuccessfull) {
-                        if (isSuccessfull) {
-                            signUp();
-                        } else {
-                            Toast.makeText(AppVendasLoginActivity.this, "email ou senha errado", Toast.LENGTH_SHORT).show();
-                            loginProgressBar.setVisibility(View.GONE);
-                        }
-                    }
-                });
+                KeyboardHandler.hideKeyboard(this);
+                if (getCurrentFocus() != null)
+                    getCurrentFocus().clearFocus();
+
+                emailLoginTextView.clearFocus();
+                passwordLoginTextView.clearFocus();
+                loginBtn.setEnabled(false);
+                firebaseSingleton.signIn((emailLoginTextView.getText() + ""), (passwordLoginTextView.getText() + ""));
 
                 break;
 
@@ -106,7 +106,7 @@ public class AppVendasLoginActivity extends AppCompatActivity implements View.On
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == SIGN_UP_CODE) {
-            signUp();
+            firebaseSingleton.getUserData();
         }
     }
 
@@ -122,11 +122,11 @@ public class AppVendasLoginActivity extends AppCompatActivity implements View.On
 
     @Override
     public void afterTextChanged(Editable editable) {
-        if (!emailLoginTextView.getText().toString().trim().equals("")
-                && !passwordLoginTextView.getText().toString().trim().equals("")) {
+        if (!(emailLoginTextView.getText() + "").trim().equals("")
+                && !(passwordLoginTextView.getText() + "").trim().equals("")) {
             loginBtn.setEnabled(true);
-        } else if (emailLoginTextView.getText().toString().trim().equals("")
-                || passwordLoginTextView.getText().toString().trim().equals("")) {
+        } else if ((emailLoginTextView.getText() + "").trim().equals("")
+                || (passwordLoginTextView.getText() + "").trim().equals("")) {
             loginBtn.setEnabled(false);
         }
     }

@@ -11,6 +11,7 @@ public class PreferencesSingleton {
     private static PreferencesSingleton INSTANCE;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
+    private boolean isLogged = false;
     private final String sharedFile = "com.example.appvendas.loggedUserData";
 
 
@@ -38,7 +39,11 @@ public class PreferencesSingleton {
     }
 
     public boolean isLoggedIn() {
-        return mSharedPreferences.getBoolean("isLoggedIn", false);
+        return isLogged;
+    }
+
+    public void userIsLogged() {
+        isLogged = true;
     }
 
     public void resetPreferences() {

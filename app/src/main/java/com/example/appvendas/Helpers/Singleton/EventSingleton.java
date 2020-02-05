@@ -31,8 +31,16 @@ public class EventSingleton {
         this.eventListener.done(aLong);
     }
 
-    public void emitterDone(boolean isSuccessfull){
-        this.firebaseEventListener.done(isSuccessfull);
+    public void emitterLogInDone(){
+        this.firebaseEventListener.logInDone();
+    }
+
+    public void emitterLogInFailed() {
+        this.firebaseEventListener.logInFailed();
+    }
+
+    public void emitterSignUpDone(boolean isSuccessfull, String signUpException) {
+        this.firebaseEventListener.signUpDone(isSuccessfull, signUpException);
     }
 
 }

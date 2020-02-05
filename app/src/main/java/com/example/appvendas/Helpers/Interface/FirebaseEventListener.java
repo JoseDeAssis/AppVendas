@@ -1,5 +1,7 @@
 package com.example.appvendas.Helpers.Interface;
 
 public interface FirebaseEventListener {
-    void done(boolean isSuccessfull);
+    void signUpDone(boolean isSuccessfull, String signUpException);
+    void logInDone();
+    void logInFailed();
 }

@@ -2,35 +2,41 @@ package com.example.appvendas.Activitity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
-import com.example.appvendas.Entity.User;
+import com.example.appvendas.Helpers.Handler.KeyboardHandler;
+import com.example.appvendas.Helpers.Interface.FirebaseEventListener;
 import com.example.appvendas.Helpers.Mask;
+import com.example.appvendas.Helpers.Singleton.EventSingleton;
+import com.example.appvendas.Helpers.Singleton.FirebaseSingleton;
 import com.example.appvendas.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+
+import java.sql.Wrapper;
 
 public class AppVendasSignUpActivity extends AppCompatActivity implements View.OnTouchListener, TextWatcher {
 
     private TextInputEditText signUpEmailTxt, signUpPasswordTxt, signUpFullNameTxt, signUpCPFTxt, signUpBirthDateTxt, signUpPhoneNumberTxt;
     private AutoCompleteTextView signUpGenderTxt, signUpReferToMeAsTxt;
     private TextInputLayout signUpEmailTxtLayout, signUpPasswordTxtLayout, signUpFullNameTxtLayout, signUpGenderTxtLayout;
-    private FirebaseAuth mFirebaseAuth;
+    private FirebaseSingleton mFirebaseSingleton;
+    private long mLastClickTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +66,10 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
 
         //AutoCompleteTextView
         signUpGenderTxt = findViewById(R.id.signUpGenderMaterialEditTxt);
-        signUpGenderTxt.setOnTouchListener(this);
+//        signUpGenderTxt.setOnTouchListener(this);
         signUpReferToMeAsTxt = findViewById(R.id.signUpReferToMeAsMaterialEditTxt);
         signUpReferToMeAsTxt.setOnTouchListener(this);
+
 
         //TextInputLayout
         signUpEmailTxtLayout = findViewById(R.id.signUpEmailMaterialTxtInput);
@@ -71,12 +78,65 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
         signUpGenderTxtLayout = findViewById(R.id.signUpGenderMaterialTxtInput);
 
         //Firebase
-        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseSingleton = FirebaseSingleton.getInstance();
+        EventSingleton mEventSingleton = EventSingleton.getInstance();
+        mEventSingleton.registerFirebaseEvent(new FirebaseEventListener() {
+            @Override
+            public void signUpDone(boolean isSuccessfull, String signUpException) {
+                if(isSuccessfull) {
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    Toast.makeText(AppVendasSignUpActivity.this, signUpException, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void logInDone() {
+
+            }
+
+            @Override
+            public void logInFailed() {
+
+            }
+        });
 
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
+        if(view.getId() == R.id.signUpGenderMaterialEditTxt || view.getId() == R.id.signUpGenderMaterialTxtInput) {
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                return false;
+            }
+            mLastClickTime = SystemClock.elapsedRealtime();
+
+            /*Context wrapper = new ContextThemeWrapper(this, R.style.app_vendas_popup_menu_style);
+            PopupMenu popupMenu = new PopupMenu(wrapper, view);
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.maleGender:
+                            signUpGenderTxt.setText(R.string.male_gender);
+                            return true;
+                        case R.id.femaleGender:
+                            signUpGenderTxt.setText(R.string.female_gender);
+                            return true;
+                        case R.id.customizeGender:
+                            signUpGenderTxt.setText(R.string.customize_gender);
+                            return true;
+                        case R.id.notDeclaredGender:
+                            signUpGenderTxt.setText(R.string.not_declared_gender);
+                            return true;
+                    }
+                    return false;
+                }
+            });
+            popupMenu.getMenuInflater().inflate(R.menu.app_vendas_gender_menu, popupMenu.getMenu());
+            popupMenu.show();*/
+        }
         return true;
     }
 
@@ -127,47 +187,19 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.confirmIcon) {
             if (validateFields()) {
-                mFirebaseAuth.createUserWithEmailAndPassword(signUpEmailTxt.getText() + "", signUpPasswordTxt.getText() + "")
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    User user = new User(
-                                            signUpFullNameTxt.getText() + "",
-                                            signUpPasswordTxt.getText() + "",
-                                            signUpEmailTxt.getText() + ""
-                                    );
+                KeyboardHandler.hideKeyboard(this);
+                if(getCurrentFocus() != null)
+                    getCurrentFocus().clearFocus();
 
-                                    if (!signUpCPFTxt.getText().toString().trim().equals("")) {
-                                        user.setUserCPF(signUpCPFTxt.getText() + "");
-                                    }
-
-                                    if (!signUpBirthDateTxt.getText().toString().trim().equals("")) {
-                                        user.setUserBirthday(signUpBirthDateTxt.getText() + "");
-                                    }
-
-                                    if (!signUpPhoneNumberTxt.getText().toString().trim().equals("")) {
-                                        user.setUserPhoneNumber(signUpPhoneNumberTxt.getText() + "");
-                                    }
-
-                                    FirebaseDatabase.getInstance().getReference("Users")
-                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()) {
-                                                setResult(RESULT_OK);
-                                                finish();
-                                            } else {
-                                                Toast.makeText(AppVendasSignUpActivity.this, task.getException() + "", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    Toast.makeText(AppVendasSignUpActivity.this, task.getException() + "", Toast.LENGTH_LONG).show();
-                                }
-                            }
-                        });
+                mFirebaseSingleton.signUp(
+                        signUpEmailTxt.getText() + "",
+                        signUpPasswordTxt.getText() + "",
+                        signUpFullNameTxt.getText() + "",
+                        signUpGenderTxt.getText() + "",
+                        signUpCPFTxt.getText() + "",
+                        signUpPhoneNumberTxt.getText() + "",
+                        signUpBirthDateTxt.getText() + ""
+                );
             }
         }
         return super.onOptionsItemSelected(item);

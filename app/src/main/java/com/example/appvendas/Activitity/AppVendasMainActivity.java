@@ -33,7 +33,6 @@ public class AppVendasMainActivity extends AppCompatActivity {
 
     private ProductViewModel appVendasProductViewModel;
     private FirebaseSingleton mFirebaseSingleton;
-    private PreferencesSingleton preferencesSingleton;
     private long mLastClickTime = 0;
     private static final int SHOPPING_CART_RESULT_CODE = 1000;
 
@@ -43,7 +42,6 @@ public class AppVendasMainActivity extends AppCompatActivity {
         setContentView(R.layout.app_vendas_main);
 
         mFirebaseSingleton = FirebaseSingleton.getInstance();
-//        preferencesSingleton = PreferencesSingleton.getInstance(getApplication());
 
 //        if(!preferencesSingleton.isLoggedIn()){
 //            startActivity(new Intent(this, AppVendasLoginActivity.class));
@@ -87,21 +85,12 @@ public class AppVendasMainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        if(preferencesSingleton.isLoggedIn())
-            Toast.makeText(this, "Seja bem vindo " + mFirebaseSingleton.getCurrentUserName() + "!" , Toast.LENGTH_LONG).show();
+        PreferencesSingleton preferencesSingleton = PreferencesSingleton.getInstance(getApplication());
+        if (!preferencesSingleton.isLoggedIn()) {
+            Toast.makeText(this, "Seja bem vindo " + mFirebaseSingleton.getCurrentUserName() + "!", Toast.LENGTH_LONG).show();
+            preferencesSingleton.userIsLogged();
+        }
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        mFirebaseSingleton.initializeAuthStateListener();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        mFirebaseSingleton.dettatchDatabaseValueEventListener();
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
