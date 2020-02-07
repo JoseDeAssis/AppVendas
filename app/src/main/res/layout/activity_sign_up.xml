@@ -115,21 +115,28 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Spinner
-                android:id="@+id/signUpGenderSpinner"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/signUpGenderTextLayout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="10dp"
+                android:hint="@string/gender"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.502"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/signUpFullNameMaterialTxtInput"
-                app:layout_constraintVertical_bias="0.0">
+                app:layout_constraintVertical_bias="0.0" >
 
-            </Spinner>
+                <com.google.android.material.textview.MaterialAutoCompleteTextView
+                    android:id="@+id/signUpGenderMaterialAutoComplete"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/signUpChooseGenderCardView"
@@ -144,7 +151,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/signUpGenderSpinner"
+                app:layout_constraintTop_toBottomOf="@+id/signUpGenderTextLayout"
                 app:layout_constraintVertical_bias="0.0">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -152,7 +159,7 @@
                     android:layout_height="match_parent">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/signUpChooseGenderMaterialTxtInput"
+                        android:id="@+id/signUpChooseGenderMaterialTextLayout"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -174,7 +181,7 @@
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/signUpReferToMeAsMaterialTxtInput"
+                        android:id="@+id/signUpReferToMeAsMaterialTextLayout"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -186,14 +193,13 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/signUpChooseGenderMaterialTxtInput"
+                        app:layout_constraintTop_toBottomOf="@+id/signUpChooseGenderMaterialTextLayout"
                         app:layout_constraintVertical_bias="0.0">
 
-                        <AutoCompleteTextView
-                            android:id="@+id/signUpReferToMeAsMaterialEditTxt"
+                        <com.google.android.material.textview.MaterialAutoCompleteTextView
+                            android:id="@+id/signUpReferToMeAsMaterialAutoComplete"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:singleLine="true" />
+                            android:layout_height="wrap_content" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -276,6 +282,17 @@
                     android:singleLine="true" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <ProgressBar
+                android:id="@+id/signUpProgressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

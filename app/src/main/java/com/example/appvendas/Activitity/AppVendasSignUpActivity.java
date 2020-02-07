@@ -2,21 +2,17 @@ package com.example.appvendas.Activitity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
-import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.appvendas.Helpers.Handler.KeyboardHandler;
@@ -25,18 +21,21 @@ import com.example.appvendas.Helpers.Mask;
 import com.example.appvendas.Helpers.Singleton.EventSingleton;
 import com.example.appvendas.Helpers.Singleton.FirebaseSingleton;
 import com.example.appvendas.R;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.textview.MaterialAutoCompleteTextView;
 
-import java.sql.Wrapper;
+public class AppVendasSignUpActivity extends AppCompatActivity implements TextWatcher, View.OnFocusChangeListener {
 
-public class AppVendasSignUpActivity extends AppCompatActivity implements View.OnTouchListener, TextWatcher {
-
-    private TextInputEditText signUpEmailTxt, signUpPasswordTxt, signUpFullNameTxt, signUpCPFTxt, signUpBirthDateTxt, signUpPhoneNumberTxt;
-    private AutoCompleteTextView signUpGenderTxt, signUpReferToMeAsTxt;
-    private TextInputLayout signUpEmailTxtLayout, signUpPasswordTxtLayout, signUpFullNameTxtLayout, signUpGenderTxtLayout;
+    private TextInputEditText signUpEmailTxt, signUpPasswordTxt, signUpFullNameTxt, signUpCPFTxt,
+            signUpBirthDateTxt, signUpPhoneNumberTxt, signUpChooseGenderTxt;
+    private MaterialAutoCompleteTextView signUpGenderTxt, signUpReferToMeAsTxt;
+    private TextInputLayout signUpEmailTxtLayout, signUpPasswordTxtLayout, signUpFullNameTxtLayout,
+            signUpGenderTxtLayout, signUpReferToMeAsTxtLayout, signUpChooseGenderTxtLayout;
     private FirebaseSingleton mFirebaseSingleton;
-    private long mLastClickTime = 0;
+    private MaterialCardView signUpChooseGenderCardView;
+    private ProgressBar signUpProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +62,44 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
         signUpBirthDateTxt.addTextChangedListener(Mask.insert(Mask.DATE_MASK, signUpBirthDateTxt));
         signUpPhoneNumberTxt = findViewById(R.id.signUpPhoneNumberMaterialEditTxt);
         signUpPhoneNumberTxt.addTextChangedListener(Mask.insert(Mask.CELULAR_MASK, signUpPhoneNumberTxt));
+        signUpChooseGenderTxt = findViewById(R.id.signUpChooseGenderMaterialEditTxt);
+        signUpChooseGenderTxt.addTextChangedListener(this);
 
         //AutoCompleteTextView
-        signUpGenderTxt = findViewById(R.id.signUpGenderMaterialEditTxt);
-//        signUpGenderTxt.setOnTouchListener(this);
-        signUpReferToMeAsTxt = findViewById(R.id.signUpReferToMeAsMaterialEditTxt);
-        signUpReferToMeAsTxt.setOnTouchListener(this);
+        signUpGenderTxt = findViewById(R.id.signUpGenderMaterialAutoComplete);
+        signUpGenderTxt.setInputType(InputType.TYPE_NULL);
+        ArrayAdapter<String> adapterGender = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.genderSpinner));
 
+        signUpGenderTxt.setAdapter(adapterGender);
+        signUpGenderTxt.addTextChangedListener(this);
+        signUpGenderTxt.setOnFocusChangeListener(this);
+
+
+        signUpReferToMeAsTxt = findViewById(R.id.signUpReferToMeAsMaterialAutoComplete);
+        signUpReferToMeAsTxt.setInputType(InputType.TYPE_NULL);
+        ArrayAdapter<String> adapterGenderReferToMe = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_1,
+                getResources().getStringArray(R.array.referToMeAsGender));
+
+        signUpReferToMeAsTxt.setAdapter(adapterGenderReferToMe);
+        signUpReferToMeAsTxt.addTextChangedListener(this);
+        signUpReferToMeAsTxt.setOnFocusChangeListener(this);
 
         //TextInputLayout
         signUpEmailTxtLayout = findViewById(R.id.signUpEmailMaterialTxtInput);
         signUpPasswordTxtLayout = findViewById(R.id.signUpPasswordMaterialTxtInput);
         signUpFullNameTxtLayout = findViewById(R.id.signUpFullNameMaterialTxtInput);
-        signUpGenderTxtLayout = findViewById(R.id.signUpGenderMaterialTxtInput);
+        signUpGenderTxtLayout = findViewById(R.id.signUpGenderTextLayout);
+        signUpReferToMeAsTxtLayout = findViewById(R.id.signUpReferToMeAsMaterialTextLayout);
+        signUpChooseGenderTxtLayout = findViewById(R.id.signUpChooseGenderMaterialTextLayout);
+
+        //MaterialCardView
+        signUpChooseGenderCardView = findViewById(R.id.signUpChooseGenderCardView);
+
+        //Progressbar
+        signUpProgressBar = findViewById(R.id.signUpProgressBar);
 
         //Firebase
         mFirebaseSingleton = FirebaseSingleton.getInstance();
@@ -83,7 +107,8 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
         mEventSingleton.registerFirebaseEvent(new FirebaseEventListener() {
             @Override
             public void signUpDone(boolean isSuccessfull, String signUpException) {
-                if(isSuccessfull) {
+                if (isSuccessfull) {
+                    signUpProgressBar.setVisibility(View.GONE);
                     setResult(RESULT_OK);
                     finish();
                 } else {
@@ -102,42 +127,6 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
             }
         });
 
-    }
-
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        if(view.getId() == R.id.signUpGenderMaterialEditTxt || view.getId() == R.id.signUpGenderMaterialTxtInput) {
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                return false;
-            }
-            mLastClickTime = SystemClock.elapsedRealtime();
-
-            /*Context wrapper = new ContextThemeWrapper(this, R.style.app_vendas_popup_menu_style);
-            PopupMenu popupMenu = new PopupMenu(wrapper, view);
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.maleGender:
-                            signUpGenderTxt.setText(R.string.male_gender);
-                            return true;
-                        case R.id.femaleGender:
-                            signUpGenderTxt.setText(R.string.female_gender);
-                            return true;
-                        case R.id.customizeGender:
-                            signUpGenderTxt.setText(R.string.customize_gender);
-                            return true;
-                        case R.id.notDeclaredGender:
-                            signUpGenderTxt.setText(R.string.not_declared_gender);
-                            return true;
-                    }
-                    return false;
-                }
-            });
-            popupMenu.getMenuInflater().inflate(R.menu.app_vendas_gender_menu, popupMenu.getMenu());
-            popupMenu.show();*/
-        }
-        return true;
     }
 
     @Override
@@ -180,6 +169,31 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
             validate = false;
         }
 
+        if (signUpGenderTxt.getText() != null && signUpGenderTxt.getText().toString().trim().equals("")) {
+            if (!signUpGenderTxtLayout.isErrorEnabled()) {
+                signUpGenderTxtLayout.setErrorEnabled(true);
+            }
+            signUpGenderTxtLayout.setError("Selecione seu sexo");
+            validate = false;
+        }
+
+        if (signUpChooseGenderCardView.getVisibility() == View.VISIBLE) {
+            if (signUpReferToMeAsTxt.getText() != null && signUpReferToMeAsTxt.getText().toString().trim().equals("")) {
+                if (!signUpReferToMeAsTxtLayout.isErrorEnabled()) {
+                    signUpReferToMeAsTxtLayout.setErrorEnabled(true);
+                }
+                signUpReferToMeAsTxtLayout.setError("Selecione um pronome");
+                validate = false;
+            }
+            if (signUpChooseGenderTxt.getText() != null && signUpChooseGenderTxt.getText().toString().trim().equals("")) {
+                if (!signUpChooseGenderTxtLayout.isErrorEnabled()) {
+                    signUpChooseGenderTxtLayout.setErrorEnabled(true);
+                }
+                signUpChooseGenderTxtLayout.setError("Indique sua identidade sexual");
+                validate = false;
+            }
+        }
+
         return validate;
     }
 
@@ -187,8 +201,9 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.confirmIcon) {
             if (validateFields()) {
+                signUpProgressBar.setVisibility(View.VISIBLE);
                 KeyboardHandler.hideKeyboard(this);
-                if(getCurrentFocus() != null)
+                if (getCurrentFocus() != null)
                     getCurrentFocus().clearFocus();
 
                 mFirebaseSingleton.signUp(
@@ -229,6 +244,35 @@ public class AppVendasSignUpActivity extends AppCompatActivity implements View.O
                 && !signUpFullNameTxt.getText().toString().trim().equals("")
                 && signUpFullNameTxtLayout.isErrorEnabled()) {
             signUpFullNameTxtLayout.setErrorEnabled(false);
+        } else if (!signUpGenderTxt.getText().toString().trim().equals("")
+                && signUpGenderTxtLayout.isErrorEnabled()) {
+            signUpGenderTxtLayout.setErrorEnabled(false);
+        } else if (signUpChooseGenderTxt.getText() != null
+                && !signUpChooseGenderTxt.getText().toString().trim().equals("")
+                && signUpChooseGenderTxtLayout.isErrorEnabled()) {
+            signUpChooseGenderTxtLayout.setErrorEnabled(false);
+        } else if (!signUpReferToMeAsTxt.getText().toString().trim().equals("")
+                && signUpReferToMeAsTxtLayout.isErrorEnabled()) {
+            signUpReferToMeAsTxtLayout.setErrorEnabled(false);
+        }
+
+        if (signUpGenderTxt.getText() != null
+                && signUpGenderTxt.getText().toString().equals(getResources().getString(R.string.customize_gender))) {
+            signUpChooseGenderCardView.setVisibility(View.VISIBLE);
+        } else if (signUpGenderTxt.getText() != null
+                && !signUpGenderTxt.getText().toString().equals(getResources().getString(R.string.customize_gender))) {
+            signUpChooseGenderCardView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean b) {
+        if (view.hasFocus()) {
+            KeyboardHandler.hideKeyboard(AppVendasSignUpActivity.this);
+            if (view.getId() == R.id.signUpGenderMaterialAutoComplete)
+                signUpGenderTxt.showDropDown();
+            else
+                signUpReferToMeAsTxt.showDropDown();
         }
     }
 }

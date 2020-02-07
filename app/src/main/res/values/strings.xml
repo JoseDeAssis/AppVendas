@@ -10,16 +10,23 @@
     <string name="birth_date_hint">Data de nascimento (opcional)</string>
     <string name="phone_number_hint">Telefone (opcional)</string>
     <string name="gender">Gênero</string>
-    <string name="male_gender">Masculino</string>
-    <string name="female_gender">Feminino</string>
     <string name="customize_gender">Personalizar</string>
-    <string name="other_gender">Outro</string>
-    <string name="not_declared_gender">Prefiro não dizer</string>
     <string name="what_is_your_gender_hint">Qual é seu sexo?</string>
     <string name="refer_to_me_as_hint">Refira-se a mim como</string>
     <string name="sign_up">Criar minha conta</string>
     <string name="log_in">Log in</string>
     <string name="divider">ou</string>
+    <string-array name="genderSpinner">
+        <item>Masculino</item>
+        <item>Feminino</item>
+        <item>Prefiro não dizer</item>
+        <item>Personalizar</item>
+    </string-array>
+    <string-array name="referToMeAsGender">
+        <item>Masculino</item>
+        <item>Feminino</item>
+        <item>Outro</item>
+    </string-array>
 
     <!--  Menu  -->
     <string name="search_icon">Search</string>
