@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.example.appvendas.Adapter.AppVendasTabAdapter;
 import com.example.appvendas.Fragment.AppVendasFavoriteFragment;
+import com.example.appvendas.Fragment.AppVendasHomeFragment;
+import com.example.appvendas.Fragment.AppVendasHotProductsFragment;
 import com.example.appvendas.Fragment.AppVendasUserFragment;
 import com.example.appvendas.Helpers.Singleton.FirebaseSingleton;
 import com.example.appvendas.Helpers.Singleton.PreferencesSingleton;
@@ -49,37 +51,38 @@ public class AppVendasMainActivity extends AppCompatActivity {
 //
 //        }
 
-        FloatingActionButton appVendasFAB = findViewById(R.id.appVendasMainFab);
+//        FloatingActionButton appVendasFAB = findViewById(R.id.appVendasMainFab);
 
         Toolbar appVendasToolbar = findViewById(R.id.myToolbar);
         setSupportActionBar(appVendasToolbar);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        initializeBottomNavigationFragment(new AppVendasHomeFragment());
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
-        appVendasProductViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
-
-        AppVendasTabAdapter appVendasTabAdapter = new AppVendasTabAdapter(getSupportFragmentManager());
-        ViewPager appVendasViewPager = findViewById(R.id.mainViewPager);
-        appVendasViewPager.setAdapter(appVendasTabAdapter);
-        appVendasViewPager.setCurrentItem(1);
-
-        TabLayout appVendasTabLayout = findViewById(R.id.mainTabLayout);
-        appVendasTabLayout.setupWithViewPager(appVendasViewPager, false);
-
-        appVendasFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                    return;
-                }
-                mLastClickTime = SystemClock.elapsedRealtime();
-
-                Intent intent = new Intent(AppVendasMainActivity.this, AppVendasShoppingCart.class);
-                intent.putExtra("shoppingCartListProducts", appVendasProductViewModel.getProductsList());
-                startActivityForResult(intent, SHOPPING_CART_RESULT_CODE);
-            }
-        });
+//        appVendasProductViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
+//
+//        AppVendasTabAdapter appVendasTabAdapter = new AppVendasTabAdapter(getSupportFragmentManager());
+//        ViewPager appVendasViewPager = findViewById(R.id.mainViewPager);
+//        appVendasViewPager.setAdapter(appVendasTabAdapter);
+//        appVendasViewPager.setCurrentItem(1);
+//
+//        TabLayout appVendasTabLayout = findViewById(R.id.mainTabLayout);
+//        appVendasTabLayout.setupWithViewPager(appVendasViewPager, false);
+//
+//        appVendasFAB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+//                    return;
+//                }
+//                mLastClickTime = SystemClock.elapsedRealtime();
+//
+//                Intent intent = new Intent(AppVendasMainActivity.this, AppVendasShoppingCart.class);
+//                intent.putExtra("shoppingCartListProducts", appVendasProductViewModel.getProductsList());
+//                startActivityForResult(intent, SHOPPING_CART_RESULT_CODE);
+//            }
+//        });
     }
 
     @Override
@@ -147,10 +150,11 @@ public class AppVendasMainActivity extends AppCompatActivity {
 
                     switch (item.getItemId()) {
                         case R.id.bottomNavigationHome:
-                            return false;
+                            selectedFragment = new AppVendasHomeFragment();
+                            break;
 
                         case R.id.bottomNavigationFavorites:
-                            selectedFragment = new AppVendasFavoriteFragment();
+                            selectedFragment = new AppVendasHotProductsFragment();
                             break;
 
                         case R.id.bottomNavigationUser:
@@ -158,8 +162,12 @@ public class AppVendasMainActivity extends AppCompatActivity {
                             break;
                     }
 
-                    getSupportFragmentManager().beginTransaction().replace(R.id.mainViewPager, selectedFragment).commit();
+                    initializeBottomNavigationFragment(selectedFragment);
                     return true;
                 }
             };
+
+    private void initializeBottomNavigationFragment(Fragment selectedFragment) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.mainFragmentLayoutContainer, selectedFragment).commit();
+    }
 }

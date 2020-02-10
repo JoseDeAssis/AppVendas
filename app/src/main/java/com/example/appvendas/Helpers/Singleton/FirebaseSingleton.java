@@ -33,7 +33,6 @@ public class FirebaseSingleton {
         mFirebaseAuth = FirebaseAuth.getInstance();
         mDatabaseReference = mFirebaseDatabase.getReference();
         eventSingleton = EventSingleton.getInstance();
-        mFirebaseAuth.signOut();
     }
 
     public static FirebaseSingleton getInstance() {
