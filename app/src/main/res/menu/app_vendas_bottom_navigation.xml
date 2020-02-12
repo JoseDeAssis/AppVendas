@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/bottomNavigationHome"
         android:icon="@drawable/app_vendas_home_icon"
-        android:title="home"/>
+        android:title="@string/bottom_navigation_home"/>
 
     <item
-        android:id="@+id/bottomNavigationFavorites"
-        android:icon="@drawable/app_vendas_favorite_icon"
-        android:title="favorite" />
+        android:id="@+id/bottomNavigationSearch"
+        android:icon="@drawable/search_icon"
+        android:title="@string/bottom_navigation_search" />
+
+<!--    <item-->
+<!--        android:id="@+id/bottomNavigationFavorites"-->
+<!--        android:icon="@drawable/app_vendas_favorite_icon"-->
+<!--        android:title="@string/bottom_navigation_favorites" />-->
+
+<!--    <item-->
+<!--        android:id="@+id/bottomNavigationShoppingCart"-->
+<!--        android:icon="@drawable/shopping_cart_icon"-->
+<!--        android:title="@string/shopping_cart" />-->
 
     <item
         android:id="@+id/bottomNavigationUser"
         android:icon="@drawable/app_vendas_user_icon"
-        android:title="user" />
+        android:title="@string/bottom_navigation_user" />
 
 </menu>

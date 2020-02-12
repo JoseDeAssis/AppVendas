@@ -50,6 +50,19 @@
     <string name="product_order_detail">Detalhes do pedido</string>
     <string name="order_detail">Detalhes do produto</string>
 
+    <!-- Bottom Navigation -->
+    <string name="bottom_navigation_home">Home</string>
+    <string name="bottom_navigation_favorites">Favorites</string>
+    <string name="bottom_navigation_shopping_cart">Shopping cart</string>
+    <string name="bottom_navigation_search">Search</string>
+    <string name="bottom_navigation_user">User</string>
+
+    <!--  User Fragment  -->
+    <string name="login_user_fragment">Faça seu login</string>
+    <string name="signup_user_fragment">ou cadastre-se</string>
+    <string name="favorite_user_fragment">Favoritos</string>
+    <string name="adress_user_fragment">Endereço</string>
+
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>
     <string name="product_quantity">1un.</string>

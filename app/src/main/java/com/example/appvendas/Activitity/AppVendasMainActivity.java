@@ -6,36 +6,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import com.example.appvendas.Adapter.AppVendasTabAdapter;
 import com.example.appvendas.Fragment.AppVendasFavoriteFragment;
 import com.example.appvendas.Fragment.AppVendasHomeFragment;
-import com.example.appvendas.Fragment.AppVendasHotProductsFragment;
 import com.example.appvendas.Fragment.AppVendasUserFragment;
 import com.example.appvendas.Helpers.Singleton.FirebaseSingleton;
 import com.example.appvendas.Helpers.Singleton.PreferencesSingleton;
-import com.example.appvendas.Model.ProductViewModel;
 import com.example.appvendas.R;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
 
 public class AppVendasMainActivity extends AppCompatActivity {
 
-    private ProductViewModel appVendasProductViewModel;
+//    private ProductViewModel appVendasProductViewModel;
     private FirebaseSingleton mFirebaseSingleton;
-    private long mLastClickTime = 0;
+//    private long mLastClickTime = 0;
     private static final int SHOPPING_CART_RESULT_CODE = 1000;
 
     @Override
@@ -59,6 +51,11 @@ public class AppVendasMainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         initializeBottomNavigationFragment(new AppVendasHomeFragment());
         bottomNavigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
+
+//        BadgeDrawable badgeDrawable = bottomNavigationView.getOrCreateBadge(R.id.bottomNavigationFavorites);
+
+//        badgeDrawable.setVisible(true);
+//        badgeDrawable.setNumber(9999);
 
 //        appVendasProductViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
 //
@@ -153,13 +150,21 @@ public class AppVendasMainActivity extends AppCompatActivity {
                             selectedFragment = new AppVendasHomeFragment();
                             break;
 
-                        case R.id.bottomNavigationFavorites:
-                            selectedFragment = new AppVendasHotProductsFragment();
-                            break;
+//                        case R.id.bottomNavigationFavorites:
+//                            selectedFragment = new AppVendasHotProductsFragment();
+//                            break;
 
                         case R.id.bottomNavigationUser:
                             selectedFragment = new AppVendasUserFragment();
                             break;
+
+                        case R.id.bottomNavigationSearch:
+                            selectedFragment = new AppVendasFavoriteFragment();
+                            break;
+
+//                        case R.id.bottomNavigationShoppingCart:
+//                            selectedFragment = new AppVendasFavoriteFragment();
+//                            break;
                     }
 
                     initializeBottomNavigationFragment(selectedFragment);
