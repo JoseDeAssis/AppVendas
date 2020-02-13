@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">AppVendas</string>
     <string name="product_unavailable">Indisponível no momento</string>
+    <string name="favorite_icon">Favorite icon</string>
+    <string name="favorite_selected_icon">Favorite selected icon</string>
 
     <!--  Login  -->
     <string name="email_hint">E-mail</string>
@@ -61,7 +63,11 @@
     <string name="login_user_fragment">Faça seu login</string>
     <string name="signup_user_fragment">ou cadastre-se</string>
     <string name="favorite_user_fragment">Favoritos</string>
+    <string name="user_favorite_products">Meus produtos favoritos</string>
     <string name="adress_user_fragment">Endereço</string>
+    <string name="user_name">User Name</string>
+    <string name="edit_profile">Editar perfil</string>
+    <string name="user_photo">User photo</string>
 
     <!--  Acivity Shopping Cart  -->
     <string name="shopping_cart">carrinho</string>

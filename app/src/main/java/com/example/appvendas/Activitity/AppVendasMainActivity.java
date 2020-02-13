@@ -85,11 +85,11 @@ public class AppVendasMainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        PreferencesSingleton preferencesSingleton = PreferencesSingleton.getInstance(getApplication());
-        if (!preferencesSingleton.isLoggedIn()) {
-            Toast.makeText(this, "Seja bem vindo " + mFirebaseSingleton.getCurrentUserName() + "!", Toast.LENGTH_LONG).show();
-            preferencesSingleton.userIsLogged();
-        }
+//        PreferencesSingleton preferencesSingleton = PreferencesSingleton.getInstance(getApplication());
+//        if (!preferencesSingleton.isLoggedIn()) {
+//            Toast.makeText(this, "Seja bem vindo " + mFirebaseSingleton.getCurrentUserName() + "!", Toast.LENGTH_LONG).show();
+//            preferencesSingleton.userIsLogged();
+//        }
     }
 
     @Override
